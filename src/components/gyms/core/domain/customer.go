@@ -9,4 +9,6 @@ type Customer struct {
 	restricted  bool
 	birthYear   int
 	gender      Gender
+	createdBy   string
+	updatedBy   string
 }
