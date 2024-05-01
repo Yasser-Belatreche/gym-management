@@ -1,0 +1,35 @@
+version: '3.8'
+name: gym-management-golang
+
+services:
+  app:
+    build:
+      context: ../.
+      dockerfile: docker/Dockerfile
+    image: gym-management-golang:dev
+    container_name: gym-management-golang-dev
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+    environment:
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_USER=postgres
+      - DB_PASSWORD=postgres
+      - DB_NAME=postgres
+  db:
+    image: postgres:latest
+    container_name: gym-management-postgres
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+
+volumes:
+  postgres_data:
+    driver: local

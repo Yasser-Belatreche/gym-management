@@ -4,7 +4,11 @@ import "gym-management/src/lib/primitives/generic"
 
 type Session struct {
 	correlationId string
-	user          User
+}
+
+type UserSession struct {
+	Session
+	user User
 }
 
 type User struct {
@@ -13,9 +17,17 @@ type User struct {
 	profile map[string]string
 }
 
-func NewSession(userId string, userRole string, profile map[string]string) *Session {
+func NewSession() *Session {
 	return &Session{
 		correlationId: generic.GenerateUUID(),
+	}
+}
+
+func NewUserSession(userId string, userRole string, profile map[string]string) *UserSession {
+	return &UserSession{
+		Session: Session{
+			correlationId: generic.GenerateUUID(),
+		},
 		user: User{
 			id:      userId,
 			role:    userRole,
