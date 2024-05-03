@@ -10,7 +10,7 @@ type DomainEvent[T interface{}] struct {
 	Payload    T
 }
 
-func NewDomainEvent[T any](eventType string, payload T) *DomainEvent[T] {
+func NewDomainEvent[T interface{}](eventType string, payload T) *DomainEvent[T] {
 	return &DomainEvent[T]{
 		EventId:    generic.GenerateUUID(),
 		OccurredAt: time.Now(),

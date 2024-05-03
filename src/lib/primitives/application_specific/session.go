@@ -7,7 +7,7 @@ type Session struct {
 }
 
 type UserSession struct {
-	Session
+	*Session
 	User *User
 }
 
@@ -25,7 +25,7 @@ func NewSession() *Session {
 
 func NewUserSession(userId string, userRole string, profile map[string]string) *UserSession {
 	return &UserSession{
-		Session: Session{
+		Session: &Session{
 			CorrelationId: generic.GenerateUUID(),
 		},
 		User: &User{

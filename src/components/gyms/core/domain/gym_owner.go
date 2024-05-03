@@ -71,7 +71,7 @@ func CreateGymOwner(name string, phoneNumber string, email application_specific.
 
 	owner.events = append(
 		owner.events,
-		events.NewGymOwnerCreatedEvent(owner.State(), password),
+		NewGymOwnerCreatedEvent(owner.State(), password),
 	)
 
 	return owner, nil
@@ -128,7 +128,7 @@ func (owner *GymOwner) Update(name string, phoneNumber string, email application
 
 	owner.events = append(
 		owner.events,
-		events.NewGymOwnerUpdatedEvent(owner.State(), password),
+		NewGymOwnerUpdatedEvent(owner.State(), password),
 	)
 
 	return nil
@@ -152,11 +152,11 @@ func (owner *GymOwner) Restrict(by string) *application_specific.ApplicationExce
 
 	owner.events = append(
 		owner.events,
-		events.NewGymOwnerUpdatedEvent(owner.State(), nil),
+		NewGymOwnerUpdatedEvent(owner.State(), nil),
 	)
 	owner.events = append(
 		owner.events,
-		events.NewGymOwnerRestrictedEvent(owner.State()),
+		NewGymOwnerRestrictedEvent(owner.State()),
 	)
 
 	return nil
@@ -180,11 +180,11 @@ func (owner *GymOwner) Unrestrict(by string) *application_specific.ApplicationEx
 
 	owner.events = append(
 		owner.events,
-		events.NewGymOwnerUpdatedEvent(owner.State(), nil),
+		NewGymOwnerUpdatedEvent(owner.State(), nil),
 	)
 	owner.events = append(
 		owner.events,
-		events.NewGymOwnerUnrestrictedEvent(owner.State()),
+		NewGymOwnerUnrestrictedEvent(owner.State()),
 	)
 
 	return nil
@@ -203,7 +203,7 @@ func (owner *GymOwner) Delete(by string) *application_specific.ApplicationExcept
 
 	owner.events = append(
 		owner.events,
-		events.NewGymOwnerDeletedEvent(owner.State()),
+		NewGymOwnerDeletedEvent(owner.State()),
 	)
 
 	return nil
