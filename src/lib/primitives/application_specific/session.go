@@ -3,35 +3,35 @@ package application_specific
 import "gym-management/src/lib/primitives/generic"
 
 type Session struct {
-	correlationId string
+	CorrelationId string
 }
 
 type UserSession struct {
 	Session
-	user User
+	User *User
 }
 
 type User struct {
-	id      string
-	role    string
-	profile map[string]string
+	Id      string
+	Role    string
+	Profile map[string]string
 }
 
 func NewSession() *Session {
 	return &Session{
-		correlationId: generic.GenerateUUID(),
+		CorrelationId: generic.GenerateUUID(),
 	}
 }
 
 func NewUserSession(userId string, userRole string, profile map[string]string) *UserSession {
 	return &UserSession{
 		Session: Session{
-			correlationId: generic.GenerateUUID(),
+			CorrelationId: generic.GenerateUUID(),
 		},
-		user: User{
-			id:      userId,
-			role:    userRole,
-			profile: profile,
+		User: &User{
+			Id:      userId,
+			Role:    userRole,
+			Profile: profile,
 		},
 	}
 }

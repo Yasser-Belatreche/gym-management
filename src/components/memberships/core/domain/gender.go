@@ -5,16 +5,16 @@ import exceptions "gym-management/src/lib/primitives/application_specific"
 type Gender string
 
 const (
-	Male   = "male"
-	Female = "female"
+	GenderMale   = "male"
+	GenderFemale = "female"
 )
 
 func NewGender(str string) (Gender, *exceptions.ApplicationException) {
-	if str == Male {
+	if str == GenderMale {
 		return Gender(str), nil
 	}
 
-	if str == Female {
+	if str == GenderFemale {
 		return Gender(str), nil
 	}
 

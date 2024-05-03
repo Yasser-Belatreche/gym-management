@@ -1,11 +1,14 @@
 package domain
 
+import "time"
+
 type Gym struct {
 	id        string
 	name      string
 	address   string
 	enabled   bool
-	ownerId   string
 	createdBy string
 	updatedBy string
+	deletedAt *time.Time
+	deleteBy  *string
 }
