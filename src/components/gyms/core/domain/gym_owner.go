@@ -14,6 +14,7 @@ type GymOwner struct {
 	phoneNumber string
 	email       application_specific.Email
 	restricted  bool
+	gyms        []*Gym
 	createdBy   string
 	updatedBy   string
 	deletedAt   *time.Time
@@ -27,6 +28,7 @@ type GymOwnerState struct {
 	PhoneNumber string
 	Email       string
 	Restricted  bool
+	Gyms        []GymState
 	CreatedBy   string
 	UpdatedBy   string
 	DeletedBy   *string
@@ -80,17 +82,233 @@ func CreateGymOwner(name string, phoneNumber string, email application_specific.
 func GymOwnerFromState(state GymOwnerState) *GymOwner {
 	email, _ := application_specific.NewEmail(state.Email)
 
+	gyms := make([]*Gym, 0)
+
+	for _, gymState := range state.Gyms {
+		gyms = append(gyms, GymFromState(gymState))
+	}
+
 	return &GymOwner{
 		id:          state.Id,
 		name:        state.Name,
 		phoneNumber: state.PhoneNumber,
 		email:       email,
 		restricted:  state.Restricted,
+		gyms:        gyms,
+		deleteBy:    state.DeletedBy,
 		createdBy:   state.CreatedBy,
 		updatedBy:   state.UpdatedBy,
 		deletedAt:   state.DeletedAt,
 		events:      make([]*events.GymEvent[any], 0),
 	}
+}
+
+func (owner *GymOwner) CreateGym(name string, address string, by string) *application_specific.ApplicationException {
+	if owner.restricted {
+		return application_specific.NewValidationException("GYMS.OWNER.RESTRICTED", "Owner is restricted", map[string]string{
+			"id": owner.id,
+		})
+	}
+
+	if owner.deletedAt != nil {
+		return application_specific.NewValidationException("GYMS.OWNER.DELETED", "Owner is deleted", map[string]string{
+			"id": owner.id,
+		})
+	}
+
+	gym, err := CreateGym(name, address, by)
+	if err != nil {
+		return err
+	}
+
+	owner.gyms = append(owner.gyms, gym)
+	owner.updatedBy = gym.createdBy
+
+	owner.events = append(
+		owner.events,
+		NewGymCreatedEvent(gym.State(), owner.State()),
+	)
+	owner.events = append(
+		owner.events,
+		NewGymOwnerUpdatedEvent(owner.State(), nil),
+	)
+
+	return nil
+}
+
+func (owner *GymOwner) DisableGym(id, by string) *application_specific.ApplicationException {
+	if owner.restricted {
+		return application_specific.NewValidationException("GYMS.OWNER.RESTRICTED", "Owner is restricted", map[string]string{
+			"id": owner.id,
+		})
+	}
+
+	if owner.deletedAt != nil {
+		return application_specific.NewValidationException("GYMS.OWNER.DELETED", "Owner is deleted", map[string]string{
+			"id": owner.id,
+		})
+	}
+
+	gym := owner.findGymById(id)
+	if gym == nil {
+		return application_specific.NewNotFoundException("GYMS.GYM_NOT_FOUND", "Gym not found", map[string]string{
+			"id": id,
+		})
+	}
+
+	err := gym.Disable(by, "Owner disabled the gym")
+	if err != nil {
+		return err
+	}
+
+	owner.updatedBy = by
+
+	owner.events = append(
+		owner.events,
+		NewGymDisabledEvent(gym.State(), owner.State()),
+	)
+	owner.events = append(
+		owner.events,
+		NewGymOwnerUpdatedEvent(owner.State(), nil),
+	)
+
+	return nil
+}
+
+func (owner *GymOwner) EnableGym(id, by string) *application_specific.ApplicationException {
+	if owner.restricted {
+		return application_specific.NewValidationException("GYMS.OWNER.RESTRICTED", "Owner is restricted", map[string]string{
+			"id": owner.id,
+		})
+	}
+
+	if owner.deletedAt != nil {
+		return application_specific.NewValidationException("GYMS.OWNER.DELETED", "Owner is deleted", map[string]string{
+			"id": owner.id,
+		})
+	}
+
+	gym := owner.findGymById(id)
+	if gym == nil {
+		return application_specific.NewNotFoundException("GYMS.GYM_NOT_FOUND", "Gym not found", map[string]string{
+			"id": id,
+		})
+	}
+
+	err := gym.Enable(by)
+	if err != nil {
+		return err
+	}
+
+	owner.updatedBy = by
+
+	owner.events = append(
+		owner.events,
+		NewGymEnabledEvent(gym.State(), owner.State()),
+	)
+	owner.events = append(
+		owner.events,
+		NewGymOwnerUpdatedEvent(owner.State(), nil),
+	)
+
+	return nil
+}
+
+func (owner *GymOwner) DeleteGym(id, by string) *application_specific.ApplicationException {
+	if owner.restricted {
+		return application_specific.NewValidationException("GYMS.OWNER.RESTRICTED", "Owner is restricted", map[string]string{
+			"id": owner.id,
+		})
+	}
+
+	if owner.deletedAt != nil {
+		return application_specific.NewValidationException("GYMS.OWNER.DELETED", "Owner is deleted", map[string]string{
+			"id": owner.id,
+		})
+	}
+
+	gym := owner.findGymById(id)
+	if gym == nil {
+		return application_specific.NewNotFoundException("GYMS.GYM_NOT_FOUND", "Gym not found", map[string]string{
+			"id": id,
+		})
+	}
+
+	err := gym.Disable(by, "Owner deleted the gym")
+	if err != nil {
+		return err
+	}
+
+	err = gym.Delete(by)
+	if err != nil {
+		return err
+	}
+
+	owner.updatedBy = by
+
+	owner.events = append(
+		owner.events,
+		NewGymDisabledEvent(gym.State(), owner.State()),
+	)
+	owner.events = append(
+		owner.events,
+		NewGymDeletedEvent(gym.State(), owner.State()),
+	)
+	owner.events = append(
+		owner.events,
+		NewGymOwnerUpdatedEvent(owner.State(), nil),
+	)
+
+	return nil
+}
+
+func (owner *GymOwner) UpdateGym(id, name, address, by string) *application_specific.ApplicationException {
+	if owner.restricted {
+		return application_specific.NewValidationException("GYMS.OWNER.RESTRICTED", "Owner is restricted", map[string]string{
+			"id": owner.id,
+		})
+	}
+
+	if owner.deletedAt != nil {
+		return application_specific.NewValidationException("GYMS.OWNER.DELETED", "Owner is deleted", map[string]string{
+			"id": owner.id,
+		})
+	}
+
+	gym := owner.findGymById(id)
+	if gym == nil {
+		return application_specific.NewNotFoundException("GYMS.GYM_NOT_FOUND", "Gym not found", map[string]string{
+			"id": id,
+		})
+	}
+
+	err := gym.Update(name, address, by)
+	if err != nil {
+		return err
+	}
+
+	owner.updatedBy = by
+
+	owner.events = append(
+		owner.events,
+		NewGymUpdatedEvent(gym.State(), owner.State()),
+	)
+	owner.events = append(
+		owner.events,
+		NewGymOwnerUpdatedEvent(owner.State(), nil),
+	)
+
+	return nil
+}
+
+func (owner *GymOwner) findGymById(id string) *Gym {
+	for _, gym := range owner.gyms {
+		if gym.id == id {
+			return gym
+		}
+	}
+
+	return nil
 }
 
 func (owner *GymOwner) Update(name string, phoneNumber string, email application_specific.Email, password *string, updatedBy string) *application_specific.ApplicationException {
@@ -150,6 +368,20 @@ func (owner *GymOwner) Restrict(by string) *application_specific.ApplicationExce
 	owner.restricted = true
 	owner.updatedBy = by
 
+	for _, gym := range owner.gyms {
+		if gym.enabled {
+			err := gym.Disable(by, "Owner is restricted")
+			if err != nil {
+				return err
+			}
+
+			owner.events = append(
+				owner.events,
+				NewGymDisabledEvent(gym.State(), owner.State()),
+			)
+		}
+	}
+
 	owner.events = append(
 		owner.events,
 		NewGymOwnerUpdatedEvent(owner.State(), nil),
@@ -177,6 +409,20 @@ func (owner *GymOwner) Unrestrict(by string) *application_specific.ApplicationEx
 
 	owner.restricted = false
 	owner.updatedBy = by
+
+	for _, gym := range owner.gyms {
+		if gym.IsDisabledBecause("Owner is restricted") {
+			err := gym.Enable(by)
+			if err != nil {
+				return err
+			}
+
+			owner.events = append(
+				owner.events,
+				NewGymEnabledEvent(gym.State(), owner.State()),
+			)
+		}
+	}
 
 	owner.events = append(
 		owner.events,
@@ -214,15 +460,22 @@ func (owner *GymOwner) EmailIs(email application_specific.Email) bool {
 }
 
 func (owner *GymOwner) State() GymOwnerState {
+	gyms := make([]GymState, 0)
+
+	for _, gym := range owner.gyms {
+		gyms = append(gyms, gym.State())
+	}
+
 	return GymOwnerState{
 		Id:          owner.id,
 		Name:        owner.name,
 		PhoneNumber: owner.phoneNumber,
 		Email:       owner.email.Value,
 		Restricted:  owner.restricted,
-		DeletedBy:   owner.deleteBy,
+		Gyms:        gyms,
 		CreatedBy:   owner.createdBy,
 		UpdatedBy:   owner.updatedBy,
+		DeletedBy:   owner.deleteBy,
 		DeletedAt:   owner.deletedAt,
 	}
 }

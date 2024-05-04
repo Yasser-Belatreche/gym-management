@@ -14,7 +14,16 @@ type UserSession struct {
 type User struct {
 	Id      string
 	Role    string
-	Profile map[string]string
+	Profile *UserProfile
+}
+
+type UserProfile struct {
+	FirstName string
+	LastName  string
+	Phone     string
+	Email     string
+
+	OwnedGyms []string // in case the user is a gym owner
 }
 
 func NewSession() *Session {
@@ -23,7 +32,7 @@ func NewSession() *Session {
 	}
 }
 
-func NewUserSession(userId string, userRole string, profile map[string]string) *UserSession {
+func NewUserSession(userId string, userRole string, profile *UserProfile) *UserSession {
 	return &UserSession{
 		Session: &Session{
 			CorrelationId: generic.GenerateUUID(),

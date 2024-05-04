@@ -45,3 +45,48 @@ func NewGymOwnerCreatedEvent(state GymOwnerState, password string) *events.GymEv
 		CreatedBy:   state.CreatedBy,
 	})
 }
+
+func NewGymCreatedEvent(state GymState, owner GymOwnerState) *events.GymEvent[interface{}] {
+	return events.NewGymEvent(events.GymCreatedEventType, events.GymCreatedEventPayload{
+		Id:        state.Id,
+		Name:      state.Name,
+		OwnerId:   owner.Id,
+		Address:   state.Address,
+		CreatedBy: state.CreatedBy,
+	})
+}
+
+func NewGymUpdatedEvent(state GymState, owner GymOwnerState) *events.GymEvent[interface{}] {
+	return events.NewGymEvent(events.GymUpdatedEventType, events.GymUpdatedEventPayload{
+		Id:        state.Id,
+		Name:      state.Name,
+		Address:   state.Address,
+		UpdatedBy: state.UpdatedBy,
+		OwnerId:   owner.Id,
+	})
+}
+
+func NewGymDeletedEvent(state GymState, owner GymOwnerState) *events.GymEvent[interface{}] {
+	return events.NewGymEvent(events.GymDeletedEventType, events.GymDeletedEventPayload{
+		Id:        state.Id,
+		DeletedBy: *state.DeleteBy,
+		OwnerId:   owner.Id,
+	})
+}
+
+func NewGymEnabledEvent(state GymState, owner GymOwnerState) *events.GymEvent[interface{}] {
+	return events.NewGymEvent(events.GymEnabledEventType, events.GymEnabledEventPayload{
+		Id:        state.Id,
+		EnabledBy: state.UpdatedBy,
+		OwnerId:   owner.Id,
+	})
+}
+
+func NewGymDisabledEvent(state GymState, owner GymOwnerState) *events.GymEvent[interface{}] {
+	return events.NewGymEvent(events.GymDisabledEventType, events.GymDisabledEventPayload{
+		Id:          state.Id,
+		DisabledBy:  state.UpdatedBy,
+		OwnerId:     owner.Id,
+		DisabledFor: *state.DisabledFor,
+	})
+}

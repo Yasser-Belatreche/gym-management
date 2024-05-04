@@ -17,7 +17,7 @@ func (h CreateGymOwnerCommandHandler) Handle(command *CreateGymOwnerCommand) (*C
 		return nil, err
 	}
 
-	if h.EmailService.IsUsed(email) {
+	if h.EmailService.IsUsed(email, command.Session.Session) {
 		return nil, application_specific.NewValidationException("GYMS.OWNERS.EMAIL_USED", "Email is already used", map[string]string{
 			"email": command.Email,
 		})
@@ -28,12 +28,12 @@ func (h CreateGymOwnerCommandHandler) Handle(command *CreateGymOwnerCommand) (*C
 		return nil, err
 	}
 
-	err = h.GymOwnerRepository.Create(owner)
+	err = h.GymOwnerRepository.Create(owner, command.Session.Session)
 	if err != nil {
 		return nil, err
 	}
 
-	err = h.EventsPublisher.Publish(owner.PullEvents())
+	err = h.EventsPublisher.Publish(owner.PullEvents(), command.Session.Session)
 	if err != nil {
 		return nil, err
 	}

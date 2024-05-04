@@ -6,5 +6,5 @@ import (
 )
 
 type EventsPublisher interface {
-	Publish(events []*events.GymEvent[interface{}]) *application_specific.ApplicationException
+	Publish(events []*events.GymEvent[interface{}], session *application_specific.Session) *application_specific.ApplicationException
 }

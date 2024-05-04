@@ -91,12 +91,12 @@ func (b *InMemoryMessagesBroker) Subscribe(subscriber *Subscriber) {
 	b.eventHandlers[subscriber.event] = append(b.eventHandlers[subscriber.event], subscriber.handler)
 }
 
-func (b *InMemoryMessagesBroker) Ask(question *Question, session *application_specific.Session) (map[string]string, *application_specific.ApplicationException) {
-	if b.answers[question.Question] == nil {
+func (b *InMemoryMessagesBroker) Ask(question string, params map[string]string, session *application_specific.Session) (map[string]string, *application_specific.ApplicationException) {
+	if b.answers[question] == nil {
 		panic("Answer not registered")
 	}
 
-	return b.answers[question.Question](question.Params, session)
+	return b.answers[question](params, session)
 }
 
 func (b *InMemoryMessagesBroker) RegisterAnswer(answer *Answer) {

@@ -11,7 +11,7 @@ type UnrestrictGymOwnerCommandHandler struct {
 }
 
 func (h UnrestrictGymOwnerCommandHandler) Handle(command *UnrestrictGymOwnerCommand) (*UnrestrictGymOwnerCommandResponse, *application_specific.ApplicationException) {
-	owner, err := h.GymOwnerRepository.FindByID(command.Id)
+	owner, err := h.GymOwnerRepository.FindByID(command.Id, command.Session.Session)
 	if err != nil {
 		return nil, err
 	}
@@ -26,12 +26,12 @@ func (h UnrestrictGymOwnerCommandHandler) Handle(command *UnrestrictGymOwnerComm
 		return nil, err
 	}
 
-	err = h.GymOwnerRepository.Update(owner)
+	err = h.GymOwnerRepository.Update(owner, command.Session.Session)
 	if err != nil {
 		return nil, err
 	}
 
-	err = h.EventsPublisher.Publish(owner.PullEvents())
+	err = h.EventsPublisher.Publish(owner.PullEvents(), command.Session.Session)
 	if err != nil {
 		return nil, err
 	}

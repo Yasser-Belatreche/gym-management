@@ -7,7 +7,7 @@ type MessagesBroker interface {
 
 	Subscribe(subscriber *Subscriber)
 
-	Ask(question *Question, session *application_specific.Session) (map[string]string, *application_specific.ApplicationException)
+	Ask(question string, params map[string]string, session *application_specific.Session) (map[string]string, *application_specific.ApplicationException)
 
 	RegisterAnswer(answer *Answer)
 }
@@ -15,11 +15,6 @@ type MessagesBroker interface {
 type Subscriber struct {
 	event   string
 	handler func(event *application_specific.DomainEvent[interface{}], session *application_specific.Session) *application_specific.ApplicationException
-}
-
-type Question struct {
-	Question string
-	Params   map[string]string
 }
 
 type Answer struct {

@@ -9,5 +9,5 @@ type GetGymOwnersQuery struct {
 	Search     string
 	Restricted *bool
 	Deleted    bool
-	session    *application_specific.UserSession
+	Session    *application_specific.UserSession
 }
