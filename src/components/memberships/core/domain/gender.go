@@ -22,3 +22,7 @@ func NewGender(str string) (Gender, *exceptions.ApplicationException) {
 		"gender": str,
 	})
 }
+
+func (g Gender) Value() string {
+	return string(g)
+}

@@ -9,6 +9,7 @@ import (
 type Password string
 
 func PasswordFromPlain(str string) (Password, *application_specific.ApplicationException) {
+	str = strings.TrimSpace(str)
 	hash, err := bcrypt.GenerateFromPassword([]byte(str), 14)
 	if err != nil {
 		return "", application_specific.NewUnknownException("AUTH.PASSWORD.HASHING_FAILED", "Password hashing failed", map[string]string{

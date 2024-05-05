@@ -2,7 +2,6 @@ package messages_broker
 
 import (
 	"gym-management/src/lib/primitives/application_specific"
-	"sync"
 )
 
 type InMemoryMessagesBrokerConfig struct {
@@ -63,14 +62,8 @@ func (b *InMemoryMessagesBroker) asyncPublish(event *application_specific.Domain
 		return nil
 	}
 
-	wg := sync.WaitGroup{}
-
 	for _, handler := range b.eventHandlers[event.EventType] {
-		wg.Add(1)
-
 		go func(handler func(event *application_specific.DomainEvent[interface{}], session *application_specific.Session) *application_specific.ApplicationException) {
-			defer wg.Done()
-
 			err := handler(event, session)
 			if err != nil {
 				// Log error
@@ -78,17 +71,15 @@ func (b *InMemoryMessagesBroker) asyncPublish(event *application_specific.Domain
 		}(handler)
 	}
 
-	wg.Wait()
-
 	return nil
 }
 
 func (b *InMemoryMessagesBroker) Subscribe(subscriber *Subscriber) {
-	if b.eventHandlers[subscriber.event] == nil {
-		b.eventHandlers[subscriber.event] = make([]func(event *application_specific.DomainEvent[interface{}], session *application_specific.Session) *application_specific.ApplicationException, 0)
+	if b.eventHandlers[subscriber.Event] == nil {
+		b.eventHandlers[subscriber.Event] = make([]func(event *application_specific.DomainEvent[interface{}], session *application_specific.Session) *application_specific.ApplicationException, 0)
 	}
 
-	b.eventHandlers[subscriber.event] = append(b.eventHandlers[subscriber.event], subscriber.handler)
+	b.eventHandlers[subscriber.Event] = append(b.eventHandlers[subscriber.Event], subscriber.Handler)
 }
 
 func (b *InMemoryMessagesBroker) Ask(question string, params map[string]string, session *application_specific.Session) (map[string]string, *application_specific.ApplicationException) {

@@ -13,8 +13,8 @@ type MessagesBroker interface {
 }
 
 type Subscriber struct {
-	event   string
-	handler func(event *application_specific.DomainEvent[interface{}], session *application_specific.Session) *application_specific.ApplicationException
+	Event   string
+	Handler func(event *application_specific.DomainEvent[interface{}], session *application_specific.Session) *application_specific.ApplicationException
 }
 
 type Answer struct {

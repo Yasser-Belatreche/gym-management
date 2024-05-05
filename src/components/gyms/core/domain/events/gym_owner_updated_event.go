@@ -10,4 +10,5 @@ type GymOwnerUpdatedEventPayload struct {
 	Restricted  bool
 	NewPassword *string
 	UpdatedBy   string
+	Gyms        []string
 }

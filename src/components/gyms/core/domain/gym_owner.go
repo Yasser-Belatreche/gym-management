@@ -443,9 +443,24 @@ func (owner *GymOwner) Delete(by string) *application_specific.ApplicationExcept
 		})
 	}
 
+	owner.restricted = true
 	now := time.Now()
 	owner.deletedAt = &now
 	owner.deleteBy = &by
+
+	for _, gym := range owner.gyms {
+		if gym.enabled {
+			err := gym.Disable(by, "Owner is deleted")
+			if err != nil {
+				return err
+			}
+
+			owner.events = append(
+				owner.events,
+				NewGymDisabledEvent(gym.State(), owner.State()),
+			)
+		}
+	}
 
 	owner.events = append(
 		owner.events,

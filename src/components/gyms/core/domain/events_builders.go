@@ -3,6 +3,14 @@ package domain
 import "gym-management/src/components/gyms/core/domain/events"
 
 func NewGymOwnerUpdatedEvent(state GymOwnerState, newPassword *string) *events.GymEvent[interface{}] {
+	gyms := make([]string, 0)
+
+	for _, gym := range state.Gyms {
+		if gym.Enabled {
+			gyms = append(gyms, gym.Id)
+		}
+	}
+
 	return events.NewGymEvent(events.GymOwnerUpdatedEventType, events.GymOwnerUpdatedEventPayload{
 		Id:          state.Id,
 		Name:        state.Name,
@@ -11,6 +19,7 @@ func NewGymOwnerUpdatedEvent(state GymOwnerState, newPassword *string) *events.G
 		Restricted:  state.Restricted,
 		NewPassword: newPassword,
 		UpdatedBy:   state.UpdatedBy,
+		Gyms:        gyms,
 	})
 }
 
@@ -36,6 +45,14 @@ func NewGymOwnerDeletedEvent(state GymOwnerState) *events.GymEvent[interface{}] 
 }
 
 func NewGymOwnerCreatedEvent(state GymOwnerState, password string) *events.GymEvent[interface{}] {
+	gyms := make([]string, 0)
+
+	for _, gym := range state.Gyms {
+		if gym.Enabled {
+			gyms = append(gyms, gym.Id)
+		}
+	}
+
 	return events.NewGymEvent(events.GymOwnerCreatedEventType, events.GymOwnerCreatedEventPayload{
 		Id:          state.Id,
 		Name:        state.Name,
@@ -43,6 +60,7 @@ func NewGymOwnerCreatedEvent(state GymOwnerState, password string) *events.GymEv
 		Email:       state.Email,
 		Password:    password,
 		CreatedBy:   state.CreatedBy,
+		Gyms:        gyms,
 	})
 }
 

@@ -1,5 +1,11 @@
 package messages_broker
 
+var broker MessagesBroker = nil
+
 func NewMessagesBroker() MessagesBroker {
-	return NewInMemoryMessagesBroker(InMemoryMessagesBrokerConfig{Async: true})
+	if broker == nil {
+		broker = NewInMemoryMessagesBroker(InMemoryMessagesBrokerConfig{Async: true})
+	}
+
+	return broker
 }

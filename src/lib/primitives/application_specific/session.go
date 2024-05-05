@@ -23,7 +23,8 @@ type UserProfile struct {
 	Phone     string
 	Email     string
 
-	OwnedGyms []string // in case the user is a gym owner
+	OwnedGyms        []string // in case the user is a gym owner
+	EnabledOwnedGyms []string // in case the user is a gym owner
 }
 
 func NewSession() *Session {

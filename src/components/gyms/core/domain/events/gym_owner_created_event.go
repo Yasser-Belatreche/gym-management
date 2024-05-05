@@ -9,4 +9,5 @@ type GymOwnerCreatedEventPayload struct {
 	Email       string
 	Password    string
 	CreatedBy   string
+	Gyms        []string
 }

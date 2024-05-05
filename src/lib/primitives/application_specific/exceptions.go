@@ -64,6 +64,15 @@ func NewUnknownException(code string, message string, payload map[string]string)
 	}
 }
 
+func NewDeveloperException(code string, message string) *ApplicationException {
+	return &ApplicationException{
+		code:      code,
+		message:   message,
+		payload:   nil,
+		exception: "DeveloperException",
+	}
+}
+
 func IsValidationException(err interface{}) bool {
 	switch e := err.(type) {
 	case *ApplicationException:
