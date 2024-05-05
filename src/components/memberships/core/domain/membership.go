@@ -297,13 +297,13 @@ func (m *Membership) disable(reason string, by string) *application_specific.App
 		})
 	}
 
-	wasAlreadyDisabled := !m.enabled
+	wasEnabled := m.enabled
 
 	m.enabled = false
 	m.disabledFor = &reason
 	m.updatedBy = by
 
-	if !wasAlreadyDisabled {
+	if wasEnabled {
 		bill, err := BillFromMembership(m)
 		if err != nil {
 			return err
