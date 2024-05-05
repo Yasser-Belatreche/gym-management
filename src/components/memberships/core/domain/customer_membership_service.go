@@ -11,7 +11,7 @@ type CustomerMembershipService struct {
 }
 
 func NewCustomerMembershipService(customer *Customer, membership *Membership) (*CustomerMembershipService, *application_specific.ApplicationException) {
-	if membership != null && customer.id != membership.customerId {
+	if membership != nil && customer.id != membership.customerId {
 		return nil, application_specific.NewValidationException("GYMS.CUSTOMERS.INVALID_MEMBERSHIP", "Customer and membership do not match", map[string]string{
 			"customerId":   customer.id,
 			"membershipId": membership.id,
