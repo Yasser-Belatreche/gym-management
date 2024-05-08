@@ -1,6 +1,7 @@
 package auth
 
 import (
+	"gym-management/src/components/auth/core/event_handlers/customers"
 	"gym-management/src/components/auth/core/event_handlers/gym_owners"
 	"gym-management/src/components/auth/core/registered_answers"
 	"gym-management/src/components/auth/core/usecases/create_admin"
@@ -16,6 +17,10 @@ func Init(broker messages_broker.MessagesBroker, facade *Facade) {
 	broker.Subscribe(gym_owners.BuildGymOwnerCreatedEventHandler(facade.UserRepository))
 	broker.Subscribe(gym_owners.BuildGymOwnerUpdatedEventHandler(facade.UserRepository))
 	broker.Subscribe(gym_owners.BuildGymOwnerDeletedEventHandler(facade.UserRepository))
+
+	broker.Subscribe(customers.BuildCustomerCreatedEventHandler(facade.UserRepository))
+	broker.Subscribe(customers.BuildCustomerUpdatedEventHandler(facade.UserRepository))
+	broker.Subscribe(customers.BuildCustomerDeletedEventHandler(facade.UserRepository))
 }
 
 func createDefaultAdmin(facade *Facade) {
