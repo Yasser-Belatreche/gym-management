@@ -98,7 +98,7 @@ func PlanFromState(state *PlanState) *Plan {
 
 func (p *Plan) Update(name string, featured bool, sessionsPerWeek int, withCoach bool, monthlyPrice float64, updatedBy string) *application_specific.ApplicationException {
 	if p.deletedAt != nil {
-		return application_specific.NewValidationException("MEMBERSHIPS.PLANS.DELETED", "Plan is deleted", map[string]string{
+		return application_specific.NewNotFoundException("MEMBERSHIPS.PLANS.DELETED", "Plan is deleted", map[string]string{
 			"id": p.id,
 		})
 	}
@@ -137,7 +137,7 @@ func (p *Plan) Update(name string, featured bool, sessionsPerWeek int, withCoach
 
 func (p *Plan) Delete(deletedBy string) *application_specific.ApplicationException {
 	if p.deletedAt != nil {
-		return application_specific.NewValidationException("MEMBERSHIPS.PLANS.DELETED", "Plan is deleted", map[string]string{
+		return application_specific.NewNotFoundException("MEMBERSHIPS.PLANS.DELETED", "Plan is deleted", map[string]string{
 			"id": p.id,
 		})
 	}

@@ -13,7 +13,6 @@ type testBroker struct {
 
 func TestMessagesBroker(t *testing.T) {
 	brokers := []testBroker{
-
 		{
 			name:   "Async In Memory Broker",
 			broker: NewInMemoryMessagesBroker(InMemoryMessagesBrokerConfig{Async: true}),

@@ -179,7 +179,7 @@ func (m *Membership) Renew(endDate *time.Time, by string) *application_specific.
 
 func (m *Membership) Cancel(by string) *application_specific.ApplicationException {
 	if m.currentTrainingSession != nil {
-		err := m.EndTrainingSession()
+		_, err := m.EndTrainingSession()
 		if err != nil {
 			return err
 		}
@@ -195,14 +195,14 @@ func (m *Membership) Cancel(by string) *application_specific.ApplicationExceptio
 	return nil
 }
 
-func (m *Membership) StartTrainingSession() *application_specific.ApplicationException {
+func (m *Membership) StartTrainingSession() (*TrainingSession, *application_specific.ApplicationException) {
 	if m.currentTrainingSession != nil {
-		return application_specific.NewValidationException("MEMBERSHIPS.TRAINING_SESSIONS.ALREADY_STARTED", "Training session already started", map[string]string{
+		return nil, application_specific.NewValidationException("MEMBERSHIPS.TRAINING_SESSIONS.ALREADY_STARTED", "Training session already started", map[string]string{
 			"membershipId": m.id,
 		})
 	}
 	if !m.enabled {
-		return application_specific.NewValidationException("MEMBERSHIPS.DISABLED", "Membership is disabled", map[string]string{
+		return nil, application_specific.NewValidationException("MEMBERSHIPS.DISABLED", "Membership is disabled", map[string]string{
 			"membershipId": m.id,
 			"reason":       *m.disabledFor,
 		})
@@ -210,10 +210,10 @@ func (m *Membership) StartTrainingSession() *application_specific.ApplicationExc
 	if m.hasMoreThanOneDueBill() {
 		err := m.disable("Have more than one due bill", "SYSTEM")
 		if err != nil {
-			return err
+			return nil, err
 		}
 
-		return nil
+		return nil, nil
 	}
 
 	trainingSession := CreateTrainingSession()
@@ -221,24 +221,24 @@ func (m *Membership) StartTrainingSession() *application_specific.ApplicationExc
 
 	m.pushEvents(NewTrainingSessionStartedEvent(trainingSession.State(), m.State()))
 
-	return nil
+	return trainingSession, nil
 }
 
-func (m *Membership) EndTrainingSession() *application_specific.ApplicationException {
+func (m *Membership) EndTrainingSession() (*TrainingSession, *application_specific.ApplicationException) {
 	if m.currentTrainingSession == nil {
-		return application_specific.NewValidationException("MEMBERSHIPS.TRAINING_SESSIONS.NOT_STARTED", "Training session not started", map[string]string{
+		return nil, application_specific.NewValidationException("MEMBERSHIPS.TRAINING_SESSIONS.NOT_STARTED", "Training session not started", map[string]string{
 			"membershipId": m.id,
 		})
 	}
 
 	err := m.currentTrainingSession.End()
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	m.pushEvents(NewTrainingSessionEndedEvent(m.currentTrainingSession.State(), m.State()))
 
-	return nil
+	return m.currentTrainingSession, nil
 }
 
 func (m *Membership) PayBill(id string) *application_specific.ApplicationException {
@@ -316,6 +316,10 @@ func (m *Membership) disable(reason string, by string) *application_specific.App
 	m.pushEvents(NewMembershipDisabledEvent(m.State()))
 
 	return nil
+}
+
+func (m *Membership) IsDisabled() bool {
+	return !m.enabled
 }
 
 func (m *Membership) State() *MembershipState {
