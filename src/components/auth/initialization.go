@@ -9,7 +9,7 @@ import (
 	"os"
 )
 
-func Init(broker messages_broker.MessagesBroker, facade *Facade) {
+func initialize(broker messages_broker.MessagesBroker, facade *Facade) {
 	createDefaultAdmin(facade)
 
 	broker.RegisterAnswer(registered_answers.BuildIsEmailUsedAnswer(facade.UserRepository))

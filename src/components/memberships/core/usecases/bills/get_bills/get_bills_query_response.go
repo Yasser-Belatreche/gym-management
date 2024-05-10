@@ -1,4 +1,4 @@
-package get_bill
+package get_bills
 
 import (
 	"gym-management/src/components/memberships/core/usecases/bills"

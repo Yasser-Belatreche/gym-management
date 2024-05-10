@@ -1,4 +1,4 @@
-package delete_plan
+package update_plan
 
 type UpdatePlanCommandResponse struct {
 	Id string

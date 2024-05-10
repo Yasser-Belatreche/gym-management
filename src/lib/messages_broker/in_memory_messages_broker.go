@@ -74,12 +74,14 @@ func (b *InMemoryMessagesBroker) asyncPublish(event *application_specific.Domain
 	return nil
 }
 
-func (b *InMemoryMessagesBroker) Subscribe(subscriber *Subscriber) {
-	if b.eventHandlers[subscriber.Event] == nil {
-		b.eventHandlers[subscriber.Event] = make([]func(event *application_specific.DomainEvent[interface{}], session *application_specific.Session) *application_specific.ApplicationException, 0)
-	}
+func (b *InMemoryMessagesBroker) Subscribe(subscribers ...*Subscriber) {
+	for _, subscriber := range subscribers {
+		if b.eventHandlers[subscriber.Event] == nil {
+			b.eventHandlers[subscriber.Event] = make([]func(event *application_specific.DomainEvent[interface{}], session *application_specific.Session) *application_specific.ApplicationException, 0)
+		}
 
-	b.eventHandlers[subscriber.Event] = append(b.eventHandlers[subscriber.Event], subscriber.Handler)
+		b.eventHandlers[subscriber.Event] = append(b.eventHandlers[subscriber.Event], subscriber.Handler)
+	}
 }
 
 func (b *InMemoryMessagesBroker) Ask(question string, params map[string]string, session *application_specific.Session) (map[string]string, *application_specific.ApplicationException) {
@@ -90,10 +92,12 @@ func (b *InMemoryMessagesBroker) Ask(question string, params map[string]string, 
 	return b.answers[question](params, session)
 }
 
-func (b *InMemoryMessagesBroker) RegisterAnswer(answer *Answer) {
-	if b.answers[answer.Question] != nil {
-		panic("Answer already registered")
-	}
+func (b *InMemoryMessagesBroker) RegisterAnswer(answers ...*Answer) {
+	for _, answer := range answers {
+		if b.answers[answer.Question] != nil {
+			panic("Answer already registered")
+		}
 
-	b.answers[answer.Question] = answer.Answer
+		b.answers[answer.Question] = answer.Answer
+	}
 }

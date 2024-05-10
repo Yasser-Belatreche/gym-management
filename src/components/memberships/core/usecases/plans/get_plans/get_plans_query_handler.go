@@ -1,4 +1,4 @@
-package get_plan
+package get_plans
 
 import "gym-management/src/lib/primitives/application_specific"
 

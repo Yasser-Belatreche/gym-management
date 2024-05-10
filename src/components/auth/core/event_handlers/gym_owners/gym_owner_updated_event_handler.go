@@ -40,11 +40,12 @@ func updatedEventHandler(userRepository domain.UserRepository, payload events.Gy
 
 	user.ChangeUsernames([]domain.Username{username})
 	user.SetProfile(&application_specific.UserProfile{
-		FirstName: payload.Name,
-		LastName:  "",
-		Phone:     payload.PhoneNumber,
-		Email:     payload.Email,
-		OwnedGyms: payload.Gyms,
+		FirstName:        payload.Name,
+		LastName:         "",
+		Phone:            payload.PhoneNumber,
+		Email:            payload.Email,
+		OwnedGyms:        payload.Gyms,
+		EnabledOwnedGyms: payload.Gyms,
 	})
 
 	if payload.NewPassword != nil {

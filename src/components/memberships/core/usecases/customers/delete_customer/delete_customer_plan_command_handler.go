@@ -1,4 +1,4 @@
-package delete_customer_plan
+package delete_customer
 
 import (
 	"gym-management/src/components/memberships/core/domain"

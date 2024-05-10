@@ -1,4 +1,4 @@
-package restrict_customer_plan
+package restrict_customer
 
 type RestrictCustomerCommandResponse struct {
 	Id string

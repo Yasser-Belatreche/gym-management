@@ -1,4 +1,4 @@
-package get_customer
+package get_customers
 
 import (
 	"gym-management/src/components/memberships/core/usecases/customers"

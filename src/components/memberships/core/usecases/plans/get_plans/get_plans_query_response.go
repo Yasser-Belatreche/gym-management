@@ -1,4 +1,4 @@
-package get_plan
+package get_plans
 
 import (
 	"gym-management/src/components/memberships/core/usecases/plans"

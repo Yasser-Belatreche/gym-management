@@ -1,4 +1,4 @@
-package delete_plan
+package update_plan
 
 import (
 	"gym-management/src/components/memberships/core/domain"

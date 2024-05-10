@@ -5,11 +5,11 @@ import "gym-management/src/lib/primitives/application_specific"
 type MessagesBroker interface {
 	Publish(event *application_specific.DomainEvent[interface{}], session *application_specific.Session) *application_specific.ApplicationException
 
-	Subscribe(subscriber *Subscriber)
+	Subscribe(subscribers ...*Subscriber)
 
 	Ask(question string, params map[string]string, session *application_specific.Session) (map[string]string, *application_specific.ApplicationException)
 
-	RegisterAnswer(answer *Answer)
+	RegisterAnswer(answers ...*Answer)
 }
 
 type Subscriber struct {

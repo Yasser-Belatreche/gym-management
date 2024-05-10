@@ -4,7 +4,7 @@ var broker MessagesBroker = nil
 
 func NewMessagesBroker() MessagesBroker {
 	if broker == nil {
-		broker = NewInMemoryMessagesBroker(InMemoryMessagesBrokerConfig{Async: true})
+		broker = NewInMemoryMessagesBroker(InMemoryMessagesBrokerConfig{Async: false})
 	}
 
 	return broker

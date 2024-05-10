@@ -3,7 +3,7 @@ package jobs_scheduler
 import "gym-management/src/lib/primitives/application_specific"
 
 type JobsScheduler interface {
-	ScheduleJob(job *Job)
+	Schedule(jobs ...*Job)
 }
 
 type Job struct {

@@ -24,6 +24,10 @@ type CustomerToReturn struct {
 			Name string
 		}
 	}
+	Gym struct {
+		Id   string
+		Name string
+	}
 	CreatedAt time.Time
 	UpdatedAt time.Time
 	DeletedBy *string

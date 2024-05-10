@@ -6,6 +6,12 @@ type Session struct {
 	CorrelationId string
 }
 
+func NewSession() *Session {
+	return &Session{
+		CorrelationId: generic.GenerateUUID(),
+	}
+}
+
 type UserSession struct {
 	*Session
 	User *User
@@ -27,12 +33,6 @@ type UserProfile struct {
 	EnabledOwnedGyms []string // in case the user is a gym owner
 }
 
-func NewSession() *Session {
-	return &Session{
-		CorrelationId: generic.GenerateUUID(),
-	}
-}
-
 func NewUserSession(userId string, userRole string, profile *UserProfile) *UserSession {
 	return &UserSession{
 		Session: &Session{
@@ -44,4 +44,32 @@ func NewUserSession(userId string, userRole string, profile *UserProfile) *UserS
 			Profile: profile,
 		},
 	}
+}
+
+func (s *UserSession) UserId() string {
+	return s.User.Id
+}
+
+func (s *UserSession) RoleIsOneOf(roles ...string) bool {
+	for _, role := range roles {
+		if s.User.Role == role {
+			return true
+		}
+	}
+
+	return false
+}
+
+func (s *UserSession) IsOwnerOfEnabledGym(gymId string) bool {
+	if s.User.Profile.EnabledOwnedGyms == nil {
+		return false
+	}
+
+	for _, gym := range s.User.Profile.EnabledOwnedGyms {
+		if gym == gymId {
+			return true
+		}
+	}
+
+	return false
 }

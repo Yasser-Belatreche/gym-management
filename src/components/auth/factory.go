@@ -7,18 +7,6 @@ import (
 
 var manager Manager = nil
 
-func InitializeAuthManager(broker messages_broker.MessagesBroker) {
-	secret, found := os.LookupEnv("JWT_SECRET")
-	if !found {
-		panic("JWT_SECRET env var is required")
-	}
-
-	Init(broker, &Facade{
-		UserRepository: nil,
-		JwtSecret:      secret,
-	})
-}
-
 func NewAuthManager() Manager {
 	secret, found := os.LookupEnv("JWT_SECRET")
 	if !found {
@@ -33,4 +21,16 @@ func NewAuthManager() Manager {
 	}
 
 	return manager
+}
+
+func InitializeAuthManager(broker messages_broker.MessagesBroker) {
+	secret, found := os.LookupEnv("JWT_SECRET")
+	if !found {
+		panic("JWT_SECRET env var is required")
+	}
+
+	initialize(broker, &Facade{
+		UserRepository: nil,
+		JwtSecret:      secret,
+	})
 }

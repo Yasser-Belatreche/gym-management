@@ -17,16 +17,17 @@ func NewCronScheduler() *CronScheduler {
 	return &CronScheduler{scheduler: c}
 }
 
-func (c *CronScheduler) ScheduleJob(job *Job) {
+func (c *CronScheduler) Schedule(jobs ...*Job) {
+	for _, job := range jobs {
+		err := c.scheduler.AddFunc(job.CronExpression, func() {
+			err := job.Handler(application_specific.NewSession())
+			if err != nil {
+				// log error
+			}
+		})
 
-	err := c.scheduler.AddFunc(job.CronExpression, func() {
-		err := job.Handler(application_specific.NewSession())
 		if err != nil {
-			// log error
+			panic(err)
 		}
-	})
-
-	if err != nil {
-		panic(err)
 	}
 }

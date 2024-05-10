@@ -11,16 +11,16 @@ func NewGymsManager(broker messages_broker.MessagesBroker) Manager {
 	if manager == nil {
 		manager = &AuthorizationDecorator{
 			manager: &Facade{
-				EmailService: &infra.BrokerEmailsService{
-					Broker: broker,
-				},
-				EventsPublisher: &infra.BrokerEventsPublisher{
-					Broker: broker,
-				},
+				EmailService:       &infra.BrokerEmailsService{Broker: broker},
+				EventsPublisher:    &infra.BrokerEventsPublisher{Broker: broker},
 				GymOwnerRepository: nil,
 			},
 		}
 	}
 
 	return manager
+}
+
+func InitializeGymsManager() {
+	initialize()
 }

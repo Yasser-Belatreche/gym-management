@@ -38,11 +38,12 @@ func createdEventHandler(userRepository domain.UserRepository, payload events.Gy
 		password,
 		domain.RoleGymOwner,
 		&application_specific.UserProfile{
-			FirstName: payload.Name,
-			LastName:  "",
-			Phone:     payload.PhoneNumber,
-			Email:     payload.Email,
-			OwnedGyms: payload.Gyms,
+			FirstName:        payload.Name,
+			LastName:         "",
+			Phone:            payload.PhoneNumber,
+			Email:            payload.Email,
+			OwnedGyms:        payload.Gyms,
+			EnabledOwnedGyms: payload.Gyms,
 		},
 		payload.CreatedBy,
 	)

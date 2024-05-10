@@ -1,4 +1,4 @@
-package restrict_customer_plan
+package restrict_customer
 
 import (
 	"gym-management/src/lib/primitives/application_specific"
