@@ -113,14 +113,14 @@ func CustomerFromState(state *CustomerState) *Customer {
 	}
 }
 
-func (c *Customer) Update(firstName string, lastName string, phoneNumber string, email application_specific.Email, birthYear int, newPassword *string, updatedBy string) *application_specific.ApplicationException {
+func (c *Customer) Update(firstName string, lastName string, phoneNumber string, email application_specific.Email, birthYear int, gender Gender, newPassword *string, updatedBy string) *application_specific.ApplicationException {
 	if c.restricted {
 		return application_specific.NewValidationException("MEMBERSHIPS.CUSTOMERS.ALREADY_RESTRICTED", "Customer is already restricted", map[string]string{
 			"customerId": c.id,
 		})
 	}
 	if c.deletedAt != nil {
-		return application_specific.NewValidationException("MEMBERSHIPS.CUSTOMERS.DELETED", "Customer is deleted", map[string]string{
+		return application_specific.NewNotFoundException("MEMBERSHIPS.CUSTOMERS.DELETED", "Customer is deleted", map[string]string{
 			"customerId": c.id,
 		})
 	}
@@ -155,6 +155,7 @@ func (c *Customer) Update(firstName string, lastName string, phoneNumber string,
 		})
 	}
 
+	c.gender = gender
 	c.firstName = firstName
 	c.lastName = lastName
 	c.phoneNumber = phoneNumber
@@ -174,7 +175,7 @@ func (c *Customer) restrict(by string) *application_specific.ApplicationExceptio
 		})
 	}
 	if c.deletedAt != nil {
-		return application_specific.NewValidationException("MEMBERSHIPS.CUSTOMERS.DELETED", "Customer is deleted", map[string]string{
+		return application_specific.NewNotFoundException("MEMBERSHIPS.CUSTOMERS.DELETED", "Customer is deleted", map[string]string{
 			"customerId": c.id,
 		})
 	}
@@ -194,7 +195,7 @@ func (c *Customer) Unrestrict(by string) *application_specific.ApplicationExcept
 		})
 	}
 	if c.deletedAt != nil {
-		return application_specific.NewValidationException("MEMBERSHIPS.CUSTOMERS.DELETED", "Customer is deleted", map[string]string{
+		return application_specific.NewNotFoundException("MEMBERSHIPS.CUSTOMERS.DELETED", "Customer is deleted", map[string]string{
 			"customerId": c.id,
 		})
 	}
@@ -205,6 +206,10 @@ func (c *Customer) Unrestrict(by string) *application_specific.ApplicationExcept
 	c.pushEvents(NewCustomerUnrestrictedEvent(c.State()), NewCustomerUpdatedEvent(c.State(), nil))
 
 	return nil
+}
+
+func (c *Customer) EmailIs(email application_specific.Email) bool {
+	return c.email.Equals(email)
 }
 
 func (c *Customer) delete(by string) *application_specific.ApplicationException {
@@ -225,7 +230,7 @@ func (c *Customer) delete(by string) *application_specific.ApplicationException 
 
 func (c *Customer) changePlan(plan *Plan, by string) *application_specific.ApplicationException {
 	if c.deletedAt != nil {
-		return application_specific.NewValidationException("MEMBERSHIPS.CUSTOMERS.DELETED", "Customer is deleted", map[string]string{
+		return application_specific.NewNotFoundException("MEMBERSHIPS.CUSTOMERS.DELETED", "Customer is deleted", map[string]string{
 			"customerId": c.id,
 		})
 	}
@@ -265,6 +270,10 @@ func (c *Customer) pushEvents(events ...*events.MembershipEvent[interface{}]) {
 	}
 }
 
-func (c *Customer) Events() []*events.MembershipEvent[interface{}] {
-	return c.events
+func (c *Customer) PullEvents() []*events.MembershipEvent[interface{}] {
+	old := c.events
+
+	c.events = make([]*events.MembershipEvent[interface{}], 0)
+
+	return old
 }

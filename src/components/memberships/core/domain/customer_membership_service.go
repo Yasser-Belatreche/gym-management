@@ -11,7 +11,7 @@ type CustomerMembershipService struct {
 }
 
 func NewCustomerMembershipService(customer *Customer, membership *Membership) (*CustomerMembershipService, *application_specific.ApplicationException) {
-	if membership != nil && customer.id != membership.customerId {
+	if customer.id != membership.customerId {
 		return nil, application_specific.NewValidationException("GYMS.CUSTOMERS.INVALID_MEMBERSHIP", "Customer and membership do not match", map[string]string{
 			"customerId":   customer.id,
 			"membershipId": membership.id,
@@ -48,15 +48,11 @@ func (s *CustomerMembershipService) RestrictCustomer(by string) *application_spe
 		return nil
 	}
 
-	if s.membership.hasUnpaidBills() {
-		return application_specific.NewValidationException("MEMBERSHIPS.UNPAID_BILLS", "Membership has unpaid bills", map[string]string{
-			"membershipId": s.membership.id,
-		})
-	}
-
-	err = s.membership.Cancel(by)
-	if err != nil {
-		return err
+	if !s.membership.IsDisabled() {
+		err = s.membership.Cancel(by)
+		if err != nil {
+			return nil
+		}
 	}
 
 	return nil
@@ -68,19 +64,11 @@ func (s *CustomerMembershipService) DeleteCustomer(by string) *application_speci
 		return err
 	}
 
-	if s.membership == nil {
-		return nil
-	}
-
-	if s.membership.hasUnpaidBills() {
-		return application_specific.NewValidationException("MEMBERSHIPS.UNPAID_BILLS", "Membership has unpaid bills", map[string]string{
-			"membershipId": s.membership.id,
-		})
-	}
-
-	err = s.membership.Cancel(by)
-	if err != nil {
-		return err
+	if !s.membership.IsDisabled() {
+		err = s.membership.Cancel(by)
+		if err != nil {
+			return nil
+		}
 	}
 
 	return nil
@@ -103,19 +91,11 @@ func (s *CustomerMembershipService) ChangeCustomerPlanTo(plan *Plan, endDate *ti
 		return nil, err
 	}
 
-	if s.membership == nil {
-		return newMembership, nil
-	}
-
-	if s.membership.hasUnpaidBills() {
-		return nil, application_specific.NewValidationException("MEMBERSHIPS.UNPAID_BILLS", "Membership has unpaid bills", map[string]string{
-			"membershipId": s.membership.id,
-		})
-	}
-
-	err = s.membership.Cancel(by)
-	if err != nil {
-		return nil, err
+	if !s.membership.IsDisabled() {
+		err = s.membership.Cancel(by)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	return newMembership, nil

@@ -32,7 +32,7 @@ func handlerGymDisabledEvent(membershipRepository domain.MembershipRepository, e
 	}
 
 	for _, membership := range memberships {
-		err = membership.Cancel(disabledBy)
+		err = membership.GymDisabled(disabledBy)
 		if err != nil {
 			return err
 		}

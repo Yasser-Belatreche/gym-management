@@ -9,7 +9,7 @@ const (
 	GenderFemale = "female"
 )
 
-func NewGender(str string) (Gender, *exceptions.ApplicationException) {
+func GenderFrom(str string) (Gender, *exceptions.ApplicationException) {
 	if str == GenderMale {
 		return Gender(str), nil
 	}

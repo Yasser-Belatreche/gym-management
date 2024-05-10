@@ -16,7 +16,9 @@ func (h *StartTrainingSessionCommandHandler) Handle(command *StartTrainingSessio
 		return nil, err
 	}
 
-	trainingSession, err := membership.StartTrainingSession()
+	trainingSession, err := membership.StartTrainingSession(func() (int, *application_specific.ApplicationException) {
+		return h.MembershipRepository.CountTrainingSessionsThisWeek(membership.State().Id, command.Session.Session)
+	})
 	if err != nil {
 		return nil, err
 	}

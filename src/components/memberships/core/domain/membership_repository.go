@@ -7,6 +7,8 @@ type MembershipRepository interface {
 
 	FindByCode(code string, session *application_specific.Session) (*Membership, *application_specific.ApplicationException)
 
+	FindLatestCustomerMembership(customerId string, session *application_specific.Session) (*Membership, *application_specific.ApplicationException)
+
 	Create(membership *Membership, session *application_specific.Session) *application_specific.ApplicationException
 
 	Update(membership *Membership, session *application_specific.Session) *application_specific.ApplicationException
