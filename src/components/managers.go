@@ -7,7 +7,7 @@ import (
 	"gym-management/src/lib"
 )
 
-func InitManagers() {
+func init() {
 	auth.InitializeAuthManager(lib.MessagesBroker())
 	gyms.InitializeGymsManager()
 	memberships.InitializeMembershipsManager(lib.MessagesBroker(), lib.JobsScheduler())
