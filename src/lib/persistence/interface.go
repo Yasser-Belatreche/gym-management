@@ -9,11 +9,9 @@ type Persistence interface {
 
 	WithTransaction(session *application_specific.Session, method func() *application_specific.ApplicationException) *application_specific.ApplicationException
 
-	HealthCheck() *PersistenceHealth
-}
-
-type PersistenceHealth struct {
-	Status   string
-	Provider string
-	Message  string
+	HealthCheck() struct {
+		Provider string
+		Status   string
+		Message  string
+	}
 }
