@@ -14,13 +14,17 @@ func initialize(broker messages_broker.MessagesBroker, facade *Facade) {
 
 	broker.RegisterAnswer(registered_answers.BuildIsEmailUsedAnswer(facade.UserRepository))
 
-	broker.Subscribe(gym_owners.BuildGymOwnerCreatedEventHandler(facade.UserRepository))
-	broker.Subscribe(gym_owners.BuildGymOwnerUpdatedEventHandler(facade.UserRepository))
-	broker.Subscribe(gym_owners.BuildGymOwnerDeletedEventHandler(facade.UserRepository))
+	broker.Subscribe(
+		gym_owners.BuildGymOwnerCreatedEventHandler(facade.UserRepository),
+		gym_owners.BuildGymOwnerUpdatedEventHandler(facade.UserRepository),
+		gym_owners.BuildGymOwnerDeletedEventHandler(facade.UserRepository),
+	)
 
-	broker.Subscribe(customers.BuildCustomerCreatedEventHandler(facade.UserRepository))
-	broker.Subscribe(customers.BuildCustomerUpdatedEventHandler(facade.UserRepository))
-	broker.Subscribe(customers.BuildCustomerDeletedEventHandler(facade.UserRepository))
+	broker.Subscribe(
+		customers.BuildCustomerCreatedEventHandler(facade.UserRepository),
+		customers.BuildCustomerUpdatedEventHandler(facade.UserRepository),
+		customers.BuildCustomerDeletedEventHandler(facade.UserRepository),
+	)
 }
 
 func createDefaultAdmin(facade *Facade) {

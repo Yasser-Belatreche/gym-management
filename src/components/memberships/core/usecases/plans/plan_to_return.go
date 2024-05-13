@@ -9,11 +9,14 @@ type PlanToReturn struct {
 	SessionPerWeek int
 	WithCoach      bool
 	MonthlyPrice   float64
-	GymId          string
-	CreatedBy      string
-	UpdatedBy      string
-	CreatedAt      time.Time
-	UpdatedAt      time.Time
-	DeletedBy      *string
-	DeletedAt      *time.Time
+	Gym            struct {
+		Id   string
+		Name string
+	}
+	CreatedBy string
+	UpdatedBy string
+	CreatedAt time.Time
+	UpdatedAt time.Time
+	DeletedBy *string
+	DeletedAt *time.Time
 }

@@ -21,6 +21,7 @@ type Membership struct {
 	currentTrainingSession *TrainingSession
 	planId                 string
 	customerId             string
+	renewedAt              *time.Time
 	events                 []*events.MembershipEvent[interface{}]
 	createdBy              string
 	updatedBy              string
@@ -39,6 +40,7 @@ type MembershipState struct {
 	UnpaidBills            []*BillState
 	CurrentTrainingSession *TrainingSessionState
 	PlanId                 string
+	RenewedAt              *time.Time
 	CustomerId             string
 	CreatedBy              string
 	UpdatedBy              string
@@ -169,6 +171,8 @@ func (m *Membership) Renew(endDate *time.Time, by string) *application_specific.
 
 	m.enabled = true
 	m.disabledFor = nil
+	now := time.Now()
+	m.renewedAt = &now
 	m.endDate = endDate
 	m.updatedBy = by
 
@@ -378,6 +382,7 @@ func (m *Membership) State() *MembershipState {
 		MonthlyPrice:           m.monthlyPrice,
 		CurrentTrainingSession: currentTrainingSession,
 		UnpaidBills:            unpaidBillsState,
+		RenewedAt:              m.renewedAt,
 		PlanId:                 m.planId,
 		CustomerId:             m.customerId,
 	}

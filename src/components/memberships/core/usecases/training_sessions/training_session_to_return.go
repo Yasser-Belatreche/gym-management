@@ -11,4 +11,8 @@ type TrainingSessionToReturn struct {
 		FirstName string
 		LastName  string
 	}
+	Gym struct {
+		Id   string
+		Name string
+	}
 }

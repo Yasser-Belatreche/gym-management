@@ -16,6 +16,17 @@ type MembershipToReturn struct {
 		FirstName string
 		LastName  string
 	}
+	Plan struct {
+		Id   string
+		Name string
+	}
+	Gym struct {
+		Id   string
+		Name string
+	}
 	CreatedBy string
+	CreatedAt time.Time
 	UpdatedBy string
+	UpdatedAt time.Time
+	RenewedAt *time.Time
 }

@@ -15,6 +15,10 @@ type BillToReturn struct {
 		Id   string
 		Name string
 	}
+	Gym struct {
+		Id   string
+		Name string
+	}
 	PaidAt    *time.Time
 	DueDate   time.Time
 	CreatedAt time.Time
