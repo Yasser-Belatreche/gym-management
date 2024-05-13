@@ -12,7 +12,7 @@ func PasswordFromPlain(str string) (Password, *application_specific.ApplicationE
 	str = strings.TrimSpace(str)
 	hash, err := bcrypt.GenerateFromPassword([]byte(str), 14)
 	if err != nil {
-		return "", application_specific.NewUnknownException("AUTH.PASSWORD.HASHING_FAILED", "Password hashing failed", map[string]string{
+		return "", application_specific.NewUnknownException("AUTH.PASSWORD.HASHING_FAILED", "password hashing failed", map[string]string{
 			"password": str,
 		})
 	}
@@ -22,7 +22,7 @@ func PasswordFromPlain(str string) (Password, *application_specific.ApplicationE
 
 func PasswordFromEncrypted(str string) (Password, *application_specific.ApplicationException) {
 	if !isEncrypted(str) {
-		return "", application_specific.NewValidationException("AUTH.PASSWORD.INVALID", "Password is not encrypted", map[string]string{
+		return "", application_specific.NewValidationException("AUTH.PASSWORD.INVALID", "password is not encrypted", map[string]string{
 			"password": str,
 		})
 	}

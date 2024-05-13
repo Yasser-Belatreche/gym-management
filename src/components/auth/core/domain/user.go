@@ -139,13 +139,13 @@ func (u *User) Restore() {
 
 func (u *User) Login(password string, tokenSecret string) (Token, *application_specific.ApplicationException) {
 	if u.IsRestricted() {
-		return "", application_specific.NewAuthenticationException("AUTH.USER.RESTRICTED", "User is restricted", map[string]string{
+		return "", application_specific.NewAuthenticationException("AUTH.USER.RESTRICTED", "user is restricted", map[string]string{
 			"id": u.id,
 		})
 	}
 
 	if u.IsDeleted() {
-		return "", application_specific.NewAuthenticationException("AUTH.USER.DELETED", "User is deleted", map[string]string{
+		return "", application_specific.NewAuthenticationException("AUTH.USER.DELETED", "user is deleted", map[string]string{
 			"id": u.id,
 		})
 	}
@@ -171,13 +171,13 @@ func (u *User) Login(password string, tokenSecret string) (Token, *application_s
 
 func (u *User) GetSession() (*application_specific.UserSession, *application_specific.ApplicationException) {
 	if u.IsRestricted() {
-		return nil, application_specific.NewAuthenticationException("AUTH.USER.RESTRICTED", "User is restricted", map[string]string{
+		return nil, application_specific.NewAuthenticationException("AUTH.USER.RESTRICTED", "user is restricted", map[string]string{
 			"id": u.id,
 		})
 	}
 
 	if u.IsDeleted() {
-		return nil, application_specific.NewAuthenticationException("AUTH.USER.DELETED", "User is deleted", map[string]string{
+		return nil, application_specific.NewAuthenticationException("AUTH.USER.DELETED", "user is deleted", map[string]string{
 			"id": u.id,
 		})
 	}

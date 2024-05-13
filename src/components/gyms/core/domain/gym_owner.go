@@ -53,7 +53,7 @@ func CreateGymOwner(name string, phoneNumber string, email application_specific.
 	}
 
 	if len(password) < 6 {
-		return nil, application_specific.NewValidationException("GYMS.OWNER.PASSWORD_TOO_SHORT", "Password is too short", map[string]string{
+		return nil, application_specific.NewValidationException("GYMS.OWNER.PASSWORD_TOO_SHORT", "password is too short", map[string]string{
 			"password": password,
 		})
 	}

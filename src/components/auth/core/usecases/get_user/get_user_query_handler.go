@@ -15,7 +15,7 @@ func (h *GetUserQueryHandler) Handle(query *GetUserQuery) (*GetUserQueryResponse
 		return nil, err
 	}
 	if user == nil {
-		return nil, application_specific.NewNotFoundException("AUTH.USER.NOT_FOUND", "User not found", map[string]string{
+		return nil, application_specific.NewNotFoundException("AUTH.USER.NOT_FOUND", "user not found", map[string]string{
 			"id": query.Id,
 		})
 	}

@@ -28,7 +28,7 @@ func updatedEventHandler(userRepository domain.UserRepository, payload events.Gy
 		return err
 	}
 	if user == nil {
-		return application_specific.NewNotFoundException("USER_NOT_FOUND", "User not found", map[string]string{
+		return application_specific.NewNotFoundException("USER_NOT_FOUND", "user not found", map[string]string{
 			"id": payload.Id,
 		})
 	}

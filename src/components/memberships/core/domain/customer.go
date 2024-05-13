@@ -62,7 +62,7 @@ func createCustomer(firstName string, lastName string, phoneNumber string, email
 		})
 	}
 	if len(password) < 6 {
-		return nil, application_specific.NewValidationException("MEMBERSHIPS.CUSTOMERS.INVALID_PASSWORD", "Password must be at least 6 characters long", map[string]string{
+		return nil, application_specific.NewValidationException("MEMBERSHIPS.CUSTOMERS.INVALID_PASSWORD", "password must be at least 6 characters long", map[string]string{
 			"password": password,
 		})
 	}
@@ -150,7 +150,7 @@ func (c *Customer) Update(firstName string, lastName string, phoneNumber string,
 		})
 	}
 	if newPassword != nil && len(*newPassword) < 6 {
-		return application_specific.NewValidationException("MEMBERSHIPS.CUSTOMERS.INVALID_PASSWORD", "Password must be at least 6 characters long", map[string]string{
+		return application_specific.NewValidationException("MEMBERSHIPS.CUSTOMERS.INVALID_PASSWORD", "password must be at least 6 characters long", map[string]string{
 			"password": *newPassword,
 		})
 	}

@@ -61,12 +61,12 @@ func isEmailUsed(userRepository domain.UserRepository, query *isEmailUsedQuery) 
 		return nil, err
 	}
 
-	user, err := userRepository.FindByUsername(domain.UsernameFromEmail(email), query.Session)
+	used, err := userRepository.UsernameUsed(domain.UsernameFromEmail(email), query.Session)
 	if err != nil {
 		return nil, err
 	}
 
 	return &isEmailUsedQueryResponse{
-		IsUsed: user != nil,
+		IsUsed: used,
 	}, nil
 }

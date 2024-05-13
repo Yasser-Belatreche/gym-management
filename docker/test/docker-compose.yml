@@ -13,7 +13,7 @@ services:
     depends_on:
       - db
     env_file:
-      - .test.env
+      - ../../.env.test
     environment:
       - DB_HOST=db
       - DB_PORT=5432

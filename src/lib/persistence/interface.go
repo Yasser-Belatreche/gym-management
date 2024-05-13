@@ -7,5 +7,5 @@ type Persistence interface {
 
 	Disconnect() *application_specific.ApplicationException
 
-	WithTransaction(session *application_specific.Session, transaction func() *application_specific.ApplicationException) *application_specific.ApplicationException
+	WithTransaction(session *application_specific.Session, method func() *application_specific.ApplicationException) *application_specific.ApplicationException
 }
