@@ -3,6 +3,7 @@ package gorm
 import (
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
+	"gym-management/src/lib/persistence"
 )
 import "gym-management/src/lib/primitives/application_specific"
 
@@ -92,6 +93,33 @@ func (g *GormPsqlPersistence) WithTransaction(session *application_specific.Sess
 	delete(g.clients, session.CorrelationId)
 
 	return nil
+}
+
+func (g *GormPsqlPersistence) HealthCheck() *persistence.PersistenceHealth {
+	if _, ok := g.clients["default"]; !ok {
+		return &persistence.PersistenceHealth{
+			Status:   "DOWN",
+			Provider: "GORM - PSQL",
+			Message:  "No database connection",
+		}
+	}
+
+	db, _ := g.clients["default"].DB()
+
+	err := db.Ping()
+	if err != nil {
+		return &persistence.PersistenceHealth{
+			Status:   "DOWN",
+			Provider: "GORM - PSQL",
+			Message:  err.Error(),
+		}
+	}
+
+	return &persistence.PersistenceHealth{
+		Status:   "UP",
+		Provider: "GORM - PSQL",
+		Message:  "Database connection is healthy",
+	}
 }
 
 func (g *GormPsqlPersistence) GetClient(session *application_specific.Session) *gorm.DB {

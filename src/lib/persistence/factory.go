@@ -5,6 +5,13 @@ import (
 	"os"
 )
 
+func InitializePersistence() {
+	err := NewPersistence().Connect()
+	if err != nil {
+		panic(err)
+	}
+}
+
 func NewPersistence() Persistence {
 	return NewGormPersistence()
 }

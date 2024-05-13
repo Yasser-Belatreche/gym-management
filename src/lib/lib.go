@@ -8,6 +8,10 @@ import (
 	"gym-management/src/lib/primitives/application_specific"
 )
 
+func InitializeLib() {
+	persistence.InitializePersistence()
+}
+
 func MessagesBroker() messages_broker.MessagesBroker {
 	return messages_broker.NewMessagesBroker()
 }

@@ -8,6 +8,8 @@ import (
 )
 
 func init() {
+	lib.InitializeLib()
+
 	auth.InitializeAuthManager(lib.MessagesBroker())
 	gyms.InitializeGymsManager()
 	memberships.InitializeMembershipsManager(lib.MessagesBroker(), lib.JobsScheduler())
