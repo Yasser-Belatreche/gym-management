@@ -10,7 +10,7 @@ import (
 type Manager interface {
 	Login(command *login.LoginCommand) (*login.LoginCommandResponse, *application_specific.ApplicationException)
 
-	GetSession(query *get_session.GetSessionQuery) (*get_session.GetSessionQueryResponse, *application_specific.ApplicationException)
+	GetUserSession(query *get_session.GetSessionQuery) (*get_session.GetSessionQueryResponse, *application_specific.ApplicationException)
 
 	GetUser(query *get_user.GetUserQuery) (*get_user.GetUserQueryResponse, *application_specific.ApplicationException)
 }

@@ -12,6 +12,12 @@ func NewSession() *Session {
 	}
 }
 
+func NewSessionWithCorrelationId(correlationId string) *Session {
+	return &Session{
+		CorrelationId: correlationId,
+	}
+}
+
 type UserSession struct {
 	*Session
 	User *User
@@ -33,7 +39,7 @@ type UserProfile struct {
 	EnabledOwnedGyms []string // in case the user is a gym owner
 }
 
-func NewUserSession(userId string, userRole string, profile *UserProfile) *UserSession {
+func NewUserSession(userId string, userRole string, profile *UserProfile, session *Session) *UserSession {
 	return &UserSession{
 		Session: &Session{
 			CorrelationId: generic.GenerateUUID(),

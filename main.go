@@ -1,5 +1,10 @@
 package main
 
+import (
+	"gym-management/src/web/gin"
+)
+
 func main() {
-	println("Hello, World!")
+	//components.Initialize()
+	gin.StartWebServer()
 }

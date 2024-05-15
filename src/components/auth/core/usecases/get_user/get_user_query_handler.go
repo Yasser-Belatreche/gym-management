@@ -10,7 +10,7 @@ type GetUserQueryHandler struct {
 }
 
 func (h *GetUserQueryHandler) Handle(query *GetUserQuery) (*GetUserQueryResponse, *application_specific.ApplicationException) {
-	user, err := h.UserRepository.FindByID(query.Id, query.Session)
+	user, err := h.UserRepository.FindByID(query.Id, query.Session.Session)
 	if err != nil {
 		return nil, err
 	}

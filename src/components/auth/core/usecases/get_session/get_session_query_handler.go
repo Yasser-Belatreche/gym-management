@@ -26,7 +26,7 @@ func (h *GetSessionQueryHandler) Handle(query *GetSessionQuery) (*GetSessionQuer
 		})
 	}
 
-	session, err := user.GetSession()
+	session, err := user.GetSession(query.Session)
 	if err != nil {
 		return nil, err
 	}

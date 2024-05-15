@@ -13,14 +13,11 @@ COPY src ./src
 RUN go mod download
 RUN go mod verify
 
-# Build the Go app
-RUN go build -o main .
-
-# This is the port that the application will use
-ENV PORT=8080
+# Install gow for hot reloading
+RUN go install github.com/mitranim/gow@latest
 
 # Expose port 8080 to the outside world
 EXPOSE 8080
 
 # Command to run the executable
-CMD ["./main"]
+CMD ["gow", "-c", "run", "main.go"]

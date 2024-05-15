@@ -17,4 +17,4 @@ do
     fi
 done
 
-docker-compose -f docker/dev/docker-compose.yml up $REBUILD $DETACH
+docker-compose -f docker/test/docker-compose.yml up $REBUILD $DETACH

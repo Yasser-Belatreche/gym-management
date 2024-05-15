@@ -140,7 +140,7 @@ func (u *User) Login(password string, tokenSecret string) (Token, *application_s
 	return token, nil
 }
 
-func (u *User) GetSession() (*application_specific.UserSession, *application_specific.ApplicationException) {
+func (u *User) GetSession(session *application_specific.Session) (*application_specific.UserSession, *application_specific.ApplicationException) {
 	if u.IsRestricted() {
 		return nil, application_specific.NewAuthenticationException("AUTH.USER.RESTRICTED", "user is restricted", map[string]string{
 			"id": u.id,
@@ -153,7 +153,7 @@ func (u *User) GetSession() (*application_specific.UserSession, *application_spe
 		})
 	}
 
-	return application_specific.NewUserSession(u.id, u.role, u.profile), nil
+	return application_specific.NewUserSession(u.id, u.role, u.profile, session), nil
 }
 
 func (u *User) IsRestricted() bool {

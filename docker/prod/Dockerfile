@@ -24,9 +24,6 @@ WORKDIR /home/app
 # Copy the Pre-built binary file from the previous stage
 COPY --from=builder /home/app/main .
 
-# This is the port that the application will use
-ENV PORT=8080
-
 # Expose port 8080 to the outside world
 EXPOSE 8080
 

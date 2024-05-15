@@ -7,7 +7,7 @@ import (
 	"gym-management/src/lib"
 )
 
-func init() {
+func Initialize() {
 	lib.InitializeLib()
 
 	auth.InitializeAuthManager(lib.MessagesBroker())

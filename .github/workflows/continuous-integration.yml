@@ -23,8 +23,8 @@ jobs:
                   go-version: 1.22.2
             - name: Install Dependencies
               run: go mod download && go mod verify
-#            - name: Setup Test Environment
-#              run: npm run docker:test -- -d
+            - name: Setup Test Environment
+              run: scripts/start-test.sh -d
             - name: Run Tests
               run: go test ./...
 

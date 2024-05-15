@@ -10,66 +10,66 @@ const (
 )
 
 type ApplicationException struct {
-	code      string
-	message   string
-	payload   map[string]string
+	Code      string
+	Message   string
+	Payload   map[string]string
 	exception string
 }
 
 func (exception *ApplicationException) Error() string {
-	return exception.message
+	return exception.Message
 }
 
 func NewValidationException(code string, message string, payload map[string]string) *ApplicationException {
 	return &ApplicationException{
-		code:      code,
-		message:   message,
-		payload:   payload,
+		Code:      code,
+		Message:   message,
+		Payload:   payload,
 		exception: validationExceptionType,
 	}
 }
 
 func NewNotFoundException(code string, message string, payload map[string]string) *ApplicationException {
 	return &ApplicationException{
-		code:      code,
-		message:   message,
-		payload:   payload,
+		Code:      code,
+		Message:   message,
+		Payload:   payload,
 		exception: notFoundExceptionType,
 	}
 }
 
 func NewAuthenticationException(code string, message string, payload map[string]string) *ApplicationException {
 	return &ApplicationException{
-		code:      code,
-		message:   message,
-		payload:   payload,
+		Code:      code,
+		Message:   message,
+		Payload:   payload,
 		exception: authenticationExceptionType,
 	}
 }
 
 func NewForbiddenException(code string, message string, payload map[string]string) *ApplicationException {
 	return &ApplicationException{
-		code:      code,
-		message:   message,
-		payload:   payload,
+		Code:      code,
+		Message:   message,
+		Payload:   payload,
 		exception: forbiddenExceptionType,
 	}
 }
 
 func NewUnknownException(code string, message string, payload map[string]string) *ApplicationException {
 	return &ApplicationException{
-		code:      code,
-		message:   message,
-		payload:   payload,
+		Code:      code,
+		Message:   message,
+		Payload:   payload,
 		exception: unknownExceptionType,
 	}
 }
 
 func NewDeveloperException(code string, message string) *ApplicationException {
 	return &ApplicationException{
-		code:      code,
-		message:   message,
-		payload:   nil,
+		Code:      code,
+		Message:   message,
+		Payload:   nil,
 		exception: developerExceptionType,
 	}
 }

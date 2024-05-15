@@ -31,7 +31,7 @@ func (f *Facade) Login(command *login.LoginCommand) (*login.LoginCommandResponse
 	return handler.Handle(command)
 }
 
-func (f *Facade) GetSession(query *get_session.GetSessionQuery) (*get_session.GetSessionQueryResponse, *application_specific.ApplicationException) {
+func (f *Facade) GetUserSession(query *get_session.GetSessionQuery) (*get_session.GetSessionQueryResponse, *application_specific.ApplicationException) {
 	handler := &get_session.GetSessionQueryHandler{
 		UserRepository: f.UserRepository,
 		JwtSecret:      f.JwtSecret,

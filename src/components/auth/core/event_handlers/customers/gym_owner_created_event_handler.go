@@ -43,7 +43,6 @@ func createdEventHandler(userRepository domain.UserRepository, payload events.Cu
 			Phone:     payload.PhoneNumber,
 			Email:     payload.Email,
 		},
-		payload.CreatedBy,
 	)
 
 	err = userRepository.Create(user, session)

@@ -45,7 +45,6 @@ func createdEventHandler(userRepository domain.UserRepository, payload events.Gy
 			OwnedGyms:        payload.Gyms,
 			EnabledOwnedGyms: payload.Gyms,
 		},
-		payload.CreatedBy,
 	)
 
 	err = userRepository.Create(user, session)
