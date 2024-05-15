@@ -5,7 +5,7 @@ import (
 	"gym-management/src/web/gin/v1/middlewares"
 )
 
-func AuthRoutes(router *gin.RouterGroup) {
+func AuthRouter(router *gin.RouterGroup) {
 	g := router.Group("/auth")
 
 	g.POST("/login", LoginHandler)

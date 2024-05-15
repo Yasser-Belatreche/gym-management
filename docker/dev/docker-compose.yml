@@ -22,6 +22,7 @@ services:
       - DB_NAME=postgres
     volumes:
       - ../../src:/home/app/src
+      - ../../main.go:/home/app/main.go
 
   db:
     image: postgres:latest

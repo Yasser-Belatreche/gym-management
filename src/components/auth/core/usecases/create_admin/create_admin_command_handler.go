@@ -15,12 +15,12 @@ func (h *CreateAdminCommandHandler) Handle(command *CreateAdminCommand) (*Create
 		return nil, err
 	}
 
-	user, err := h.UserRepository.FindByUsername(domain.UsernameFromEmail(email), command.Session)
+	used, err := h.UserRepository.UsernameUsed(domain.UsernameFromEmail(email), command.Session)
 	if err != nil {
 		return nil, err
 	}
-	if user != nil {
-		return nil, application_specific.NewValidationException("AUTH.USERNAME.EXISTS", "Email already exists", map[string]string{
+	if used {
+		return nil, application_specific.NewValidationException("AUTH.EMAIL_USED", "Email is already used", map[string]string{
 			"email": command.Email,
 		})
 	}

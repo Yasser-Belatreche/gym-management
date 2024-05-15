@@ -1,8 +1,18 @@
 package utils
 
-import "gym-management/src/lib/primitives/application_specific"
+import (
+	"gym-management/src/lib/primitives/application_specific"
+)
 
 func NewInvalidRequestError(err error) *application_specific.ApplicationException {
+
+	//switch ve := err.(type) {
+	//case validator.ValidationErrors:
+	//	for _, fe := range ve {
+	//		fmt.Println(fe.Field(), fe.Tag(), fe.Param(), fe.Value())
+	//	}
+	//}
+
 	return application_specific.NewValidationException("INVALID_REQUEST", err.Error(), nil)
 }
 

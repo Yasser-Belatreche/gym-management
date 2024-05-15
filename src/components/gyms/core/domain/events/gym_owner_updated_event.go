@@ -11,4 +11,5 @@ type GymOwnerUpdatedEventPayload struct {
 	NewPassword *string
 	UpdatedBy   string
 	Gyms        []string
+	EnabledGyms []string
 }

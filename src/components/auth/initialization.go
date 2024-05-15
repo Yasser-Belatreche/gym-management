@@ -45,9 +45,10 @@ func createDefaultAdmin(facade *Facade) {
 		Email:     email,
 		Password:  password,
 		Phone:     "07 98 98 09 75",
+		Session:   application_specific.NewSession(),
 	})
 
-	if err == nil {
+	if err != nil {
 		if application_specific.IsUnknownException(err) {
 			panic(err)
 		}

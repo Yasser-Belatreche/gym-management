@@ -4,10 +4,13 @@ import "gym-management/src/components/gyms/core/domain/events"
 
 func NewGymOwnerUpdatedEvent(state GymOwnerState, newPassword *string) *events.GymEvent[interface{}] {
 	gyms := make([]string, 0)
+	enabledGyms := make([]string, 0)
 
 	for _, gym := range state.Gyms {
+		gyms = append(gyms, gym.Id)
+
 		if gym.Enabled {
-			gyms = append(gyms, gym.Id)
+			enabledGyms = append(enabledGyms, gym.Id)
 		}
 	}
 
@@ -20,6 +23,7 @@ func NewGymOwnerUpdatedEvent(state GymOwnerState, newPassword *string) *events.G
 		NewPassword: newPassword,
 		UpdatedBy:   state.UpdatedBy,
 		Gyms:        gyms,
+		EnabledGyms: enabledGyms,
 	})
 }
 

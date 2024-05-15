@@ -24,9 +24,7 @@ func (g *GormGymOwnerRepository) FindByID(id string, session *application_specif
 				"id": id,
 			})
 		}
-		return nil, application_specific.NewUnknownException("FAILED_TO_FIND_GYM_OWNER", "Failed to find gym owner", map[string]string{
-			"error": result.Error.Error(),
-		})
+		return nil, application_specific.NewUnknownException("GYMS.INFRA.FAILED_TO_FIND_GYM_OWNER", result.Error.Error(), nil)
 	}
 
 	domainOwner, err := toDomain(&owner)
@@ -44,16 +42,15 @@ func (g *GormGymOwnerRepository) Create(owner *domain.GymOwner, session *applica
 
 	result := db.Create(ownerModel)
 	if result.Error != nil {
-		return application_specific.NewUnknownException("FAILED_TO_CREATE_GYM_OWNER", "Failed to create gym owner", map[string]string{
-			"error": result.Error.Error(),
-		})
+		return application_specific.NewUnknownException("GYMS.INFRA.FAILED_TO_CREATE_GYM_OWNER", result.Error.Error(), nil)
 	}
 
+	if len(gyms) == 0 {
+		return nil
+	}
 	result = db.Create(gyms)
 	if result.Error != nil {
-		return application_specific.NewUnknownException("FAILED_TO_CREATE_GYM", "Failed to create gym", map[string]string{
-			"error": result.Error.Error(),
-		})
+		return application_specific.NewUnknownException("GYMS.INFRA.FAILED_TO_CREATE_GYM", result.Error.Error(), nil)
 	}
 
 	return nil
@@ -66,16 +63,15 @@ func (g *GormGymOwnerRepository) Update(owner *domain.GymOwner, session *applica
 
 	res := db.Save(ownerModel)
 	if res.Error != nil {
-		return application_specific.NewUnknownException("FAILED_TO_UPDATE_GYM_OWNER", "Failed to update gym owner", map[string]string{
-			"error": res.Error.Error(),
-		})
+		return application_specific.NewUnknownException("GYMS.INFRA.FAILED_TO_UPDATE_GYM_OWNER", res.Error.Error(), nil)
 	}
 
+	if len(gyms) == 0 {
+		return nil
+	}
 	res = db.Save(gyms)
 	if res.Error != nil {
-		return application_specific.NewUnknownException("FAILED_TO_UPDATE_GYM", "Failed to update gym", map[string]string{
-			"error": res.Error.Error(),
-		})
+		return application_specific.NewUnknownException("GYMS.INFRA.FAILED_TO_UPDATE_GYM", res.Error.Error(), nil)
 	}
 
 	return nil
@@ -115,6 +111,7 @@ func toDomain(owner *models.GymOwner) (*domain.GymOwner, *application_specific.A
 }
 
 func toDB(owner *domain.GymOwner) (*models.GymOwner, []*models.Gym) {
+	state := owner.State()
 	gyms := make([]*models.Gym, len(owner.State().Gyms))
 
 	for i, gym := range owner.State().Gyms {
@@ -124,7 +121,7 @@ func toDB(owner *domain.GymOwner) (*models.GymOwner, []*models.Gym) {
 			Address:     gym.Address,
 			Enabled:     gym.Enabled,
 			DisabledFor: gym.DisabledFor,
-			OwnerId:     owner.State().Id,
+			OwnerId:     state.Id,
 			CreatedBy:   gym.CreatedBy,
 			UpdatedBy:   gym.UpdatedBy,
 			DeletedBy:   gym.DeletedBy,
@@ -133,15 +130,15 @@ func toDB(owner *domain.GymOwner) (*models.GymOwner, []*models.Gym) {
 	}
 
 	ownerModel := &models.GymOwner{
-		Id:          owner.State().Id,
-		Name:        owner.State().Name,
-		PhoneNumber: owner.State().PhoneNumber,
-		Email:       owner.State().Email,
-		Restricted:  owner.State().Restricted,
-		CreatedBy:   owner.State().CreatedBy,
-		UpdatedBy:   owner.State().UpdatedBy,
-		DeletedBy:   owner.State().DeletedBy,
-		DeletedAt:   owner.State().DeletedAt,
+		Id:          state.Id,
+		Name:        state.Name,
+		PhoneNumber: state.PhoneNumber,
+		Email:       state.Email,
+		Restricted:  state.Restricted,
+		CreatedBy:   state.CreatedBy,
+		UpdatedBy:   state.UpdatedBy,
+		DeletedBy:   state.DeletedBy,
+		DeletedAt:   state.DeletedAt,
 	}
 
 	return ownerModel, gyms

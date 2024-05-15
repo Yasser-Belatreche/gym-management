@@ -178,6 +178,7 @@ func (u *User) State() UserState {
 		Role:       u.role,
 		Profile:    *u.profile,
 		Restricted: u.restricted,
+		LastLogin:  u.lastLogin,
 		DeletedAt:  u.deletedAt,
 	}
 }

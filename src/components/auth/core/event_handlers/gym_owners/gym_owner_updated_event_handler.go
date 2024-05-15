@@ -45,7 +45,7 @@ func updatedEventHandler(userRepository domain.UserRepository, payload events.Gy
 		Phone:            payload.PhoneNumber,
 		Email:            payload.Email,
 		OwnedGyms:        payload.Gyms,
-		EnabledOwnedGyms: payload.Gyms,
+		EnabledOwnedGyms: payload.EnabledGyms,
 	})
 
 	if payload.NewPassword != nil {

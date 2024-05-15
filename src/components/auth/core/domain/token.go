@@ -19,18 +19,16 @@ func NewToken(claims TokenClaims, secret string) (Token, *application_specific.A
 		"userId": claims.UserId,
 		"role":   claims.Role,
 		"exp":    time.Now().Add(time.Hour * 24).Unix(),
-		"issuer": "gym-management",
+		"iss":    "gym-management",
 		"sub":    "auth",
 		"aud":    claims.UserId,
 		"iat":    time.Now().Unix(),
 		"jti":    generic.GenerateUUID(),
 	})
 
-	tokenString, err := token.SignedString(secret)
+	tokenString, err := token.SignedString([]byte(secret))
 	if err != nil {
-		return "", application_specific.NewUnknownException("AUTH.TOKEN.CREATION_FAILED", "Token creation failed", map[string]string{
-			"err": err.Error(),
-		})
+		return "", application_specific.NewUnknownException("AUTH.TOKEN.CREATION_FAILED", err.Error(), nil)
 	}
 
 	return Token(tokenString), nil
@@ -38,7 +36,7 @@ func NewToken(claims TokenClaims, secret string) (Token, *application_specific.A
 
 func DecodeToken(tokenString string, secret string) (*TokenClaims, *application_specific.ApplicationException) {
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
-		return secret, nil
+		return []byte(secret), nil
 	})
 	if err != nil {
 		return nil, application_specific.NewAuthenticationException("AUTH.TOKEN.INVALID", "Invalid token", map[string]string{

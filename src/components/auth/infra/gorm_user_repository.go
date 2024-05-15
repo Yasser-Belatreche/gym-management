@@ -64,16 +64,14 @@ func (g *GormUserRepository) FindByID(id string, session *application_specific.S
 	db := lib.GormDB(session)
 
 	var user models.User
-	result := db.Clauses(clause.Locking{Strength: "UPDATE"}).Preload("Usernames").First(&user, id)
+	result := db.Clauses(clause.Locking{Strength: "UPDATE"}).Preload("Usernames").First(&user, "id = ?", id)
 	if result.Error != nil {
 		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
 			return nil, application_specific.NewNotFoundException("USERS.NOT_FOUND", "User not found", map[string]string{
 				"id": id,
 			})
 		}
-		return nil, application_specific.NewUnknownException("FAILED_TO_FIND_USER", "Failed to find user", map[string]string{
-			"error": result.Error.Error(),
-		})
+		return nil, application_specific.NewUnknownException("USERS.INFRA.FAILED_TO_FIND_USER", result.Error.Error(), nil)
 	}
 
 	domainUser := toDomain(&user)
@@ -88,9 +86,7 @@ func (g *GormUserRepository) Create(user *domain.User, session *application_spec
 
 	result := db.Create(model)
 	if result.Error != nil {
-		return application_specific.NewUnknownException("FAILED_TO_CREATE_USER", "Failed to save user", map[string]string{
-			"error": result.Error.Error(),
-		})
+		return application_specific.NewUnknownException("AUTH.INFRA.FAILED_TO_CREATE_USER", result.Error.Error(), nil)
 	}
 
 	return nil
@@ -103,9 +99,12 @@ func (g *GormUserRepository) Update(user *domain.User, session *application_spec
 
 	result := db.Save(model)
 	if result.Error != nil {
-		return application_specific.NewUnknownException("FAILED_TO_UPDATE_USER", "Failed to update user", map[string]string{
-			"error": result.Error.Error(),
-		})
+		return application_specific.NewUnknownException("AUTH.INFRA.FAILED_TO_UPDATE_USER", result.Error.Error(), nil)
+	}
+
+	result = db.Where("user_id = ? AND username NOT IN ?", model.Id, user.State().Usernames).Delete(&models.Username{})
+	if result.Error != nil {
+		return application_specific.NewUnknownException("AUTH.INFRA.FAILED_TO_UPDATE_USER", result.Error.Error(), nil)
 	}
 
 	return nil
@@ -118,13 +117,33 @@ func toDomain(dbModel *models.User) *domain.User {
 		usernames = append(usernames, username.Username)
 	}
 
+	var OwnedGyms []string = nil
+	var EnabledOwnedGyms []string = nil
+
+	if dbModel.Profile["owned_gyms"] != nil {
+		ownedGymsInterface := dbModel.Profile["owned_gyms"].([]interface{})
+
+		OwnedGyms := make([]string, len(ownedGymsInterface))
+		for i, v := range ownedGymsInterface {
+			OwnedGyms[i] = v.(string)
+		}
+	}
+	if dbModel.Profile["enabled_owned_gyms"] != nil {
+		ownedGymsInterface := dbModel.Profile["enabled_owned_gyms"].([]interface{})
+
+		EnabledOwnedGyms := make([]string, len(ownedGymsInterface))
+		for i, v := range ownedGymsInterface {
+			EnabledOwnedGyms[i] = v.(string)
+		}
+	}
+
 	profile := application_specific.UserProfile{
 		FirstName:        dbModel.Profile["first_name"].(string),
 		LastName:         dbModel.Profile["last_name"].(string),
 		Phone:            dbModel.Profile["phone"].(string),
 		Email:            dbModel.Profile["email"].(string),
-		OwnedGyms:        dbModel.Profile["owned_gyms"].([]string),
-		EnabledOwnedGyms: dbModel.Profile["enabled_owned_gyms"].([]string),
+		OwnedGyms:        OwnedGyms,
+		EnabledOwnedGyms: EnabledOwnedGyms,
 	}
 
 	state := domain.UserState{
@@ -144,7 +163,7 @@ func toDomain(dbModel *models.User) *domain.User {
 func toDBModel(domainModel *domain.User) *models.User {
 	state := domainModel.State()
 
-	usernames := make([]models.Username, 0, len(state.Usernames))
+	usernames := make([]models.Username, 0)
 	for _, username := range state.Usernames {
 		usernames = append(usernames, models.Username{
 			UserId:   state.Id,

@@ -4,8 +4,8 @@ import "time"
 
 type TrainingSessionToReturn struct {
 	Id        string
-	startedAt time.Time
-	endedAt   *time.Time
+	StartedAt time.Time
+	EndedAt   *time.Time
 	Customer  struct {
 		Id        string
 		FirstName string
