@@ -28,13 +28,8 @@ func (h *GetUserQueryHandler) Handle(query *GetUserQuery) (*GetUserQueryResponse
 		FirstName: user.State().Profile.FirstName,
 		LastName:  user.State().Profile.LastName,
 		Phone:     user.State().Profile.Phone,
-		CreatedAt: user.State().CreatedAt,
-		UpdatedAt: user.State().UpdatedAt,
 		LastLogin: user.State().LastLogin,
-		CreatedBy: user.State().CreatedBy,
-		UpdatedBy: user.State().UpdatedBy,
 		DeletedAt: user.State().DeletedAt,
-		DeletedBy: user.State().DeletedBy,
 	}, nil
 
 }

@@ -17,7 +17,7 @@ type Logger interface {
 	)
 
 	Error(
-		msg string,
+		context string,
 		payload map[string]interface{},
 		error *error,
 		session *application_specific.Session,

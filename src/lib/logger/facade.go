@@ -23,7 +23,7 @@ func (f *Facade) Info(msg string, payload map[string]interface{}, session *appli
 		}
 	}
 
-	str := session.CorrelationId + " - " + date + " - " + "INFO" + " - " + msg + " - " + "Payload: " + payloadStr
+	str := session.CorrelationId + " -|- " + date + " -|- " + "INFO" + " -|- " + msg + " -|- " + "Payload: " + payloadStr
 
 	f.printer.Print(str)
 }
@@ -45,12 +45,12 @@ func (f *Facade) Warn(msg string, payload map[string]interface{}, error *error, 
 		errorStr = (*error).Error()
 	}
 
-	str := session.CorrelationId + " - " + date + " - " + "WARN" + " - " + msg + " - " + "Payload: " + payloadStr + " - " + "Error: " + errorStr
+	str := session.CorrelationId + " -|- " + date + " -|- " + "WARN" + " -|- " + msg + " -|- " + "Payload: " + payloadStr + " -|- " + "Error: " + errorStr
 
 	f.printer.Print(str)
 }
 
-func (f *Facade) Error(msg string, payload map[string]interface{}, error *error, session *application_specific.Session) {
+func (f *Facade) Error(context string, payload map[string]interface{}, error *error, session *application_specific.Session) {
 	date := time.Now().Format(time.RFC3339)
 
 	payloadStr := ""
@@ -68,7 +68,7 @@ func (f *Facade) Error(msg string, payload map[string]interface{}, error *error,
 		errorStr = (*error).Error()
 	}
 
-	str := session.CorrelationId + " - " + date + " - " + "ERROR" + " - " + msg + " - " + "Payload: " + payloadStr + " - " + "Error: " + errorStr
+	str := session.CorrelationId + " -|- " + date + " -|- " + "ERROR" + " -|- " + context + " -|- " + "Payload: " + payloadStr + " -|- " + "Error: " + errorStr
 
 	f.printer.Print(str)
 }

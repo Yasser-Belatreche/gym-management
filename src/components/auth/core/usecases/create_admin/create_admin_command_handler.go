@@ -36,7 +36,6 @@ func (h *CreateAdminCommandHandler) Handle(command *CreateAdminCommand) (*Create
 		command.Phone,
 		email,
 		password,
-		"system",
 	)
 
 	err = h.UserRepository.Create(admin, command.Session)

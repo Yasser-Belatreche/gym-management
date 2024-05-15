@@ -7,23 +7,21 @@ import (
 )
 
 type Bill struct {
-	id           string
-	amount       float64
-	paid         bool
-	paidAt       *time.Time
-	dueDate      time.Time
-	createdAt    time.Time
-	membershipId string
+	id        string
+	amount    float64
+	paid      bool
+	paidAt    *time.Time
+	dueDate   time.Time
+	createdAt time.Time
 }
 
 type BillState struct {
-	Id           string
-	Amount       float64
-	Paid         bool
-	PaidAt       *time.Time
-	DueDate      time.Time
-	CreatedAt    time.Time
-	MembershipId string
+	Id        string
+	Amount    float64
+	Paid      bool
+	PaidAt    *time.Time
+	DueDate   time.Time
+	CreatedAt time.Time
 }
 
 func BillFromMembership(membership *Membership) (*Bill, *application_specific.ApplicationException) {
@@ -38,12 +36,11 @@ func BillFromMembership(membership *Membership) (*Bill, *application_specific.Ap
 	}
 
 	bill := &Bill{
-		id:           generic.GenerateUUID(),
-		amount:       amount,
-		paid:         false,
-		dueDate:      time.Now().AddDate(0, 1, 0),
-		createdAt:    time.Now(),
-		membershipId: membership.id,
+		id:        generic.GenerateUUID(),
+		amount:    amount,
+		paid:      false,
+		dueDate:   time.Now().AddDate(0, 1, 0),
+		createdAt: time.Now(),
 	}
 
 	return bill, nil
@@ -51,13 +48,12 @@ func BillFromMembership(membership *Membership) (*Bill, *application_specific.Ap
 
 func BillFromState(state *BillState) *Bill {
 	return &Bill{
-		id:           state.Id,
-		amount:       state.Amount,
-		paid:         state.Paid,
-		paidAt:       state.PaidAt,
-		dueDate:      state.DueDate,
-		createdAt:    state.CreatedAt,
-		membershipId: state.MembershipId,
+		id:        state.Id,
+		amount:    state.Amount,
+		paid:      state.Paid,
+		paidAt:    state.PaidAt,
+		dueDate:   state.DueDate,
+		createdAt: state.CreatedAt,
 	}
 }
 
@@ -73,12 +69,11 @@ func (b *Bill) IsDue() bool {
 
 func (b *Bill) State() *BillState {
 	return &BillState{
-		Id:           b.id,
-		Amount:       b.amount,
-		Paid:         b.paid,
-		PaidAt:       b.paidAt,
-		DueDate:      b.dueDate,
-		CreatedAt:    b.createdAt,
-		MembershipId: b.membershipId,
+		Id:        b.id,
+		Amount:    b.amount,
+		Paid:      b.paid,
+		PaidAt:    b.paidAt,
+		DueDate:   b.dueDate,
+		CreatedAt: b.createdAt,
 	}
 }

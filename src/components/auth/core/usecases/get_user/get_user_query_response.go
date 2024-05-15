@@ -10,11 +10,6 @@ type GetUserQueryResponse struct {
 	FirstName string
 	LastName  string
 	Phone     string
-	CreatedAt time.Time
-	UpdatedAt time.Time
 	LastLogin *time.Time
-	CreatedBy string
-	UpdatedBy string
 	DeletedAt *time.Time
-	DeletedBy *string
 }

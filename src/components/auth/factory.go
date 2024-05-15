@@ -1,11 +1,27 @@
 package auth
 
 import (
+	"gym-management/src/components/auth/core/domain"
+	"gym-management/src/components/auth/infra"
 	"gym-management/src/lib/messages_broker"
 	"os"
 )
 
 var manager Manager = nil
+var facade *Facade = nil
+
+func getFacade(userRepository domain.UserRepository, jwtSecret string) *Facade {
+	if facade != nil {
+		return facade
+	}
+
+	facade = &Facade{
+		UserRepository: userRepository,
+		JwtSecret:      jwtSecret,
+	}
+
+	return facade
+}
 
 func NewAuthManager() Manager {
 	secret, found := os.LookupEnv("JWT_SECRET")
@@ -14,10 +30,8 @@ func NewAuthManager() Manager {
 	}
 
 	if manager == nil {
-		manager = &Facade{
-			UserRepository: nil,
-			JwtSecret:      secret,
-		}
+		facade = getFacade(&infra.GormUserRepository{}, secret)
+		manager = facade
 	}
 
 	return manager
@@ -29,8 +43,5 @@ func InitializeAuthManager(broker messages_broker.MessagesBroker) {
 		panic("JWT_SECRET env var is required")
 	}
 
-	initialize(broker, &Facade{
-		UserRepository: nil,
-		JwtSecret:      secret,
-	})
+	initialize(broker, getFacade(&infra.GormUserRepository{}, secret))
 }

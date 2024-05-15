@@ -6,6 +6,7 @@ const (
 	authenticationExceptionType = "AuthenticationException"
 	forbiddenExceptionType      = "ForbiddenException"
 	unknownExceptionType        = "UnknownException"
+	developerExceptionType      = "DeveloperException"
 )
 
 type ApplicationException struct {
@@ -69,7 +70,7 @@ func NewDeveloperException(code string, message string) *ApplicationException {
 		code:      code,
 		message:   message,
 		payload:   nil,
-		exception: "DeveloperException",
+		exception: developerExceptionType,
 	}
 }
 
@@ -120,9 +121,9 @@ func IsForbiddenException(err interface{}) bool {
 func IsUnknownException(err interface{}) bool {
 	switch e := err.(type) {
 	case *ApplicationException:
-		return e.exception == unknownExceptionType
+		return e.exception == unknownExceptionType || e.exception == developerExceptionType
 	case ApplicationException:
-		return e.exception == unknownExceptionType
+		return e.exception == unknownExceptionType || e.exception == developerExceptionType
 	default:
 		return false
 	}

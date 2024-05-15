@@ -45,10 +45,10 @@ func (a *AuthorizationDecorator) CreateCustomer(command *create_customer.CreateC
 		return nil, err
 	}
 
-	if !command.Session.IsOwnerOfEnabledGym(plan.Gym.Id) {
+	if !command.Session.IsOwnerOfEnabledGym(plan.GymId) {
 		return nil, application_specific.NewForbiddenException("OPERATION_NOT_ALLOWED", "Target gym disabled or not your gym", map[string]string{
 			"planId": command.PlanId,
-			"gymId":  plan.Gym.Id,
+			"gymId":  plan.GymId,
 		})
 	}
 
@@ -69,10 +69,10 @@ func (a *AuthorizationDecorator) UpdateCustomer(command *update_customer.UpdateC
 		return nil, err
 	}
 
-	if !command.Session.IsOwnerOfEnabledGym(customer.Gym.Id) {
+	if !command.Session.IsOwnerOfEnabledGym(customer.GymId) {
 		return nil, application_specific.NewForbiddenException("OPERATION_NOT_ALLOWED", "Target gym disabled or not your gym", map[string]string{
 			"customerId": command.Id,
-			"gymId":      customer.Gym.Id,
+			"gymId":      customer.GymId,
 		})
 	}
 
@@ -93,10 +93,10 @@ func (a *AuthorizationDecorator) RestrictCustomer(command *restrict_customer.Res
 		return nil, err
 	}
 
-	if !command.Session.IsOwnerOfEnabledGym(customer.Gym.Id) {
+	if !command.Session.IsOwnerOfEnabledGym(customer.GymId) {
 		return nil, application_specific.NewForbiddenException("OPERATION_NOT_ALLOWED", "Target gym disabled or not your gym", map[string]string{
 			"customerId": command.Id,
-			"gymId":      customer.Gym.Id,
+			"gymId":      customer.GymId,
 		})
 	}
 
@@ -117,10 +117,10 @@ func (a *AuthorizationDecorator) UnrestrictCustomer(command *unrestrict_customer
 		return nil, err
 	}
 
-	if !command.Session.IsOwnerOfEnabledGym(customer.Gym.Id) {
+	if !command.Session.IsOwnerOfEnabledGym(customer.GymId) {
 		return nil, application_specific.NewForbiddenException("OPERATION_NOT_ALLOWED", "Target gym disabled or not your gym", map[string]string{
 			"customerId": command.Id,
-			"gymId":      customer.Gym.Id,
+			"gymId":      customer.GymId,
 		})
 	}
 
@@ -141,10 +141,10 @@ func (a *AuthorizationDecorator) DeleteCustomer(command *delete_customer.DeleteC
 		return nil, err
 	}
 
-	if !command.Session.IsOwnerOfEnabledGym(customer.Gym.Id) {
+	if !command.Session.IsOwnerOfEnabledGym(customer.GymId) {
 		return nil, application_specific.NewForbiddenException("OPERATION_NOT_ALLOWED", "Target gym disabled or not your gym", map[string]string{
 			"customerId": command.Id,
-			"gymId":      customer.Gym.Id,
+			"gymId":      customer.GymId,
 		})
 	}
 
@@ -165,10 +165,10 @@ func (a *AuthorizationDecorator) ChangeCustomerPlan(command *change_customer_pla
 		return nil, err
 	}
 
-	if !command.Session.IsOwnerOfEnabledGym(customer.Gym.Id) {
+	if !command.Session.IsOwnerOfEnabledGym(customer.GymId) {
 		return nil, application_specific.NewForbiddenException("OPERATION_NOT_ALLOWED", "Target gym disabled or not your gym", map[string]string{
 			"customerId": command.CustomerId,
-			"gymId":      customer.Gym.Id,
+			"gymId":      customer.GymId,
 		})
 	}
 
@@ -177,10 +177,10 @@ func (a *AuthorizationDecorator) ChangeCustomerPlan(command *change_customer_pla
 		return nil, err
 	}
 
-	if !command.Session.IsOwnerOfEnabledGym(plan.Gym.Id) {
+	if !command.Session.IsOwnerOfEnabledGym(plan.GymId) {
 		return nil, application_specific.NewForbiddenException("OPERATION_NOT_ALLOWED", "Target gym disabled or not your gym", map[string]string{
 			"planId": command.PlanId,
-			"gymId":  plan.Gym.Id,
+			"gymId":  plan.GymId,
 		})
 	}
 
@@ -198,10 +198,10 @@ func (a *AuthorizationDecorator) GetCustomer(query *get_customer.GetCustomerQuer
 		return nil, err
 	}
 
-	if query.Session.RoleIsOneOf(auth.RoleGymOwner) && !query.Session.IsOwnerOfEnabledGym(customer.Gym.Id) {
+	if query.Session.RoleIsOneOf(auth.RoleGymOwner) && !query.Session.IsOwnerOfEnabledGym(customer.GymId) {
 		return nil, application_specific.NewForbiddenException("OPERATION_NOT_ALLOWED", "Target gym disabled or not your gym", map[string]string{
 			"customerId": query.Id,
-			"gymId":      customer.Gym.Id,
+			"gymId":      customer.GymId,
 		})
 	}
 	if query.Session.RoleIsOneOf(auth.RoleCustomer) && query.Session.UserId() != query.Id {
@@ -240,10 +240,10 @@ func (a *AuthorizationDecorator) CancelMembership(command *cancel_membership.Can
 		return nil, err
 	}
 
-	if !command.Session.IsOwnerOfEnabledGym(membership.Gym.Id) {
+	if !command.Session.IsOwnerOfEnabledGym(membership.GymId) {
 		return nil, application_specific.NewForbiddenException("OPERATION_NOT_ALLOWED", "Target gym disabled or not your gym", map[string]string{
 			"membershipId": command.MembershipId,
-			"gymId":        membership.Gym.Id,
+			"gymId":        membership.GymId,
 		})
 	}
 
@@ -261,10 +261,10 @@ func (a *AuthorizationDecorator) RenewMembership(command *renew_membership.Renew
 		return nil, err
 	}
 
-	if !command.Session.IsOwnerOfEnabledGym(membership.Gym.Id) {
+	if !command.Session.IsOwnerOfEnabledGym(membership.GymId) {
 		return nil, application_specific.NewForbiddenException("OPERATION_NOT_ALLOWED", "Target gym disabled or not your gym", map[string]string{
 			"membershipId": command.MembershipId,
-			"gymId":        membership.Gym.Id,
+			"gymId":        membership.GymId,
 		})
 	}
 
@@ -282,10 +282,10 @@ func (a *AuthorizationDecorator) GetMembership(query *get_membership.GetMembersh
 		return nil, err
 	}
 
-	if query.Session.RoleIsOneOf(auth.RoleGymOwner) && !query.Session.IsOwnerOfEnabledGym(membership.Gym.Id) {
+	if query.Session.RoleIsOneOf(auth.RoleGymOwner) && !query.Session.IsOwnerOfEnabledGym(membership.GymId) {
 		return nil, application_specific.NewForbiddenException("OPERATION_NOT_ALLOWED", "Target gym disabled or not your gym", map[string]string{
 			"membershipId": query.MembershipId,
-			"gymId":        membership.Gym.Id,
+			"gymId":        membership.GymId,
 		})
 	}
 
@@ -309,10 +309,10 @@ func (a *AuthorizationDecorator) GetMembershipBadge(query *get_membership_badge.
 		return nil, err
 	}
 
-	if !query.Session.IsOwnerOfEnabledGym(membership.Gym.Id) {
+	if !query.Session.IsOwnerOfEnabledGym(membership.GymId) {
 		return nil, application_specific.NewForbiddenException("OPERATION_NOT_ALLOWED", "Target gym disabled or not your gym", map[string]string{
 			"membershipId": membership.Id,
-			"gymId":        membership.Gym.Id,
+			"gymId":        membership.GymId,
 		})
 	}
 
@@ -347,10 +347,10 @@ func (a *AuthorizationDecorator) StartTrainingSession(command *start_training_se
 		return nil, err
 	}
 
-	if !command.Session.IsOwnerOfEnabledGym(membership.Gym.Id) {
+	if !command.Session.IsOwnerOfEnabledGym(membership.GymId) {
 		return nil, application_specific.NewForbiddenException("OPERATION_NOT_ALLOWED", "Target gym disabled or not your gym", map[string]string{
 			"membershipCode": command.MembershipCode,
-			"gymId":          membership.Gym.Id,
+			"gymId":          membership.GymId,
 		})
 	}
 
@@ -368,10 +368,10 @@ func (a *AuthorizationDecorator) EndTrainingSession(command *end_training_sessio
 		return nil, err
 	}
 
-	if !command.Session.IsOwnerOfEnabledGym(membership.Gym.Id) {
+	if !command.Session.IsOwnerOfEnabledGym(membership.GymId) {
 		return nil, application_specific.NewForbiddenException("OPERATION_NOT_ALLOWED", "Target gym disabled or not your gym", map[string]string{
 			"membershipCode": command.MembershipCode,
-			"gymId":          membership.Gym.Id,
+			"gymId":          membership.GymId,
 		})
 	}
 
@@ -389,10 +389,10 @@ func (a *AuthorizationDecorator) GetTrainingSession(query *get_training_session.
 		return nil, err
 	}
 
-	if query.Session.RoleIsOneOf(auth.RoleGymOwner) && !query.Session.IsOwnerOfEnabledGym(trainingSession.Gym.Id) {
+	if query.Session.RoleIsOneOf(auth.RoleGymOwner) && !query.Session.IsOwnerOfEnabledGym(trainingSession.GymId) {
 		return nil, application_specific.NewForbiddenException("OPERATION_NOT_ALLOWED", "Target gym disabled or not your gym", map[string]string{
 			"trainingSessionId": trainingSession.Id,
-			"gymId":             trainingSession.Gym.Id,
+			"gymId":             trainingSession.GymId,
 		})
 	}
 
@@ -433,10 +433,10 @@ func (a *AuthorizationDecorator) MarkBillAsPaid(command *mark_bill_as_paid.MarkB
 		return nil, err
 	}
 
-	if !command.Session.IsOwnerOfEnabledGym(bill.Gym.Id) {
+	if !command.Session.IsOwnerOfEnabledGym(bill.GymId) {
 		return nil, application_specific.NewForbiddenException("OPERATION_NOT_ALLOWED", "Target gym disabled or not your gym", map[string]string{
 			"billId": command.BillId,
-			"gymId":  bill.Gym.Id,
+			"gymId":  bill.GymId,
 		})
 	}
 
@@ -454,10 +454,10 @@ func (a *AuthorizationDecorator) GetBill(query *get_bill.GetBillQuery) (*get_bil
 		return nil, err
 	}
 
-	if query.Session.RoleIsOneOf(auth.RoleGymOwner) && !query.Session.IsOwnerOfEnabledGym(bill.Gym.Id) {
+	if query.Session.RoleIsOneOf(auth.RoleGymOwner) && !query.Session.IsOwnerOfEnabledGym(bill.GymId) {
 		return nil, application_specific.NewForbiddenException("OPERATION_NOT_ALLOWED", "Target gym disabled or not your gym", map[string]string{
 			"billId": query.BillId,
-			"gymId":  bill.Gym.Id,
+			"gymId":  bill.GymId,
 		})
 	}
 
@@ -513,10 +513,10 @@ func (a *AuthorizationDecorator) UpdatePlan(command *update_plan.UpdatePlanComma
 		return nil, err
 	}
 
-	if !command.Session.IsOwnerOfEnabledGym(plan.Gym.Id) {
+	if !command.Session.IsOwnerOfEnabledGym(plan.GymId) {
 		return nil, application_specific.NewForbiddenException("OPERATION_NOT_ALLOWED", "Target gym disabled or not your gym", map[string]string{
 			"planId": plan.Id,
-			"gymId":  plan.Gym.Id,
+			"gymId":  plan.GymId,
 		})
 	}
 
@@ -534,10 +534,10 @@ func (a *AuthorizationDecorator) DeletePlan(command *delete_plan.DeletePlanComma
 		return nil, err
 	}
 
-	if !command.Session.IsOwnerOfEnabledGym(plan.Gym.Id) {
+	if !command.Session.IsOwnerOfEnabledGym(plan.GymId) {
 		return nil, application_specific.NewForbiddenException("OPERATION_NOT_ALLOWED", "Target gym disabled or not your gym", map[string]string{
 			"planId": plan.Id,
-			"gymId":  plan.Gym.Id,
+			"gymId":  plan.GymId,
 		})
 	}
 
@@ -555,10 +555,10 @@ func (a *AuthorizationDecorator) GetPlan(query *get_plan.GetPlanQuery) (*get_pla
 		return nil, err
 	}
 
-	if query.Session.RoleIsOneOf(auth.RoleGymOwner) && !query.Session.IsOwnerOfEnabledGym(plan.Gym.Id) {
+	if query.Session.RoleIsOneOf(auth.RoleGymOwner) && !query.Session.IsOwnerOfEnabledGym(plan.GymId) {
 		return nil, application_specific.NewForbiddenException("OPERATION_NOT_ALLOWED", "Target gym disabled or not your gym", map[string]string{
 			"planId": query.Id,
-			"gymId":  plan.Gym.Id,
+			"gymId":  plan.GymId,
 		})
 	}
 

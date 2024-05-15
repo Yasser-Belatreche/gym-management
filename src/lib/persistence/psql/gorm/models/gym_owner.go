@@ -11,6 +11,7 @@ type GymOwner struct {
 	Email         string     `gorm:"not null"`
 	Restricted    bool       `gorm:"not null"`
 	CreatedBy     string     `gorm:"not null"`
+	Gyms          []Gym      `gorm:"foreignKey:OwnerId;references:Id;constraint:OnUpdate:CASCADE,OnDelete:RESTRICT"`
 	CreatedByUser User       `gorm:"foreignKey:CreatedBy;references:Id;constraint:OnUpdate:CASCADE,OnDelete:RESTRICT"`
 	UpdatedBy     string     `gorm:"not null"`
 	UpdatedByUser User       `gorm:"foreignKey:UpdatedBy;references:Id;constraint:OnUpdate:CASCADE,OnDelete:RESTRICT"`

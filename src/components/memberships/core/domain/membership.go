@@ -92,7 +92,7 @@ func createMembership(endDate *time.Time, plan *Plan, customer *Customer) (*Memb
 	return membership, nil
 }
 
-func MembershipFromState(state MembershipState) *Membership {
+func MembershipFromState(state *MembershipState) *Membership {
 	unpaidBills := make([]*Bill, 0)
 	for _, billState := range state.UnpaidBills {
 		unpaidBills = append(unpaidBills, BillFromState(billState))

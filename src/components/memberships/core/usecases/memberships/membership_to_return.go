@@ -20,10 +20,7 @@ type MembershipToReturn struct {
 		Id   string
 		Name string
 	}
-	Gym struct {
-		Id   string
-		Name string
-	}
+	GymId     string
 	CreatedBy string
 	CreatedAt time.Time
 	UpdatedBy string

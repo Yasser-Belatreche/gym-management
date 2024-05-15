@@ -15,9 +15,9 @@ func NewMembershipsManager(broker messages_broker.MessagesBroker) Manager {
 
 	manager = &AuthorizationDecorator{
 		manager: &Facade{
-			CustomerRepository:   nil,
-			PlanRepository:       nil,
-			MembershipRepository: nil,
+			CustomerRepository:   &infra.GormCustomerRepository{},
+			PlanRepository:       &infra.GormPlanRepository{},
+			MembershipRepository: &infra.GormMembershipRepository{},
 			EmailsService:        &infra.BrokerEmailsService{Broker: broker},
 			EventsPublisher:      &infra.BrokerEventsPublisher{Broker: broker},
 		},

@@ -16,7 +16,7 @@ type Gym struct {
 	createdBy   string
 	updatedBy   string
 	deletedAt   *time.Time
-	deleteBy    *string
+	deletedBy   *string
 }
 
 type GymState struct {
@@ -28,7 +28,7 @@ type GymState struct {
 	CreatedBy   string
 	UpdatedBy   string
 	DeletedAt   *time.Time
-	DeleteBy    *string
+	DeletedBy   *string
 }
 
 func CreateGym(name string, address string, by string) (*Gym, *application_specific.ApplicationException) {
@@ -56,7 +56,7 @@ func CreateGym(name string, address string, by string) (*Gym, *application_speci
 		createdBy:   by,
 		updatedBy:   by,
 		deletedAt:   nil,
-		deleteBy:    nil,
+		deletedBy:   nil,
 	}
 
 	return gym, nil
@@ -72,7 +72,7 @@ func GymFromState(state GymState) *Gym {
 		disabledFor: state.DisabledFor,
 		updatedBy:   state.UpdatedBy,
 		deletedAt:   state.DeletedAt,
-		deleteBy:    state.DeleteBy,
+		deletedBy:   state.DeletedBy,
 	}
 }
 
@@ -160,7 +160,7 @@ func (g *Gym) Delete(by string) *application_specific.ApplicationException {
 
 	now := time.Now()
 	g.deletedAt = &now
-	g.deleteBy = &by
+	g.deletedBy = &by
 
 	return nil
 }
@@ -183,6 +183,6 @@ func (g *Gym) State() GymState {
 		DisabledFor: g.disabledFor,
 		UpdatedBy:   g.updatedBy,
 		DeletedAt:   g.deletedAt,
-		DeleteBy:    g.deleteBy,
+		DeletedBy:   g.deletedBy,
 	}
 }

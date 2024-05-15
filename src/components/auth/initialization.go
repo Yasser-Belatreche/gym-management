@@ -6,6 +6,7 @@ import (
 	"gym-management/src/components/auth/core/registered_answers"
 	"gym-management/src/components/auth/core/usecases/create_admin"
 	"gym-management/src/lib/messages_broker"
+	"gym-management/src/lib/primitives/application_specific"
 	"os"
 )
 
@@ -47,5 +48,8 @@ func createDefaultAdmin(facade *Facade) {
 	})
 
 	if err == nil {
+		if application_specific.IsUnknownException(err) {
+			panic(err)
+		}
 	}
 }

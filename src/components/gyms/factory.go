@@ -13,7 +13,7 @@ func NewGymsManager(broker messages_broker.MessagesBroker) Manager {
 			manager: &Facade{
 				EmailService:       &infra.BrokerEmailsService{Broker: broker},
 				EventsPublisher:    &infra.BrokerEventsPublisher{Broker: broker},
-				GymOwnerRepository: nil,
+				GymOwnerRepository: &infra.GormGymOwnerRepository{},
 			},
 		}
 	}

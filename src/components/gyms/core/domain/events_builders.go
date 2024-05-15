@@ -87,7 +87,7 @@ func NewGymUpdatedEvent(state GymState, owner GymOwnerState) *events.GymEvent[in
 func NewGymDeletedEvent(state GymState, owner GymOwnerState) *events.GymEvent[interface{}] {
 	return events.NewGymEvent(events.GymDeletedEventType, events.GymDeletedEventPayload{
 		Id:        state.Id,
-		DeletedBy: *state.DeleteBy,
+		DeletedBy: *state.DeletedBy,
 		OwnerId:   owner.Id,
 	})
 }

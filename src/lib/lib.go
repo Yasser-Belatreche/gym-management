@@ -24,6 +24,17 @@ func Persistence() persistence.Persistence {
 	return persistence.NewPersistence()
 }
 
-func GormDB(session *application_specific.Session) *gorm.DB {
-	return persistence.NewGormPersistence().GetClient(session)
+func GormDB(session interface{}) *gorm.DB {
+	switch e := session.(type) {
+	case *application_specific.Session:
+		return persistence.NewGormPersistence().GetClient(e)
+	case *application_specific.UserSession:
+		return persistence.NewGormPersistence().GetClient(e.Session)
+	case application_specific.Session:
+		return persistence.NewGormPersistence().GetClient(&e)
+	case application_specific.UserSession:
+		return persistence.NewGormPersistence().GetClient(e.Session)
+	default:
+		panic("Invalid session type")
+	}
 }
