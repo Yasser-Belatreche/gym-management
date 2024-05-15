@@ -15,16 +15,16 @@ func GymsRouter(router *gin.RouterGroup) {
 	g.POST("/", middlewares.TransactionMiddleware(), CreateGymOwnerHandler)
 	g.PUT("/:ownerId", middlewares.TransactionMiddleware(), UpdateGymOwnerHandler)
 	g.DELETE("/:ownerId", middlewares.TransactionMiddleware(), DeleteGymOwnerHandler)
-	g.PATCH("/:ownerId/restrict", RestrictGymOwnerHandler)
-	g.PATCH("/:ownerId/unrestrict", UnrestrictGymOwnerHandler)
+	g.PATCH("/:ownerId/restrict", middlewares.TransactionMiddleware(), RestrictGymOwnerHandler)
+	g.PATCH("/:ownerId/unrestrict", middlewares.TransactionMiddleware(), UnrestrictGymOwnerHandler)
 
 	gg := g.Group("/:ownerId/gyms")
 
 	gg.GET("/:gymId", GetGymHandler)
 	gg.GET("/", GetGymsHandler)
-	gg.POST("/", CreateGymHandler)
-	gg.PUT("/:gymId", UpdateGymHandler)
-	gg.DELETE("/:gymId", DeleteGymHandler)
-	gg.PATCH("/:gymId/enable", EnableGymHandler)
-	gg.PATCH("/:gymId/disable", DisableGymHandler)
+	gg.POST("/", middlewares.TransactionMiddleware(), CreateGymHandler)
+	gg.PUT("/:gymId", middlewares.TransactionMiddleware(), UpdateGymHandler)
+	gg.DELETE("/:gymId", middlewares.TransactionMiddleware(), DeleteGymHandler)
+	gg.PATCH("/:gymId/enable", middlewares.TransactionMiddleware(), EnableGymHandler)
+	gg.PATCH("/:gymId/disable", middlewares.TransactionMiddleware(), DisableGymHandler)
 }

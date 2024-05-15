@@ -78,6 +78,14 @@ func (g *GormPsqlPersistence) WithTransaction(session *application_specific.Sess
 		return application_specific.NewUnknownException("DATABASE_CONNECTION_ERROR", "No database connection to start a transaction", nil)
 	}
 
+	defer func() {
+		if r := recover(); r != nil {
+			g.clients[session.CorrelationId].Rollback()
+			delete(g.clients, session.CorrelationId)
+			panic(r)
+		}
+	}()
+
 	g.clients[session.CorrelationId] = defaultDB.Begin()
 
 	err := method()

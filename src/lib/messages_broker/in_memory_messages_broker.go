@@ -39,6 +39,22 @@ func (b *InMemoryMessagesBroker) syncPublish(event *application_specific.DomainE
 
 	for _, handler := range b.eventHandlers[event.EventType] {
 		go func(handler func(event *application_specific.DomainEvent[interface{}], session *application_specific.Session) *application_specific.ApplicationException) {
+			defer func() {
+				if r := recover(); r != nil {
+					switch v := r.(type) {
+					case error:
+						err := application_specific.NewUnknownException("EVENT_HANDLER_PANIC", v.Error(), nil)
+						routine <- err
+					case string:
+						err := application_specific.NewUnknownException("EVENT_HANDLER_PANIC", v, nil)
+						routine <- err
+					default:
+						err := application_specific.NewUnknownException("EVENT_HANDLER_PANIC", "panic", nil)
+						routine <- err
+					}
+				}
+			}()
+
 			err := handler(event, session)
 			if err != nil {
 				// Log error
@@ -48,13 +64,14 @@ func (b *InMemoryMessagesBroker) syncPublish(event *application_specific.DomainE
 		}(handler)
 	}
 
+	var lastErr *application_specific.ApplicationException = nil
 	for range b.eventHandlers[event.EventType] {
 		if err := <-routine; err != nil {
-			return err
+			lastErr = err
 		}
 	}
 
-	return nil
+	return lastErr
 }
 
 func (b *InMemoryMessagesBroker) asyncPublish(event *application_specific.DomainEvent[interface{}], session *application_specific.Session) *application_specific.ApplicationException {
@@ -64,6 +81,12 @@ func (b *InMemoryMessagesBroker) asyncPublish(event *application_specific.Domain
 
 	for _, handler := range b.eventHandlers[event.EventType] {
 		go func(handler func(event *application_specific.DomainEvent[interface{}], session *application_specific.Session) *application_specific.ApplicationException) {
+			defer func() {
+				if r := recover(); r != nil {
+					// Log the panic
+				}
+			}()
+
 			err := handler(event, session)
 			if err != nil {
 				// Log error
