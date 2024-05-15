@@ -1,4 +1,4 @@
-package gym_owners
+package gyms
 
 import "time"
 

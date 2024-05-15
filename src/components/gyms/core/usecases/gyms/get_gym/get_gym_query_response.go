@@ -4,4 +4,4 @@ import (
 	"gym-management/src/components/gyms/core/usecases/gyms"
 )
 
-type GetGymQueryResponse gym_owners.GymToReturn
+type GetGymQueryResponse gyms.GymToReturn
