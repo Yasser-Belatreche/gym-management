@@ -3,6 +3,7 @@ package infra
 import (
 	"errors"
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 	"gym-management/src/components/gyms/core/domain"
 	"gym-management/src/lib"
 	"gym-management/src/lib/persistence/psql/gorm/models"
@@ -16,7 +17,7 @@ func (g *GormGymOwnerRepository) FindByID(id string, session *application_specif
 	db := lib.GormDB(session)
 
 	var owner models.GymOwner
-	result := db.Set("gorm:query_option", "FOR UPDATE").Preload("Gyms").First(&owner, "id = ?", id)
+	result := db.Clauses(clause.Locking{Strength: "UPDATE"}).Preload("Gyms").First(&owner, "id = ?", id)
 	if result.Error != nil {
 		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
 			return nil, application_specific.NewNotFoundException("GYMS.OWNERS.NOT_FOUND", "Gym owner not found", map[string]string{

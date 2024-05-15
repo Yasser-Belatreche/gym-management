@@ -3,6 +3,7 @@ package infra
 import (
 	"errors"
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 	"gym-management/src/components/auth/core/domain"
 	"gym-management/src/lib"
 	"gym-management/src/lib/persistence/psql/gorm/customer_types"
@@ -30,17 +31,14 @@ func (g *GormUserRepository) FindByUsername(username domain.Username, session *a
 	}
 
 	var user models.User
-	result = db.Set("gorm:query_option", "FOR UPDATE").Preload("Usernames").First(&user, "id = ?", usernameModel.UserId)
+	result = db.Clauses(clause.Locking{Strength: "UPDATE"}).Preload("Usernames").First(&user, "id = ?", usernameModel.UserId)
 	if result.Error != nil {
 		return nil, application_specific.NewUnknownException("FAILED_TO_FIND_USER", "Failed to find user", map[string]string{
 			"error": result.Error.Error(),
 		})
 	}
 
-	domainUser, err := toDomain(&user)
-	if err != nil {
-		return nil, err
-	}
+	domainUser := toDomain(&user)
 
 	return domainUser, nil
 }
@@ -60,14 +58,13 @@ func (g *GormUserRepository) UsernameUsed(username domain.Username, session *app
 	}
 
 	return true, nil
-
 }
 
 func (g *GormUserRepository) FindByID(id string, session *application_specific.Session) (*domain.User, *application_specific.ApplicationException) {
 	db := lib.GormDB(session)
 
 	var user models.User
-	result := db.Set("gorm:query_option", "FOR UPDATE").Preload("Usernames").First(&user, id)
+	result := db.Clauses(clause.Locking{Strength: "UPDATE"}).Preload("Usernames").First(&user, id)
 	if result.Error != nil {
 		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
 			return nil, application_specific.NewNotFoundException("USERS.NOT_FOUND", "User not found", map[string]string{
@@ -79,10 +76,7 @@ func (g *GormUserRepository) FindByID(id string, session *application_specific.S
 		})
 	}
 
-	domainUser, err := toDomain(&user)
-	if err != nil {
-		return nil, err
-	}
+	domainUser := toDomain(&user)
 
 	return domainUser, nil
 }
@@ -90,10 +84,7 @@ func (g *GormUserRepository) FindByID(id string, session *application_specific.S
 func (g *GormUserRepository) Create(user *domain.User, session *application_specific.Session) *application_specific.ApplicationException {
 	db := lib.GormDB(session)
 
-	model, err := toDBModel(user)
-	if err != nil {
-		return err
-	}
+	model := toDBModel(user)
 
 	result := db.Create(model)
 	if result.Error != nil {
@@ -108,10 +99,7 @@ func (g *GormUserRepository) Create(user *domain.User, session *application_spec
 func (g *GormUserRepository) Update(user *domain.User, session *application_specific.Session) *application_specific.ApplicationException {
 	db := lib.GormDB(session)
 
-	model, err := toDBModel(user)
-	if err != nil {
-		return err
-	}
+	model := toDBModel(user)
 
 	result := db.Save(model)
 	if result.Error != nil {
@@ -123,7 +111,7 @@ func (g *GormUserRepository) Update(user *domain.User, session *application_spec
 	return nil
 }
 
-func toDomain(dbModel *models.User) (*domain.User, *application_specific.ApplicationException) {
+func toDomain(dbModel *models.User) *domain.User {
 	usernames := make([]string, 0, len(dbModel.Usernames))
 
 	for _, username := range dbModel.Usernames {
@@ -139,46 +127,48 @@ func toDomain(dbModel *models.User) (*domain.User, *application_specific.Applica
 		EnabledOwnedGyms: dbModel.Profile["enabled_owned_gyms"].([]string),
 	}
 
-	return domain.UserFromState(
-		domain.UserState{
-			Id:         dbModel.Id,
-			Usernames:  usernames,
-			Password:   dbModel.Password,
-			Role:       dbModel.Role,
-			Profile:    profile,
-			Restricted: dbModel.Restricted,
-			LastLogin:  dbModel.LastLogin,
-			DeletedAt:  dbModel.DeletedAt,
-		}), nil
+	state := domain.UserState{
+		Id:         dbModel.Id,
+		Usernames:  usernames,
+		Password:   dbModel.Password,
+		Role:       dbModel.Role,
+		Profile:    profile,
+		Restricted: dbModel.Restricted,
+		LastLogin:  dbModel.LastLogin,
+		DeletedAt:  dbModel.DeletedAt,
+	}
+
+	return domain.UserFromState(state)
 }
 
-func toDBModel(domainModel *domain.User) (*models.User, *application_specific.ApplicationException) {
-	usernames := make([]models.Username, 0, len(domainModel.State().Usernames))
+func toDBModel(domainModel *domain.User) *models.User {
+	state := domainModel.State()
 
-	for _, username := range domainModel.State().Usernames {
+	usernames := make([]models.Username, 0, len(state.Usernames))
+	for _, username := range state.Usernames {
 		usernames = append(usernames, models.Username{
-			UserId:   domainModel.State().Id,
+			UserId:   state.Id,
 			Username: username,
 		})
 	}
 
 	user := &models.User{
-		Id:        domainModel.State().Id,
+		Id:        state.Id,
 		Usernames: usernames,
-		Password:  domainModel.State().Password,
-		Role:      domainModel.State().Role,
+		Password:  state.Password,
+		Role:      state.Role,
 		Profile: customer_types.JSONB{
-			"first_name":         domainModel.State().Profile.FirstName,
-			"last_name":          domainModel.State().Profile.LastName,
-			"phone":              domainModel.State().Profile.Phone,
-			"email":              domainModel.State().Profile.Email,
-			"owned_gyms":         domainModel.State().Profile.OwnedGyms,
-			"enabled_owned_gyms": domainModel.State().Profile.EnabledOwnedGyms,
+			"first_name":         state.Profile.FirstName,
+			"last_name":          state.Profile.LastName,
+			"phone":              state.Profile.Phone,
+			"email":              state.Profile.Email,
+			"owned_gyms":         state.Profile.OwnedGyms,
+			"enabled_owned_gyms": state.Profile.EnabledOwnedGyms,
 		},
-		Restricted: domainModel.State().Restricted,
-		LastLogin:  domainModel.State().LastLogin,
-		DeletedAt:  domainModel.State().DeletedAt,
+		Restricted: state.Restricted,
+		LastLogin:  state.LastLogin,
+		DeletedAt:  state.DeletedAt,
 	}
 
-	return user, nil
+	return user
 }
