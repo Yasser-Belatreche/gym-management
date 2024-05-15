@@ -12,12 +12,13 @@ import (
 )
 
 func StartWebServer() {
-	r := g.Default()
+	g.DisableConsoleColor()
+	r := g.New()
 
 	r.Use(g.CustomRecovery(utils.GlobalErrorHandler))
 
 	r.Use(middlewares.SessionInjectorMiddleware())
-
+	r.Use(middlewares.RequestLoggerMiddleware())
 	router := r.Group("/api/v1")
 
 	auth.AuthRouter(router)

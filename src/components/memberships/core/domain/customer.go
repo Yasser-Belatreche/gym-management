@@ -73,7 +73,7 @@ func createCustomer(firstName string, lastName string, phoneNumber string, email
 	}
 
 	customer := &Customer{
-		id:          generic.GenerateUUID(),
+		id:          generic.GenerateULID(),
 		firstName:   firstName,
 		lastName:    lastName,
 		phoneNumber: phoneNumber,

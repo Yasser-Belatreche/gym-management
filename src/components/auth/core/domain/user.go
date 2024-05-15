@@ -43,7 +43,7 @@ func CreateUser(id string, usernames []Username, password Password, role string,
 
 func CreateAdmin(firstName string, lastName string, phone string, email application_specific.Email, password Password) *User {
 	return CreateUser(
-		generic.GenerateUUID(),
+		generic.GenerateULID(),
 		[]Username{
 			UsernameFromEmail(email),
 		},

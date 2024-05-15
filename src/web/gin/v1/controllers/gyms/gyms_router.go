@@ -12,9 +12,9 @@ func GymsRouter(router *gin.RouterGroup) {
 
 	g.GET("/:ownerId", GetGymOwnerHandler)
 	g.GET("/", GetGymOwnersHandler)
-	g.POST("/", CreateGymOwnerHandler)
-	g.PUT("/:ownerId", UpdateGymOwnerHandler)
-	g.DELETE("/:ownerId", DeleteGymOwnerHandler)
+	g.POST("/", middlewares.TransactionMiddleware(), CreateGymOwnerHandler)
+	g.PUT("/:ownerId", middlewares.TransactionMiddleware(), UpdateGymOwnerHandler)
+	g.DELETE("/:ownerId", middlewares.TransactionMiddleware(), DeleteGymOwnerHandler)
 	g.PATCH("/:ownerId/restrict", RestrictGymOwnerHandler)
 	g.PATCH("/:ownerId/unrestrict", UnrestrictGymOwnerHandler)
 

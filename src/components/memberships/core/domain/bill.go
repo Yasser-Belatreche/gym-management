@@ -36,7 +36,7 @@ func BillFromMembership(membership *Membership) (*Bill, *application_specific.Ap
 	}
 
 	bill := &Bill{
-		id:        generic.GenerateUUID(),
+		id:        generic.GenerateULID(),
 		amount:    amount,
 		paid:      false,
 		dueDate:   time.Now().AddDate(0, 1, 0),

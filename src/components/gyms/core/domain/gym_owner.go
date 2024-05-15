@@ -59,7 +59,7 @@ func CreateGymOwner(name string, phoneNumber string, email application_specific.
 	}
 
 	owner := &GymOwner{
-		id:          generic.GenerateUUID(),
+		id:          generic.GenerateULID(),
 		name:        name,
 		phoneNumber: phoneNumber,
 		email:       email,

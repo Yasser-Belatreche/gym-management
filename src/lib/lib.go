@@ -3,6 +3,7 @@ package lib
 import (
 	"gorm.io/gorm"
 	"gym-management/src/lib/jobs_scheduler"
+	"gym-management/src/lib/logger"
 	"gym-management/src/lib/messages_broker"
 	"gym-management/src/lib/persistence"
 	"gym-management/src/lib/primitives/application_specific"
@@ -22,6 +23,10 @@ func JobsScheduler() jobs_scheduler.JobsScheduler {
 
 func Persistence() persistence.Persistence {
 	return persistence.NewPersistence()
+}
+
+func Logger() logger.Logger {
+	return logger.NewLogger()
 }
 
 func GormDB(session interface{}) *gorm.DB {

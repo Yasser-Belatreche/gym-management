@@ -2,6 +2,7 @@ package jobs_scheduler
 
 import (
 	"github.com/robfig/cron"
+	"gym-management/src/lib/persistence"
 	"gym-management/src/lib/primitives/application_specific"
 )
 
@@ -20,9 +21,19 @@ func NewCronScheduler() *CronScheduler {
 func (c *CronScheduler) Schedule(jobs ...*Job) {
 	for _, job := range jobs {
 		err := c.scheduler.AddFunc(job.CronExpression, func() {
-			err := job.Handler(application_specific.NewSession())
+			session := application_specific.NewSession()
+
+			err := persistence.NewPersistence().WithTransaction(session, func() *application_specific.ApplicationException {
+				err := job.Handler(session)
+				if err != nil {
+					// log error
+				}
+
+				return err
+			})
+
 			if err != nil {
-				// log error
+				panic(err)
 			}
 		})
 

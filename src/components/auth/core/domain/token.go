@@ -23,7 +23,7 @@ func NewToken(claims TokenClaims, secret string) (Token, *application_specific.A
 		"sub":    "auth",
 		"aud":    claims.UserId,
 		"iat":    time.Now().Unix(),
-		"jti":    generic.GenerateUUID(),
+		"jti":    generic.GenerateULID(),
 	})
 
 	tokenString, err := token.SignedString([]byte(secret))

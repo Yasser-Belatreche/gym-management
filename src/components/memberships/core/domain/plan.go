@@ -60,7 +60,7 @@ func CreatePlan(name string, featured bool, sessionsPerWeek int, withCoach bool,
 	}
 
 	plan := &Plan{
-		id:              generic.GenerateUUID(),
+		id:              generic.GenerateULID(),
 		name:            name,
 		featured:        featured,
 		sessionsPerWeek: sessionsPerWeek,

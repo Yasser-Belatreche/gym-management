@@ -69,7 +69,7 @@ func createMembership(endDate *time.Time, plan *Plan, customer *Customer) (*Memb
 	}
 
 	membership := &Membership{
-		id:                     generic.GenerateUUID(),
+		id:                     generic.GenerateULID(),
 		code:                   generic.GenerateRandomString(30),
 		startDate:              time.Now(),
 		endDate:                endDate,

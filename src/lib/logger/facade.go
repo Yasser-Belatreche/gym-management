@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"gym-management/src/lib/logger/printer"
 	"gym-management/src/lib/primitives/application_specific"
+	"strconv"
 	"time"
 )
 
@@ -12,7 +13,9 @@ type Facade struct {
 }
 
 func (f *Facade) Info(msg string, payload map[string]interface{}, session *application_specific.Session) {
-	date := time.Now().Format(time.RFC3339)
+	now := time.Now()
+	epoch := now.UnixNano()
+	date := now.Format("2006-01-02 15:04:05.000")
 
 	payloadStr := ""
 
@@ -23,13 +26,15 @@ func (f *Facade) Info(msg string, payload map[string]interface{}, session *appli
 		}
 	}
 
-	str := session.CorrelationId + " -|- " + date + " -|- " + "INFO" + " -|- " + msg + " -|- " + "Payload: " + payloadStr
+	str := session.CorrelationId + " | " + "Date: " + strconv.FormatInt(epoch, 10) + " - " + date + " | " + "INFO" + " | " + msg + " | " + "Payload: " + payloadStr
 
 	f.printer.Print(str)
 }
 
 func (f *Facade) Warn(msg string, payload map[string]interface{}, error *error, session *application_specific.Session) {
-	date := time.Now().Format(time.RFC3339)
+	now := time.Now()
+	epoch := now.UnixNano()
+	date := now.Format("2006-01-02 15:04:05.000")
 
 	payloadStr := ""
 
@@ -45,13 +50,15 @@ func (f *Facade) Warn(msg string, payload map[string]interface{}, error *error, 
 		errorStr = (*error).Error()
 	}
 
-	str := session.CorrelationId + " -|- " + date + " -|- " + "WARN" + " -|- " + msg + " -|- " + "Payload: " + payloadStr + " -|- " + "Error: " + errorStr
+	str := session.CorrelationId + " | " + "Date: " + strconv.FormatInt(epoch, 10) + " - " + date + " | " + "WARN" + " | " + msg + " | " + "Payload: " + payloadStr + " | " + "Error: " + errorStr
 
 	f.printer.Print(str)
 }
 
 func (f *Facade) Error(context string, payload map[string]interface{}, error *error, session *application_specific.Session) {
-	date := time.Now().Format(time.RFC3339)
+	now := time.Now()
+	epoch := now.UnixNano()
+	date := now.Format("2006-01-02 15:04:05.000")
 
 	payloadStr := ""
 
@@ -68,7 +75,7 @@ func (f *Facade) Error(context string, payload map[string]interface{}, error *er
 		errorStr = (*error).Error()
 	}
 
-	str := session.CorrelationId + " -|- " + date + " -|- " + "ERROR" + " -|- " + context + " -|- " + "Payload: " + payloadStr + " -|- " + "Error: " + errorStr
+	str := session.CorrelationId + " | " + "Date: " + strconv.FormatInt(epoch, 10) + " - " + date + " | " + "ERROR" + " | " + context + " | " + "Payload: " + payloadStr + " | " + "Error: " + errorStr
 
 	f.printer.Print(str)
 }

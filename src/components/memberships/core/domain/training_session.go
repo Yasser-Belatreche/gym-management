@@ -20,7 +20,7 @@ type TrainingSessionState struct {
 
 func CreateTrainingSession() *TrainingSession {
 	return &TrainingSession{
-		id:        generic.GenerateUUID(),
+		id:        generic.GenerateULID(),
 		startedAt: time.Now(),
 		endedAt:   nil,
 	}

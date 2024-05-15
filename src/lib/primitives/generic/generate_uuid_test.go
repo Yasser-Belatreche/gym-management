@@ -3,7 +3,7 @@ package generic
 import "testing"
 
 func TestGenerateUUIDShouldReturnUniqueIds(t *testing.T) {
-	if GenerateUUID() == GenerateUUID() {
+	if GenerateULID() == GenerateULID() {
 		t.Errorf("Expected different ids, got the same")
 	}
 }

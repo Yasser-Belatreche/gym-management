@@ -48,7 +48,7 @@ func CreateGym(name string, address string, by string) (*Gym, *application_speci
 	}
 
 	gym := &Gym{
-		id:          generic.GenerateUUID(),
+		id:          generic.GenerateULID(),
 		name:        name,
 		address:     address,
 		enabled:     true,

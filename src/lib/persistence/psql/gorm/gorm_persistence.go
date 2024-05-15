@@ -84,7 +84,7 @@ func (g *GormPsqlPersistence) WithTransaction(session *application_specific.Sess
 	if err != nil {
 		g.clients[session.CorrelationId].Rollback()
 		delete(g.clients, session.CorrelationId)
-		return err
+		return nil
 	}
 
 	g.clients[session.CorrelationId].Commit()
