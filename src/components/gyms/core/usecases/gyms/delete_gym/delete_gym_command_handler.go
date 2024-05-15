@@ -37,6 +37,6 @@ func (h DeleteGymCommandHandler) Handle(command *DeleteGymCommand) (*DeleteGymCo
 	}
 
 	return &DeleteGymCommandResponse{
-		Id: owner.State().Id,
+		Id: command.GymId,
 	}, nil
 }

@@ -6,7 +6,7 @@ import (
 )
 
 func GymsRouter(router *gin.RouterGroup) {
-	g := router.Group("/gym-owners")
+	g := router.Group("/owners")
 
 	g.Use(middlewares.AuthMiddleware())
 
@@ -27,5 +27,4 @@ func GymsRouter(router *gin.RouterGroup) {
 	gg.DELETE("/:gymId", DeleteGymHandler)
 	gg.PATCH("/:gymId/enable", EnableGymHandler)
 	gg.PATCH("/:gymId/disable", DisableGymHandler)
-
 }

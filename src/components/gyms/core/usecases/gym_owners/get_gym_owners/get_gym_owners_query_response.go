@@ -5,4 +5,4 @@ import (
 	"gym-management/src/lib/primitives/application_specific"
 )
 
-type GetGymOwnersQueryResponse application_specific.PaginatedQueryResponse[gym_owners.GymOwnerToReturn]
+type GetGymOwnersQueryResponse = application_specific.PaginatedQueryResponse[gym_owners.GymOwnerToReturn]

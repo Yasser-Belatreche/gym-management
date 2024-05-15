@@ -6,7 +6,7 @@ import (
 )
 
 func MembershipsRouter(r *gin.RouterGroup) {
-	g := r.Group("/gym-owners/:ownerId/gyms/:gymId/memberships")
+	g := r.Group("/owners/:ownerId/gyms/:gymId/memberships")
 
 	g.Use(middlewares.AuthMiddleware())
 }

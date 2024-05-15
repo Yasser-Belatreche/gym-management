@@ -37,6 +37,6 @@ func (h EnableGymCommandHandler) Handle(command *EnableGymCommand) (*EnableGymCo
 	}
 
 	return &EnableGymCommandResponse{
-		Id: owner.State().Id,
+		Id: command.GymId,
 	}, nil
 }

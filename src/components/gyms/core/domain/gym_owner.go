@@ -103,22 +103,22 @@ func GymOwnerFromState(state GymOwnerState) *GymOwner {
 	}
 }
 
-func (owner *GymOwner) CreateGym(name string, address string, by string) *application_specific.ApplicationException {
+func (owner *GymOwner) CreateGym(name string, address string, by string) (*Gym, *application_specific.ApplicationException) {
 	if owner.restricted {
-		return application_specific.NewValidationException("GYMS.OWNER.RESTRICTED", "Owner is restricted", map[string]string{
+		return nil, application_specific.NewValidationException("GYMS.OWNER.RESTRICTED", "Owner is restricted", map[string]string{
 			"id": owner.id,
 		})
 	}
 
 	if owner.deletedAt != nil {
-		return application_specific.NewValidationException("GYMS.OWNER.DELETED", "Owner is deleted", map[string]string{
+		return nil, application_specific.NewValidationException("GYMS.OWNER.DELETED", "Owner is deleted", map[string]string{
 			"id": owner.id,
 		})
 	}
 
 	gym, err := CreateGym(name, address, by)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	owner.gyms = append(owner.gyms, gym)
@@ -133,7 +133,7 @@ func (owner *GymOwner) CreateGym(name string, address string, by string) *applic
 		NewGymOwnerUpdatedEvent(owner.State(), nil),
 	)
 
-	return nil
+	return gym, nil
 }
 
 func (owner *GymOwner) DisableGym(id, by string) *application_specific.ApplicationException {

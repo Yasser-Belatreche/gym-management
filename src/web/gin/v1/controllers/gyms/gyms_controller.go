@@ -3,6 +3,7 @@ package gyms
 import (
 	"github.com/gin-gonic/gin"
 	"gym-management/src/components"
+	"gym-management/src/components/gyms/core/usecases/gym_owners"
 	"gym-management/src/components/gyms/core/usecases/gym_owners/create_gym_owner"
 	"gym-management/src/components/gyms/core/usecases/gym_owners/delete_gym_owner"
 	"gym-management/src/components/gyms/core/usecases/gym_owners/get_gym_owner"
@@ -10,6 +11,7 @@ import (
 	"gym-management/src/components/gyms/core/usecases/gym_owners/restrict_gym_owner"
 	"gym-management/src/components/gyms/core/usecases/gym_owners/unrestrict_gym_owner"
 	"gym-management/src/components/gyms/core/usecases/gym_owners/update_gym_owner"
+	gyms2 "gym-management/src/components/gyms/core/usecases/gyms"
 	"gym-management/src/components/gyms/core/usecases/gyms/create_gym"
 	"gym-management/src/components/gyms/core/usecases/gyms/delete_gym"
 	"gym-management/src/components/gyms/core/usecases/gyms/disable_gym"
@@ -19,6 +21,7 @@ import (
 	"gym-management/src/components/gyms/core/usecases/gyms/update_gym"
 	"gym-management/src/lib/primitives/application_specific"
 	"gym-management/src/web/gin/v1/controllers/gyms/contracts"
+	"gym-management/src/web/gin/v1/controllers/gyms/contracts/base"
 	"gym-management/src/web/gin/v1/utils"
 	"net/http"
 )
@@ -39,7 +42,21 @@ func GetGymOwnerHandler(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, response)
+	c.JSON(http.StatusOK, contracts.GetGymOwnerResponse(
+		base.GymOwner{
+			Id:          response.Id,
+			Name:        response.Name,
+			PhoneNumber: response.PhoneNumber,
+			Email:       response.Email,
+			Restricted:  response.Restricted,
+			CreatedBy:   response.CreatedBy,
+			CreatedAt:   response.CreatedAt,
+			UpdatedBy:   response.UpdatedBy,
+			UpdatedAt:   response.UpdatedAt,
+			DeletedBy:   response.DeletedBy,
+			DeletedAt:   response.DeletedAt,
+		},
+	))
 }
 
 func GetGymOwnersHandler(c *gin.Context) {
@@ -65,7 +82,21 @@ func GetGymOwnersHandler(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, response)
+	c.JSON(http.StatusOK, utils.GetHttpPaginatedResponse(response, func(item gym_owners.GymOwnerToReturn) base.GymOwner {
+		return base.GymOwner{
+			Id:          item.Id,
+			Name:        item.Name,
+			PhoneNumber: item.PhoneNumber,
+			Email:       item.Email,
+			Restricted:  item.Restricted,
+			CreatedBy:   item.CreatedBy,
+			CreatedAt:   item.CreatedAt,
+			UpdatedBy:   item.UpdatedBy,
+			UpdatedAt:   item.UpdatedAt,
+			DeletedBy:   item.DeletedBy,
+			DeletedAt:   item.DeletedAt,
+		}
+	}))
 }
 
 func CreateGymOwnerHandler(c *gin.Context) {
@@ -87,7 +118,7 @@ func CreateGymOwnerHandler(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusCreated, response)
+	c.JSON(http.StatusCreated, contracts.CreateGymOwnerResponse{Id: response.Id})
 }
 
 func UpdateGymOwnerHandler(c *gin.Context) {
@@ -116,7 +147,7 @@ func UpdateGymOwnerHandler(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, response)
+	c.JSON(http.StatusOK, contracts.UpdateGymOwnerResponse{Id: response.Id})
 }
 
 func DeleteGymOwnerHandler(c *gin.Context) {
@@ -154,7 +185,7 @@ func RestrictGymOwnerHandler(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, res)
+	c.JSON(http.StatusOK, contracts.RestrictGymOwnerResponse{Id: res.Id})
 }
 
 func UnrestrictGymOwnerHandler(c *gin.Context) {
@@ -173,7 +204,7 @@ func UnrestrictGymOwnerHandler(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, res)
+	c.JSON(http.StatusOK, contracts.UnrestrictGymOwnerResponse{Id: res.Id})
 }
 
 func GetGymHandler(c *gin.Context) {
@@ -192,7 +223,22 @@ func GetGymHandler(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, response)
+	c.JSON(http.StatusOK, contracts.GetGymResponse(
+		base.Gym{
+			Id:          response.Id,
+			Name:        response.Name,
+			Address:     response.Address,
+			Enabled:     response.Enabled,
+			OwnerId:     response.OwnerId,
+			DisabledFor: response.DisabledFor,
+			CreatedBy:   response.CreatedBy,
+			CreatedAt:   response.CreatedAt,
+			UpdatedBy:   response.UpdatedBy,
+			UpdatedAt:   response.UpdatedAt,
+			DeletedBy:   response.DeletedBy,
+			DeletedAt:   response.DeletedAt,
+		},
+	))
 }
 
 func GetGymsHandler(c *gin.Context) {
@@ -225,7 +271,22 @@ func GetGymsHandler(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, response)
+	c.JSON(http.StatusOK, utils.GetHttpPaginatedResponse(response, func(item gyms2.GymToReturn) base.Gym {
+		return base.Gym{
+			Id:          item.Id,
+			Name:        item.Name,
+			Address:     item.Address,
+			Enabled:     item.Enabled,
+			OwnerId:     item.OwnerId,
+			DisabledFor: item.DisabledFor,
+			CreatedBy:   item.CreatedBy,
+			CreatedAt:   item.CreatedAt,
+			UpdatedBy:   item.UpdatedBy,
+			UpdatedAt:   item.UpdatedAt,
+			DeletedBy:   item.DeletedBy,
+			DeletedAt:   item.DeletedAt,
+		}
+	}))
 }
 
 func CreateGymHandler(c *gin.Context) {
@@ -252,7 +313,7 @@ func CreateGymHandler(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusCreated, response)
+	c.JSON(http.StatusCreated, contracts.CreateGymResponse{Id: response.Id})
 }
 
 func UpdateGymHandler(c *gin.Context) {
@@ -280,7 +341,7 @@ func UpdateGymHandler(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, response)
+	c.JSON(http.StatusOK, contracts.UpdateGymResponse{Id: response.Id})
 }
 
 func DeleteGymHandler(c *gin.Context) {
@@ -310,7 +371,7 @@ func EnableGymHandler(c *gin.Context) {
 		return
 	}
 
-	_, err := components.Gyms().EnableGym(&enable_gym.EnableGymCommand{
+	res, err := components.Gyms().EnableGym(&enable_gym.EnableGymCommand{
 		GymId:   url.GymId,
 		OwnerId: url.OwnerId,
 		Session: utils.ExtractUserSession(c),
@@ -320,7 +381,7 @@ func EnableGymHandler(c *gin.Context) {
 		return
 	}
 
-	c.Status(http.StatusNoContent)
+	c.JSON(http.StatusOK, contracts.EnableGymResponse{Id: res.Id})
 }
 
 func DisableGymHandler(c *gin.Context) {
@@ -330,7 +391,7 @@ func DisableGymHandler(c *gin.Context) {
 		return
 	}
 
-	_, err := components.Gyms().DisableGym(&disable_gym.DisableGymCommand{
+	res, err := components.Gyms().DisableGym(&disable_gym.DisableGymCommand{
 		GymId:   url.GymId,
 		OwnerId: url.OwnerId,
 		Session: utils.ExtractUserSession(c),
@@ -340,5 +401,5 @@ func DisableGymHandler(c *gin.Context) {
 		return
 	}
 
-	c.Status(http.StatusNoContent)
+	c.JSON(http.StatusOK, contracts.DisableGymResponse{Id: res.Id})
 }

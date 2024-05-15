@@ -21,7 +21,7 @@ func (h CreateGymCommandHandler) Handle(command *CreateGymCommand) (*CreateGymCo
 		})
 	}
 
-	err = owner.CreateGym(command.Name, command.Address, command.Session.User.Id)
+	gym, err := owner.CreateGym(command.Name, command.Address, command.Session.User.Id)
 	if err != nil {
 		return nil, err
 	}
@@ -37,6 +37,6 @@ func (h CreateGymCommandHandler) Handle(command *CreateGymCommand) (*CreateGymCo
 	}
 
 	return &CreateGymCommandResponse{
-		Id: owner.State().Id,
+		Id: gym.State().Id,
 	}, nil
 }
