@@ -399,10 +399,11 @@ func GetBillsHandler(c *gin.Context) {
 				Id:   x.Plan.Id,
 				Name: x.Plan.Name,
 			},
-			GymId:     x.GymId,
-			PaidAt:    x.PaidAt,
-			DueDate:   x.DueDate,
-			CreatedAt: x.CreatedAt,
+			MembershipId: x.MembershipId,
+			GymId:        x.GymId,
+			PaidAt:       x.PaidAt,
+			DueDate:      x.DueDate,
+			CreatedAt:    x.CreatedAt,
 		}
 	}))
 }
@@ -436,10 +437,11 @@ func GetBillHandler(c *gin.Context) {
 			Id:   res.Plan.Id,
 			Name: res.Plan.Name,
 		},
-		GymId:     res.GymId,
-		PaidAt:    res.PaidAt,
-		DueDate:   res.DueDate,
-		CreatedAt: res.CreatedAt,
+		MembershipId: res.MembershipId,
+		GymId:        res.GymId,
+		PaidAt:       res.PaidAt,
+		DueDate:      res.DueDate,
+		CreatedAt:    res.CreatedAt,
 	})
 }
 

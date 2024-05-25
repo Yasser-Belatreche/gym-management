@@ -85,7 +85,7 @@ func (g *GormMembershipRepository) FindLatestCustomerMembership(customerId strin
 	db := lib.GormDB(session)
 
 	var membership *models.Membership
-	result := db.Clauses(clause.Locking{Strength: "UPDATE"}).Order("updated_at desc").First(membership, "customer_id = ?", customerId)
+	result := db.Clauses(clause.Locking{Strength: "UPDATE"}).Order("updated_at DESC").First(membership, "customer_id = ?", customerId)
 	if result.Error != nil {
 		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
 			return nil, application_specific.NewNotFoundException("MEMBERSHIPS.NOT_FOUND", "Membership not found", map[string]string{

@@ -11,19 +11,23 @@ type MembershipToReturn struct {
 	SessionsPerWeek int
 	WithCoach       bool
 	MonthlyPrice    float64
-	Customer        struct {
-		Id        string
-		FirstName string
-		LastName  string
-	}
-	Plan struct {
-		Id   string
-		Name string
-	}
-	GymId     string
-	CreatedBy string
-	CreatedAt time.Time
-	UpdatedBy string
-	UpdatedAt time.Time
-	RenewedAt *time.Time
+	Customer        MembershipToReturnCustomer
+	Plan            MembershipToReturnPlan
+	GymId           string
+	CreatedBy       string
+	CreatedAt       time.Time
+	UpdatedBy       string
+	UpdatedAt       time.Time
+	RenewedAt       *time.Time
+}
+
+type MembershipToReturnCustomer struct {
+	Id        string
+	FirstName string
+	LastName  string
+}
+
+type MembershipToReturnPlan struct {
+	Id   string
+	Name string
 }

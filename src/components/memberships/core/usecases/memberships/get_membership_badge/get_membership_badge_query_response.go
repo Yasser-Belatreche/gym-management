@@ -1,4 +1,5 @@
 package get_membership_badge
 
-type GetMembershipBadgeQueryResponse struct {
-}
+import "gym-management/src/components/memberships/core/usecases/memberships"
+
+type GetMembershipBadgeQueryResponse memberships.MembershipToReturn

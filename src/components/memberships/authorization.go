@@ -342,7 +342,7 @@ func (a *AuthorizationDecorator) StartTrainingSession(command *start_training_se
 		return nil, err
 	}
 
-	membership, err := a.manager.GetMembership(&get_membership.GetMembershipQuery{MembershipCode: command.MembershipId, Session: command.Session})
+	membership, err := a.manager.GetMembership(&get_membership.GetMembershipQuery{MembershipId: command.MembershipId, Session: command.Session})
 	if err != nil {
 		return nil, err
 	}
@@ -363,7 +363,7 @@ func (a *AuthorizationDecorator) EndTrainingSession(command *end_training_sessio
 		return nil, err
 	}
 
-	membership, err := a.manager.GetMembership(&get_membership.GetMembershipQuery{MembershipCode: command.MembershipId, Session: command.Session})
+	membership, err := a.manager.GetMembership(&get_membership.GetMembershipQuery{MembershipId: command.MembershipId, Session: command.Session})
 	if err != nil {
 		return nil, err
 	}

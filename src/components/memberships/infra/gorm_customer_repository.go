@@ -3,6 +3,7 @@ package infra
 import (
 	"errors"
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 	"gym-management/src/components/memberships/core/domain"
 	"gym-management/src/lib"
 	"gym-management/src/lib/persistence/psql/gorm/models"
@@ -16,7 +17,7 @@ func (g *GormCustomerRepository) FindByID(id string, session *application_specif
 	db := lib.GormDB(session)
 
 	var customer models.Customer
-	result := db.Set("gorm:query_option", "FOR UPDATE").First(&customer, "id = ?", id)
+	result := db.Clauses(clause.Locking{Strength: "UPDATE"}).First(&customer, "id = ?", id)
 	if result.Error != nil {
 		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
 			return nil, application_specific.NewNotFoundException("MEMBERSHIPS.CUSTOMERS.NOT_FOUND", "Customer not found", map[string]string{
