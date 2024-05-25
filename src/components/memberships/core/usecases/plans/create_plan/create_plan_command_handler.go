@@ -14,7 +14,7 @@ func (h *CreatePlanCommandHandler) Handle(command *CreatePlanCommand) (*CreatePl
 	plan, err := domain.CreatePlan(
 		command.Name,
 		command.Featured,
-		command.SessionPerWeek,
+		command.SessionsPerWeek,
 		command.WithCoach,
 		command.MonthlyPrice,
 		command.GymId,

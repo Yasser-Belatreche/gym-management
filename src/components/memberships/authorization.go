@@ -342,14 +342,14 @@ func (a *AuthorizationDecorator) StartTrainingSession(command *start_training_se
 		return nil, err
 	}
 
-	membership, err := a.manager.GetMembership(&get_membership.GetMembershipQuery{MembershipCode: command.MembershipCode, Session: command.Session})
+	membership, err := a.manager.GetMembership(&get_membership.GetMembershipQuery{MembershipCode: command.MembershipId, Session: command.Session})
 	if err != nil {
 		return nil, err
 	}
 
 	if !command.Session.IsOwnerOfEnabledGym(membership.GymId) {
 		return nil, application_specific.NewForbiddenException("OPERATION_NOT_ALLOWED", "Target gym disabled or not your gym", map[string]string{
-			"membershipCode": command.MembershipCode,
+			"membershipCode": command.MembershipId,
 			"gymId":          membership.GymId,
 		})
 	}
@@ -363,14 +363,14 @@ func (a *AuthorizationDecorator) EndTrainingSession(command *end_training_sessio
 		return nil, err
 	}
 
-	membership, err := a.manager.GetMembership(&get_membership.GetMembershipQuery{MembershipCode: command.MembershipCode, Session: command.Session})
+	membership, err := a.manager.GetMembership(&get_membership.GetMembershipQuery{MembershipCode: command.MembershipId, Session: command.Session})
 	if err != nil {
 		return nil, err
 	}
 
 	if !command.Session.IsOwnerOfEnabledGym(membership.GymId) {
 		return nil, application_specific.NewForbiddenException("OPERATION_NOT_ALLOWED", "Target gym disabled or not your gym", map[string]string{
-			"membershipCode": command.MembershipCode,
+			"membershipCode": command.MembershipId,
 			"gymId":          membership.GymId,
 		})
 	}

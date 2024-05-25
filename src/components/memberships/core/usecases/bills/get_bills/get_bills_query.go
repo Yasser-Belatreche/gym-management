@@ -8,6 +8,7 @@ type GetBillsQuery struct {
 	MembershipId []string
 	CustomerId   []string
 	GymId        []string
+	PlanId       []string
 	Paid         *bool
 	Session      *application_specific.UserSession
 }

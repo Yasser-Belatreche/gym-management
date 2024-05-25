@@ -5,4 +5,4 @@ import (
 	"gym-management/src/lib/primitives/application_specific"
 )
 
-type GetMembershipsQueryResponse application_specific.PaginatedQueryResponse[memberships.MembershipToReturn]
+type GetMembershipsQueryResponse = application_specific.PaginatedQueryResponse[memberships.MembershipToReturn]

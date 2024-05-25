@@ -28,7 +28,7 @@ func BillFromMembership(membership *Membership) (*Bill, *application_specific.Ap
 	amount := membership.monthlyPrice
 
 	numberOfDaysSinceStartDate := time.Now().Sub(membership.startDate).Hours() / 24
-	if numberOfDaysSinceStartDate < 30 {
+	if numberOfDaysSinceStartDate >= 30 {
 		amount = membership.monthlyPrice
 	} else {
 		dailyPrice := membership.monthlyPrice / 30

@@ -19,7 +19,7 @@ func (h *UpdatePlanCommandHandler) Handle(command *UpdatePlanCommand) (*UpdatePl
 	err = plan.Update(
 		command.Name,
 		command.Featured,
-		command.SessionPerWeek,
+		command.SessionsPerWeek,
 		command.WithCoach,
 		command.MonthlyPrice,
 		command.Session.User.Id)

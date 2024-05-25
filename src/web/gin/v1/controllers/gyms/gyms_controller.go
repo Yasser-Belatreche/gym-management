@@ -101,7 +101,7 @@ func GetGymOwnersHandler(c *gin.Context) {
 
 func CreateGymOwnerHandler(c *gin.Context) {
 	var request contracts.CreateGymOwnerRequest
-	if err := c.ShouldBindJSON(&request); err != nil {
+	if err := c.ShouldBind(&request); err != nil {
 		utils.HandleError(c, utils.NewInvalidRequestError(err))
 		return
 	}

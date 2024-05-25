@@ -11,7 +11,7 @@ type StartTrainingSessionCommandHandler struct {
 }
 
 func (h *StartTrainingSessionCommandHandler) Handle(command *StartTrainingSessionCommand) (*StartTrainingSessionCommandResponse, *application_specific.ApplicationException) {
-	membership, err := h.MembershipRepository.FindByCode(command.MembershipCode, command.Session.Session)
+	membership, err := h.MembershipRepository.FindByID(command.MembershipId, command.Session.Session)
 	if err != nil {
 		return nil, err
 	}

@@ -8,7 +8,7 @@ import (
 func AuthRouter(router *gin.RouterGroup) {
 	g := router.Group("/auth")
 
-	g.POST("/login", LoginHandler)
+	g.POST("/login", middlewares.TransactionMiddleware(), LoginHandler)
 
 	g.GET("/me", middlewares.AuthMiddleware(), GetCurrentUser)
 }
