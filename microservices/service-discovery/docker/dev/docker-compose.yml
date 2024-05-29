@@ -1,0 +1,36 @@
+version: "3.8"
+name: "service-discovery-dev"
+
+services:
+    app:
+        build:
+          context: ../..
+          dockerfile: docker/dev/Dockerfile
+        image: service-discovery:dev
+        container_name: service-discovery-dev
+        depends_on:
+          - redis
+        ports:
+          - "3000:3000"
+        env_file:
+          - ../../.env.dev
+        environment:
+          - REDIS_URL=redis://redis:6379
+          - PORT=3000
+        restart: always
+        volumes:
+          - "../..:/home/app/"
+
+    redis:
+      image: "redis/redis-stack:latest"
+      container_name: "service-discovery-redis-dev"
+      ports:
+        - "6379:6379"
+        - "8001:8001"
+      volumes:
+        - "redis-data:/data"
+
+
+volumes:
+  redis-data: 
+    driver: local

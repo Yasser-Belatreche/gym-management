@@ -1,0 +1,27 @@
+version: '3.8'
+name: "service-discovery-prod"
+
+services:
+    app:
+        build:
+            context: ../..
+            dockerfile: docker/prod/Dockerfile
+        image: service-discovery:prod
+        container_name: service-discovery-prod
+        depends_on:
+            - redis
+        ports:
+            - '3000:3000'
+        env_file:
+            - ../../.env
+        environment:
+            - REDIS_URL=redis://:password@redis:6379
+            - PORT=3000
+        restart: always
+
+    redis:
+        image: "redis/redis-stack-server:latest"
+        container_name: "service-discovery-redis-dev"
+        command: redis-server --requirepass password
+        ports:
+            - "6379:6379"
