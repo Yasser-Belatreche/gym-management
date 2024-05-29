@@ -1,4 +1,4 @@
-package scratch
+package concurrency
 
 import (
 	"testing"

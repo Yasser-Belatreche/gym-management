@@ -2,6 +2,7 @@ package gin
 
 import (
 	g "github.com/gin-gonic/gin"
+	"gym-management/src/concurrency"
 	"gym-management/src/web/gin/v1/controllers/auth"
 	"gym-management/src/web/gin/v1/controllers/gyms"
 	"gym-management/src/web/gin/v1/controllers/health"
@@ -25,6 +26,7 @@ func StartWebServer() {
 	gyms.GymsRouter(router)
 	memberships.MembershipsRouter(router)
 	health.HealthRoutes(router)
+	concurrency.ConcurrencyRouter(router)
 
 	r.GET("/", func(c *g.Context) {
 		c.JSON(http.StatusOK, g.H{"message": "Hello, World!"})

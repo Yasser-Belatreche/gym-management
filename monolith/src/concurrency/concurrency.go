@@ -1,8 +1,9 @@
-package scratch
+package concurrency
 
 import (
 	"strings"
 	"sync"
+	"unicode"
 )
 
 type WordInfo struct {
@@ -86,7 +87,19 @@ func (wi *wordIndex) searchWord(word string, fileContents map[string]string) *Wo
 }
 
 func (wi *wordIndex) countWordOccurrenceInFile(word, content string) int {
-	return strings.Count(content, word)
+	words := strings.FieldsFunc(content, func(c rune) bool {
+		return !unicode.IsLetter(c)
+	})
+
+	// Count the occurrences of the target word
+	count := 0
+	for _, w := range words {
+		if w == word {
+			count++
+		}
+	}
+
+	return count
 }
 
 func (wi *wordIndex) getWordInfo(word string) *WordInfo {

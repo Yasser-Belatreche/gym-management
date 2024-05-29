@@ -13,8 +13,8 @@ func MembershipsRouter(r *gin.RouterGroup) {
 	plans := g.Group("/plans")
 	{
 		plans.POST("/", middlewares.TransactionMiddleware(), CreatePlanHandler)
-		plans.PUT("/:planId", middlewares.TransactionMiddleware())
-		plans.DELETE("/:planId", middlewares.TransactionMiddleware())
+		plans.PUT("/:planId", middlewares.TransactionMiddleware(), UpdatePlanHandler)
+		plans.DELETE("/:planId", middlewares.TransactionMiddleware(), DeletePlanHandler)
 		plans.GET("/", GetPlansHandler)
 		plans.GET("/:planId", GetPlanHandler)
 	}

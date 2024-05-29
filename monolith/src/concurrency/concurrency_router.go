@@ -1,8 +1,10 @@
-package scratch
+package concurrency
 
 import (
 	"github.com/gin-gonic/gin"
 	"os"
+	"path/filepath"
+	"runtime"
 )
 
 type SearchRequest struct {
@@ -23,7 +25,9 @@ func ConcurrencyRouter(router *gin.RouterGroup) {
 
 		fileContents := make(map[string]string)
 
-		dir, err := os.Open("data")
+		_, filename, _, _ := runtime.Caller(0)
+		dirPath := filepath.Join(filepath.Dir(filename), "data")
+		dir, err := os.Open(dirPath)
 		if err != nil {
 			c.JSON(500, gin.H{"error": err.Error()})
 			return
@@ -36,15 +40,14 @@ func ConcurrencyRouter(router *gin.RouterGroup) {
 		}
 
 		for _, file := range files {
-			fileName := file.Name()
-			filePath := "data/" + fileName
-			bytes, err := os.ReadFile(filePath)
+			name := file.Name()
+			bytes, err := os.ReadFile(filepath.Join(dirPath, name))
 			if err != nil {
 				c.JSON(500, gin.H{"error": err.Error()})
 				return
 			}
 
-			fileContents[fileName] = string(bytes)
+			fileContents[name] = string(bytes)
 		}
 
 		infos, err := engine.SearchWords(req.Words, fileContents)
