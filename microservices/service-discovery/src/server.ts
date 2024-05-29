@@ -17,6 +17,7 @@ const StartWebServer = async () => {
 
     app.use(express.json());
     app.use(express.urlencoded({ extended: true }));
+
     app.use((req, res, next) => {
         const secretHeader = req.headers['x-secret'];
 
@@ -31,6 +32,24 @@ const StartWebServer = async () => {
     const router = GetRouter(service);
 
     app.use('/api/v1/services', router);
+    app.get('/api/v1/health', async (req, res) => {
+        const health = await redis.healthCheck();
+
+        let status: 'UP' | 'DOWN' = 'UP';
+
+        if (health.status === 'DOWN') {
+            status = 'DOWN';
+        }
+
+        res.json({
+            status,
+            redis: health,
+        });
+    });
+
+    app.get('*', (req, res) => {
+        res.status(404).json({ error: 'Not found' });
+    });
 
     app.listen(config.port, () => {
         console.log('Server is running on port 3000');

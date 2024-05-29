@@ -29,6 +29,16 @@ class Redis {
     async connect(): Promise<void> {
         await this.client.connect();
     }
+
+    async healthCheck(): Promise<{ status: 'UP' | 'DOWN' }> {
+        try {
+            await this.client.ping();
+
+            return { status: 'UP' };
+        } catch (error) {
+            return { status: 'DOWN' };
+        }
+    }
 }
 
 export { Redis };
