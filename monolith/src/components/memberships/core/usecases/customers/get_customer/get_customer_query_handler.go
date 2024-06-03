@@ -5,7 +5,6 @@ import (
 	"gorm.io/gorm"
 	"gym-management/src/components/memberships/core/usecases/customers"
 	"gym-management/src/lib"
-	"gym-management/src/lib/persistence/psql/gorm/models"
 	"gym-management/src/lib/primitives/application_specific"
 )
 
@@ -14,13 +13,43 @@ type GetCustomerQueryHandler struct{}
 func (h *GetCustomerQueryHandler) Handle(query *GetCustomerQuery) (*GetCustomerQueryResponse, *application_specific.ApplicationException) {
 	db := lib.GormDB(query.Session)
 
-	var customer models.Customer
+	var customer customers.CustomerToReturn
 
-	dbQuery := db.Model(&models.Customer{})
-	dbQuery = dbQuery.Joins("Memberships", "ORDER BY memberships.updated_at DESC LIMIT 1")
-	dbQuery = dbQuery.Joins("Memberships.Plan")
+	err := db.Table("memberships AS m").
+		Select(`
+			c.id AS id,
+			c.first_name AS first_name,
+			c.last_name AS last_name,
+			c.email AS email,
+			c.phone_number AS phone_number,
+			c.restricted AS restricted,
+			c.birth_year AS birth_year,
+			c.gender AS gender,
+			c.created_by AS created_by,
+			c.updated_by AS updated_by,
+			c.created_at AS created_at,
+			c.updated_at AS updated_at,
+			c.deleted_at AS deleted_at,
+			c.deleted_by AS deleted_by,
 
-	if err := dbQuery.Where("id = ?", query.Id).First(&customer).Error; err != nil {
+			m.id AS membership_id,
+			m.enabled AS membership_enabled,
+			m.sessions_per_week AS membership_sessions_per_week,
+			m.with_coach AS membership_with_coach,
+			m.monthly_price AS membership_monthly_price,
+			
+			p.id AS membership_plan_id,
+			p.name AS membership_plan_name,
+			p.gym_id AS gym_id
+		`).
+		Joins("INNER JOIN plans AS p ON p.id = m.plan_id").
+		Joins("INNER JOIN customers AS c ON c.id = m.customer_id").
+		Where("m.customer_id = ?", query.Id).
+		Order("m.created_at DESC").
+		First(&customer).
+		Error
+
+	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, application_specific.NewNotFoundException("CUSTOMERS.NOT_FOUND", "customer not found", map[string]string{
 				"id": query.Id,
@@ -30,35 +59,7 @@ func (h *GetCustomerQueryHandler) Handle(query *GetCustomerQuery) (*GetCustomerQ
 		return nil, application_specific.NewUnknownException("CUSTOMERS.FAILED_TO_GET_CUSTOMER", err.Error(), nil)
 	}
 
-	response := GetCustomerQueryResponse(
-		customers.CustomerToReturn{
-			Id:          customer.Id,
-			FirstName:   customer.FirstName,
-			LastName:    customer.LastName,
-			Email:       customer.Email,
-			PhoneNumber: customer.PhoneNumber,
-			Restricted:  customer.Restricted,
-			BirthYear:   customer.BirthYear,
-			Gender:      customer.Gender,
-			CreatedBy:   customer.CreatedBy,
-			UpdatedBy:   customer.UpdatedBy,
-			Membership: customers.CustomerToReturnMembership{
-				Id:              customer.Memberships[0].Id,
-				Enabled:         customer.Memberships[0].Enabled,
-				SessionsPerWeek: customer.Memberships[0].SessionsPerWeek,
-				WithCoach:       customer.Memberships[0].WithCoach,
-				MonthlyPrice:    customer.Memberships[0].MonthlyPrice,
-				Plan: customers.CustomerToReturnMembershipPlan{
-					Id:   customer.Memberships[0].Plan.Id,
-					Name: customer.Memberships[0].Plan.Name,
-				},
-			},
-			GymId:     customer.Memberships[0].Plan.GymId,
-			CreatedAt: customer.CreatedAt,
-			UpdatedAt: customer.UpdatedAt,
-			DeletedBy: customer.DeletedBy,
-			DeletedAt: customer.DeletedAt,
-		})
+	response := GetCustomerQueryResponse(customer)
 
 	return &response, nil
 }

@@ -31,5 +31,7 @@ func (h *CancelMembershipCommandHandler) Handle(command *CancelMembershipCommand
 		return nil, err
 	}
 
-	return nil, nil
+	return &CancelMembershipCommandResponse{
+		Id: membership.State().Id,
+	}, nil
 }

@@ -5,7 +5,7 @@ import (
 )
 
 type InMemoryMessagesBrokerConfig struct {
-	Async bool
+	AsyncEvents bool
 }
 
 type InMemoryMessagesBroker struct {
@@ -23,7 +23,7 @@ func NewInMemoryMessagesBroker(config InMemoryMessagesBrokerConfig) *InMemoryMes
 }
 
 func (b *InMemoryMessagesBroker) Publish(event *application_specific.DomainEvent[interface{}], session *application_specific.Session) *application_specific.ApplicationException {
-	if b.config.Async {
+	if b.config.AsyncEvents {
 		return b.asyncPublish(event, session)
 	}
 
@@ -107,20 +107,28 @@ func (b *InMemoryMessagesBroker) Subscribe(subscribers ...*Subscriber) {
 	}
 }
 
-func (b *InMemoryMessagesBroker) Ask(question string, params map[string]string, session *application_specific.Session) (map[string]string, *application_specific.ApplicationException) {
+func (b *InMemoryMessagesBroker) GetReply(question string, params map[string]string, session *application_specific.Session) (map[string]string, *application_specific.ApplicationException) {
 	if b.answers[question] == nil {
-		panic("Answer not registered")
+		panic("Reply not registered")
 	}
 
 	return b.answers[question](params, session)
 }
 
-func (b *InMemoryMessagesBroker) RegisterAnswer(answers ...*Answer) {
+func (b *InMemoryMessagesBroker) RegisterReply(answers ...*Reply) {
 	for _, answer := range answers {
-		if b.answers[answer.Question] != nil {
-			panic("Answer already registered")
+		if b.answers[answer.Message] != nil {
+			panic("Reply already registered")
 		}
 
-		b.answers[answer.Question] = answer.Answer
+		b.answers[answer.Message] = answer.Handler
+	}
+}
+
+func (b *InMemoryMessagesBroker) HealthCheck() *Health {
+	return &Health{
+		Provider: "InMemory",
+		Status:   "UP",
+		Message:  "Message broker is up and running",
 	}
 }

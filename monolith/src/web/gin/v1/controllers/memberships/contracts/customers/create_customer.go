@@ -10,15 +10,15 @@ type CreateCustomerUrl struct {
 }
 
 type CreateCustomerRequest struct {
-	FirstName         string     `form:"firstName" binding:"required"`
-	LastName          string     `form:"lastName" binding:"required"`
-	Email             string     `form:"email" binding:"required"`
-	PhoneNumber       string     `form:"phoneNumber" binding:"required"`
-	BirthYear         int        `form:"birthYear" binding:"required"`
-	Gender            string     `form:"gender" binding:"required"`
-	Password          string     `form:"password" binding:"required"`
-	PlanId            string     `form:"planId" binding:"required"`
-	MembershipEndDate *time.Time `form:"membershipEndDate" binding:"required"`
+	FirstName         string     `form:"firstName" json:"firstName" binding:"required"`
+	LastName          string     `form:"lastName" json:"lastName" binding:"required"`
+	Email             string     `form:"email" json:"email" binding:"required"`
+	PhoneNumber       string     `form:"phoneNumber" json:"phoneNumber" binding:"required"`
+	BirthYear         int        `form:"birthYear" json:"birthYear" binding:"required"`
+	Gender            string     `form:"gender" json:"gender" binding:"required"`
+	Password          string     `form:"password" json:"password" binding:"required"`
+	PlanId            string     `form:"planId" json:"planId" binding:"required"`
+	MembershipEndDate *time.Time `form:"membershipEndDate" json:"membershipEndDate" binding:"required"`
 }
 
 type CreateCustomerResponse struct {

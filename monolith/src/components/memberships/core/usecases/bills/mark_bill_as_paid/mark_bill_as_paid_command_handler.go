@@ -31,5 +31,7 @@ func (h *MarkBillAsPaidCommandHandler) Handle(command *MarkBillAsPaidCommand) (*
 		return nil, err
 	}
 
-	return nil, nil
+	return &MarkBillAsPaidCommandResponse{
+		Id: command.BillId,
+	}, nil
 }

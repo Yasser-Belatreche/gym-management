@@ -9,11 +9,11 @@ type CreatePlanUrl struct {
 }
 
 type CreatePlanRequest struct {
-	Name            string  `form:"name" binding:"required"`
-	Featured        bool    `form:"featured" binding:"required"`
-	SessionsPerWeek int     `form:"sessionsPerWeek" binding:"required"`
-	WithCoach       bool    `form:"withCoach" binding:"required"`
-	MonthlyPrice    float64 `form:"monthlyPrice" binding:"required"`
+	Name            string  `form:"name" json:"name" binding:"required"`
+	Featured        *bool   `form:"featured" json:"featured" binding:"required"`
+	SessionsPerWeek int     `form:"sessionsPerWeek" json:"sessionsPerWeek" binding:"required"`
+	WithCoach       *bool   `form:"withCoach" json:"withCoach" binding:"required"`
+	MonthlyPrice    float64 `form:"monthlyPrice" json:"monthlyPrice" binding:"required"`
 }
 
 type CreatePlanResponse struct {

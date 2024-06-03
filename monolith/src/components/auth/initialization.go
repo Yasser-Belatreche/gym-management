@@ -3,7 +3,7 @@ package auth
 import (
 	"gym-management/src/components/auth/core/event_handlers/customers"
 	"gym-management/src/components/auth/core/event_handlers/gym_owners"
-	"gym-management/src/components/auth/core/registered_answers"
+	"gym-management/src/components/auth/core/registered_replies"
 	"gym-management/src/components/auth/core/usecases/create_admin"
 	"gym-management/src/lib/messages_broker"
 	"gym-management/src/lib/primitives/application_specific"
@@ -13,7 +13,7 @@ import (
 func initialize(broker messages_broker.MessagesBroker, facade *Facade) {
 	createDefaultAdmin(facade)
 
-	broker.RegisterAnswer(registered_answers.BuildIsEmailUsedAnswer(facade.UserRepository))
+	broker.RegisterReply(registered_replies.BuildIsEmailUsedReply(facade.UserRepository))
 
 	broker.Subscribe(
 		gym_owners.BuildGymOwnerCreatedEventHandler(facade.UserRepository),

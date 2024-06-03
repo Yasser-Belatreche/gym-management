@@ -103,15 +103,15 @@ func (g *GormPsqlPersistence) WithTransaction(session *application_specific.Sess
 }
 
 type Status struct {
-	Provider string
-	Status   string
-	Message  string
+	Provider string `json:"provider"`
+	Status   string `json:"status"`
+	Message  string `json:"message"`
 }
 
 func (g *GormPsqlPersistence) HealthCheck() struct {
-	Provider string
-	Status   string
-	Message  string
+	Provider string `json:"provider"`
+	Status   string `json:"status"`
+	Message  string `json:"message"`
 } {
 	if _, ok := g.clients["default"]; !ok {
 		return Status{

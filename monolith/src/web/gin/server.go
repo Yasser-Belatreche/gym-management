@@ -2,6 +2,8 @@ package gin
 
 import (
 	g "github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin/binding"
+	"github.com/go-playground/validator/v10"
 	"gym-management/src/concurrency"
 	"gym-management/src/web/gin/v1/controllers/auth"
 	"gym-management/src/web/gin/v1/controllers/gyms"
@@ -10,16 +12,32 @@ import (
 	"gym-management/src/web/gin/v1/middlewares"
 	"gym-management/src/web/gin/v1/utils"
 	"net/http"
+	"reflect"
+	"strings"
 )
 
 func StartWebServer() {
 	g.DisableConsoleColor()
 	r := g.New()
 
+	if v, ok := binding.Validator.Engine().(*validator.Validate); ok {
+		v.RegisterTagNameFunc(func(fld reflect.StructField) string {
+			name := strings.SplitN(fld.Tag.Get("json"), ",", 2)[0]
+			if name == "-" {
+				return ""
+			}
+			if name == "" {
+				name = fld.Tag.Get("form")
+			}
+			return name
+		})
+	}
+
 	r.Use(g.CustomRecovery(utils.GlobalErrorHandler))
 
 	r.Use(middlewares.SessionInjectorMiddleware())
 	r.Use(middlewares.RequestLoggerMiddleware())
+
 	router := r.Group("/api/v1")
 
 	auth.AuthRouter(router)

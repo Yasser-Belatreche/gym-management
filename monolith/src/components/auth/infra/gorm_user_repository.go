@@ -123,15 +123,16 @@ func toDomain(dbModel *models.User) *domain.User {
 	if dbModel.Profile["owned_gyms"] != nil {
 		ownedGymsInterface := dbModel.Profile["owned_gyms"].([]interface{})
 
-		OwnedGyms := make([]string, len(ownedGymsInterface))
+		OwnedGyms = make([]string, len(ownedGymsInterface))
 		for i, v := range ownedGymsInterface {
 			OwnedGyms[i] = v.(string)
 		}
 	}
+
 	if dbModel.Profile["enabled_owned_gyms"] != nil {
 		ownedGymsInterface := dbModel.Profile["enabled_owned_gyms"].([]interface{})
 
-		EnabledOwnedGyms := make([]string, len(ownedGymsInterface))
+		EnabledOwnedGyms = make([]string, len(ownedGymsInterface))
 		for i, v := range ownedGymsInterface {
 			EnabledOwnedGyms[i] = v.(string)
 		}

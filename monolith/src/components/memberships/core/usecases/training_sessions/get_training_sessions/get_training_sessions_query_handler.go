@@ -3,7 +3,6 @@ package get_training_sessions
 import (
 	"gym-management/src/components/memberships/core/usecases/training_sessions"
 	"gym-management/src/lib"
-	"gym-management/src/lib/persistence/psql/gorm/models"
 	"gym-management/src/lib/primitives/application_specific"
 )
 
@@ -14,60 +13,62 @@ func (h *GetTrainingSessionsQueryHandler) Handle(query *GetTrainingSessionsQuery
 
 	options := application_specific.NewPaginationOptions(&query.PaginatedQuery)
 
-	var trainingSessions []models.TrainingSession
+	var list []training_sessions.TrainingSessionToReturn
 
-	dbQuery := db.Model(&models.TrainingSession{})
-	dbQuery = dbQuery.Joins("Membership").Select("")
-	dbQuery = dbQuery.Joins("Membership.Plan").Select("plans.gym_id")
-	dbQuery = dbQuery.Joins("Membership.Customer").Select("customers.id, customers.first_name, customers.last_name")
+	dbQuery := db.Table("training_sessions as ts").
+		Select(`
+			ts.id AS id,
+			ts.started_at AS started_at,
+			ts.ended_at AS ended_at,
+
+			c.id AS customer_id,
+			c.first_name AS customer_first_name,
+			c.last_name AS customer_last_name,
+
+			p.gym_id AS gym_id
+		`).
+		Joins("INNER JOIN memberships AS m ON m.id = ts.membership_id").
+		Joins("INNER JOIN customers AS c ON c.id = m.customer_id").
+		Joins("INNER JOIN plans AS p ON p.id = m.plan_id")
 
 	if len(query.Id) > 0 {
-		dbQuery = dbQuery.Where("id IN (?)", query.Id)
+		dbQuery.Where("ts.id IN (?)", query.Id)
 	}
 
 	if len(query.MembershipId) > 0 {
-		dbQuery = dbQuery.Where("membership_id IN (?)", query.MembershipId)
+		dbQuery.Where("ts.membership_id IN (?)", query.MembershipId)
 	}
 
 	if len(query.CustomerId) > 0 {
-		dbQuery = dbQuery.Where("memberships.customer_id IN (?)", query.CustomerId)
+		dbQuery.Where("m.customer_id IN (?)", query.CustomerId)
 	}
 
 	if len(query.GymId) > 0 {
-		dbQuery = dbQuery.Where("plans.gym_id IN (?)", query.GymId)
+		dbQuery.Where("p.gym_id IN (?)", query.GymId)
 	}
 
 	if query.Ended != nil {
-		dbQuery = dbQuery.Where("ended = ?", *query.Ended)
+		dbQuery.Where("ts.ended_at IS NOT NULL")
 	}
 
-	results := dbQuery.Offset(options.Skip).Limit(options.PerPage).Order("started_at DESC").Find(&trainingSessions)
-	if results.Error != nil {
-		return nil, application_specific.NewUnknownException("TRAINING_SESSIONS.FAILED_TO_GET_TRAINING_SESSIONS", results.Error.Error(), nil)
+	err := dbQuery.
+		Offset(options.Skip).
+		Limit(options.PerPage).
+		Order("ts.started_at DESC").
+		Find(&list).
+		Error
+	if err != nil {
+		return nil, application_specific.NewUnknownException("TRAINING_SESSIONS.FAILED_TO_GET_TRAINING_SESSIONS", err.Error(), nil)
 	}
 
 	var total int64
-	results = dbQuery.Count(&total)
-	if results.Error != nil {
-		return nil, application_specific.NewUnknownException("TRAINING_SESSIONS.FAILED_TO_GET_TRAINING_SESSIONS", results.Error.Error(), nil)
+	err = dbQuery.Count(&total).Error
+	if err != nil {
+		return nil, application_specific.NewUnknownException("TRAINING_SESSIONS.FAILED_TO_GET_TRAINING_SESSIONS", err.Error(), nil)
 	}
 
-	response := GetTrainingSessionsQueryResponse(application_specific.NewPaginatedResponse(options, total, trainingSessions, func(item models.TrainingSession) training_sessions.TrainingSessionToReturn {
-		return training_sessions.TrainingSessionToReturn{
-			Id:        item.Id,
-			StartedAt: item.StartedAt,
-			EndedAt:   item.EndedAt,
-			Customer: struct {
-				Id        string
-				FirstName string
-				LastName  string
-			}{
-				Id:        item.Membership.Customer.Id,
-				FirstName: item.Membership.Customer.FirstName,
-				LastName:  item.Membership.Customer.LastName,
-			},
-			GymId: item.Membership.Plan.GymId,
-		}
+	response := GetTrainingSessionsQueryResponse(application_specific.NewPaginatedResponse(options, total, list, func(item training_sessions.TrainingSessionToReturn) training_sessions.TrainingSessionToReturn {
+		return item
 	}))
 
 	return &response, nil

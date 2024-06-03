@@ -58,9 +58,9 @@ func CreatePlanHandler(c *gin.Context) {
 
 	response, err := components.Memberships().CreatePlan(&create_plan.CreatePlanCommand{
 		Name:            request.Name,
-		Featured:        request.Featured,
+		Featured:        *request.Featured,
 		SessionsPerWeek: request.SessionsPerWeek,
-		WithCoach:       request.WithCoach,
+		WithCoach:       *request.WithCoach,
 		MonthlyPrice:    request.MonthlyPrice,
 		GymId:           url.GymId,
 		Session:         utils.ExtractUserSession(c),
@@ -90,9 +90,9 @@ func UpdatePlanHandler(c *gin.Context) {
 	response, err := components.Memberships().UpdatePlan(&update_plan.UpdatePlanCommand{
 		Id:              url.PlanId,
 		Name:            request.Name,
-		Featured:        request.Featured,
+		Featured:        *request.Featured,
 		SessionsPerWeek: request.SessionsPerWeek,
-		WithCoach:       request.WithCoach,
+		WithCoach:       *request.WithCoach,
 		MonthlyPrice:    request.MonthlyPrice,
 		Session:         utils.ExtractUserSession(c),
 	})
@@ -131,15 +131,21 @@ func GetPlansHandler(c *gin.Context) {
 		return
 	}
 
+	var request plans.GetPlansRequest
+	if err := c.ShouldBind(&request); err != nil {
+		utils.HandleError(c, utils.NewInvalidRequestError(err))
+		return
+	}
+
 	res, err := components.Memberships().GetPlans(&get_plans.GetPlansQuery{
 		PaginatedQuery: application_specific.PaginatedQuery{
-			Page:    url.Page,
-			PerPage: url.PerPage,
+			Page:    request.Page,
+			PerPage: request.PerPage,
 		},
-		Id:       url.Id,
+		Id:       request.Id,
 		GymId:    []string{url.GymId},
-		Featured: url.Featured,
-		Deleted:  url.Deleted,
+		Featured: request.Featured,
+		Deleted:  request.Deleted,
 		Session:  utils.ExtractUserSession(c),
 	})
 	if err != nil {
@@ -711,17 +717,23 @@ func GetCustomersHandler(c *gin.Context) {
 		return
 	}
 
+	var request customers.GetCustomersRequest
+	if err := c.ShouldBind(&request); err != nil {
+		utils.HandleError(c, utils.NewInvalidRequestError(err))
+		return
+	}
+
 	res, err := components.Memberships().GetCustomers(&get_customers.GetCustomersQuery{
 		PaginatedQuery: application_specific.PaginatedQuery{
-			Page:    url.Page,
-			PerPage: url.PerPage,
+			Page:    request.Page,
+			PerPage: request.PerPage,
 		},
-		Id:           url.Id,
+		Id:           request.Id,
 		GymId:        []string{url.GymId},
-		MembershipId: url.MembershipId,
-		PlanId:       url.PlanId,
-		Restricted:   url.Restricted,
-		Deleted:      url.Deleted,
+		MembershipId: request.MembershipId,
+		PlanId:       request.PlanId,
+		Restricted:   request.Restricted,
+		Deleted:      request.Deleted,
 		Session:      utils.ExtractUserSession(c),
 	})
 	if err != nil {

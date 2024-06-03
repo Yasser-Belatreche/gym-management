@@ -10,6 +10,6 @@ type TrainingSessionToReturn struct {
 		Id        string
 		FirstName string
 		LastName  string
-	}
+	} `gorm:"embedded; embeddedPrefix:customer_"`
 	GymId string
 }

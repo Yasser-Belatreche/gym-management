@@ -7,17 +7,23 @@ import (
 
 func HealthRoutes(router *gin.RouterGroup) {
 	router.GET("/health", func(c *gin.Context) {
-		health := lib.Persistence().HealthCheck()
+		broker := lib.MessagesBroker().HealthCheck()
+		persistence := lib.Persistence().HealthCheck()
 
 		status := "UP"
 
-		if health.Status != "UP" {
+		if broker.Status != "UP" {
+			status = "DOWN"
+		}
+
+		if persistence.Status != "UP" {
 			status = "DOWN"
 		}
 
 		c.JSON(200, gin.H{
-			"status":      status,
-			"persistence": health,
+			"status":         status,
+			"persistence":    persistence,
+			"messagesBroker": broker,
 		})
 	})
 }

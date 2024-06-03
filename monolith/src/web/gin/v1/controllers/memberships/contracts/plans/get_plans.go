@@ -8,10 +8,13 @@ import (
 
 type GetPlansUrl struct {
 	contracts.MembershipsUrl
+}
+
+type GetPlansRequest struct {
 	utils.HttpPaginatedRequest
-	Id       []string `uri:"planId" binding:"omitempty,dive"`
-	Featured *bool    `uri:"featured" binding:"omitempty"`
-	Deleted  bool     `uri:"deleted" binding:"omitempty"`
+	Id       []string `form:"planId" json:"id" binding:"omitempty,dive"`
+	Featured *bool    `form:"featured" json:"featured" binding:"omitempty"`
+	Deleted  bool     `form:"deleted" json:"deleted" binding:"omitempty"`
 }
 
 type GetPlansResponse utils.HttpPaginatedResponse[base.Plan]

@@ -16,36 +16,33 @@ func (h *GetBillsQueryHandler) Handle(query *GetBillsQuery) (*GetBillsQueryRespo
 
 	var bills []models.Bill
 
-	dbQuery := db.Model(&models.Bill{})
-	dbQuery = dbQuery.Joins("Membership").Select("")
-	dbQuery = dbQuery.Joins("Membership.Plan").Select("plans.id", "plans.name", "plans.gym_id")
-	dbQuery = dbQuery.Joins("Membership.Customer").Select("customers.id", "customers.first_name", "customers.last_name")
-	//dbQuery = dbQuery.Joins("JOIN memberships ON memberships.id = bills.membership_id")
-	//dbQuery = dbQuery.Joins("JOIN plans ON plans.id = memberships.plan_id")
-	//dbQuery = dbQuery.Joins("JOIN customers ON customers.id = memberships.customer_id")
+	dbQuery := db.Model(&models.Bill{}).
+		Joins("Membership").
+		Joins("Membership.Plan").
+		Joins("Membership.Customer")
 
 	if len(query.Id) > 0 {
-		dbQuery = dbQuery.Where("id IN (?)", query.Id)
+		dbQuery.Where("id IN (?)", query.Id)
 	}
 
 	if len(query.MembershipId) > 0 {
-		dbQuery = dbQuery.Where("membership_id IN (?)", query.MembershipId)
+		dbQuery.Where("membership_id IN (?)", query.MembershipId)
 	}
 
 	if len(query.CustomerId) > 0 {
-		dbQuery = dbQuery.Where("memberships.customer_id IN (?)", query.CustomerId)
+		dbQuery.Where("memberships.customer_id IN (?)", query.CustomerId)
 	}
 
 	if len(query.PlanId) > 0 {
-		dbQuery = dbQuery.Where("memberships.plan_id IN (?)", query.PlanId)
+		dbQuery.Where("memberships.plan_id IN (?)", query.PlanId)
 	}
 
 	if len(query.GymId) > 0 {
-		dbQuery = dbQuery.Where("plans.gym_id IN (?)", query.GymId)
+		dbQuery.Where("gym_id IN (?)", query.GymId)
 	}
 
 	if query.Paid != nil {
-		dbQuery = dbQuery.Where("paid = ?", *query.Paid)
+		dbQuery.Where("paid = ?", *query.Paid)
 	}
 
 	result := dbQuery.Offset(options.Skip).Limit(options.PerPage).Order("updated_at DESC").Find(&bills)

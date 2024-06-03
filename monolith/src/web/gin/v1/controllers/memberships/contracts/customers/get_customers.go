@@ -8,12 +8,15 @@ import (
 
 type GetCustomersUrl struct {
 	contracts.MembershipsUrl
+}
+
+type GetCustomersRequest struct {
 	utils.HttpPaginatedRequest
-	Id           []string `uri:"customerId" binding:"omitempty,dive"`
-	MembershipId []string `uri:"membershipId" binding:"omitempty,dive"`
-	PlanId       []string `uri:"planId" binding:"omitempty,dive"`
-	Restricted   *bool    `uri:"restricted" binding:"omitempty"`
-	Deleted      bool     `uri:"deleted" binding:"omitempty"`
+	Id           []string `form:"customerId" json:"customerId" binding:"omitempty,dive"`
+	MembershipId []string `form:"membershipId" json:"membershipId" binding:"omitempty,dive"`
+	PlanId       []string `form:"planId" json:"planId" binding:"omitempty,dive"`
+	Restricted   *bool    `form:"restricted" json:"restricted" binding:"omitempty"`
+	Deleted      bool     `form:"deleted" json:"deleted" binding:"omitempty"`
 }
 
 type GetCustomersResponse utils.HttpPaginatedResponse[base.Customer]

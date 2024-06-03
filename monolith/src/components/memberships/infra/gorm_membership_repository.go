@@ -16,8 +16,8 @@ type GormMembershipRepository struct{}
 func (g *GormMembershipRepository) FindByID(id string, session *application_specific.Session) (*domain.Membership, *application_specific.ApplicationException) {
 	db := lib.GormDB(session)
 
-	var membership *models.Membership
-	result := db.Clauses(clause.Locking{Strength: "UPDATE"}).First(membership, "id = ?", id)
+	var membership models.Membership
+	result := db.Clauses(clause.Locking{Strength: "UPDATE"}).First(&membership, "id = ?", id)
 	if result.Error != nil {
 		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
 			return nil, application_specific.NewNotFoundException("MEMBERSHIPS.NOT_FOUND", "Membership not found", map[string]string{
@@ -28,8 +28,9 @@ func (g *GormMembershipRepository) FindByID(id string, session *application_spec
 		return nil, application_specific.NewUnknownException("MEMBERSHIPS.INFRA.FAILED_TO_FIND_MEMBERSHIP", result.Error.Error(), map[string]string{})
 	}
 
-	var currentTrainingSession *models.TrainingSession
-	result = db.First(currentTrainingSession, "membership_id = ? AND ended_at IS NULL", id)
+	var t models.TrainingSession
+	var currentTrainingSession = &t
+	result = db.First(&t, "membership_id = ? AND ended_at IS NULL", id)
 	if result.Error != nil {
 		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
 			currentTrainingSession = nil
@@ -38,54 +39,20 @@ func (g *GormMembershipRepository) FindByID(id string, session *application_spec
 		}
 	}
 
-	var unpaidBills []*models.Bill
+	var unpaidBills []models.Bill
 	result = db.Find(&unpaidBills, "membership_id = ? AND paid = false", id)
 	if result.Error != nil {
 		return nil, application_specific.NewUnknownException("MEMBERSHIPS.INFRA.FAILED_TO_FIND_MEMBERSHIP", result.Error.Error(), map[string]string{})
 	}
 
-	return membershipToDomain(membership, currentTrainingSession, unpaidBills), nil
-}
-
-func (g *GormMembershipRepository) FindByCode(code string, session *application_specific.Session) (*domain.Membership, *application_specific.ApplicationException) {
-	db := lib.GormDB(session)
-
-	var membership *models.Membership
-	result := db.Clauses(clause.Locking{Strength: "UPDATE"}).First(membership, "code = ?", code)
-	if result.Error != nil {
-		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
-			return nil, application_specific.NewNotFoundException("MEMBERSHIPS.NOT_FOUND", "Membership not found", map[string]string{
-				"code": code,
-			})
-		}
-
-		return nil, application_specific.NewUnknownException("MEMBERSHIPS.INFRA.FAILED_TO_FIND_MEMBERSHIP", result.Error.Error(), map[string]string{})
-	}
-
-	var currentTrainingSession *models.TrainingSession
-	result = db.First(currentTrainingSession, "membership_id = ? AND ended_at IS NULL", membership.Id)
-	if result.Error != nil {
-		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
-			currentTrainingSession = nil
-		} else {
-			return nil, application_specific.NewUnknownException("MEMBERSHIPS.INFRA.FAILED_TO_FIND_MEMBERSHIP", result.Error.Error(), map[string]string{})
-		}
-	}
-
-	var unpaidBills []*models.Bill
-	result = db.Find(&unpaidBills, "membership_id = ? AND paid = false", membership.Id)
-	if result.Error != nil {
-		return nil, application_specific.NewUnknownException("MEMBERSHIPS.INFRA.FAILED_TO_FIND_MEMBERSHIP", result.Error.Error(), map[string]string{})
-	}
-
-	return membershipToDomain(membership, currentTrainingSession, unpaidBills), nil
+	return membershipToDomain(&membership, currentTrainingSession, unpaidBills), nil
 }
 
 func (g *GormMembershipRepository) FindLatestCustomerMembership(customerId string, session *application_specific.Session) (*domain.Membership, *application_specific.ApplicationException) {
 	db := lib.GormDB(session)
 
-	var membership *models.Membership
-	result := db.Clauses(clause.Locking{Strength: "UPDATE"}).Order("updated_at DESC").First(membership, "customer_id = ?", customerId)
+	var membership models.Membership
+	result := db.Clauses(clause.Locking{Strength: "UPDATE"}).Order("created_at DESC").First(&membership, "customer_id = ?", customerId)
 	if result.Error != nil {
 		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
 			return nil, application_specific.NewNotFoundException("MEMBERSHIPS.NOT_FOUND", "Membership not found", map[string]string{
@@ -96,8 +63,9 @@ func (g *GormMembershipRepository) FindLatestCustomerMembership(customerId strin
 		return nil, application_specific.NewUnknownException("MEMBERSHIPS.INFRA.FAILED_TO_FIND_MEMBERSHIP", result.Error.Error(), map[string]string{})
 	}
 
-	var currentTrainingSession *models.TrainingSession
-	result = db.First(currentTrainingSession, "membership_id = ? AND ended_at IS NULL", membership.Id)
+	var t models.TrainingSession
+	var currentTrainingSession = &t
+	result = db.First(&t, "membership_id = ? AND ended_at IS NULL", membership.Id)
 	if result.Error != nil {
 		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
 			currentTrainingSession = nil
@@ -106,13 +74,13 @@ func (g *GormMembershipRepository) FindLatestCustomerMembership(customerId strin
 		}
 	}
 
-	var unpaidBills []*models.Bill
+	var unpaidBills []models.Bill
 	result = db.Find(&unpaidBills, "membership_id = ? AND paid = false", membership.Id)
 	if result.Error != nil {
 		return nil, application_specific.NewUnknownException("MEMBERSHIPS.INFRA.FAILED_TO_FIND_MEMBERSHIP", result.Error.Error(), map[string]string{})
 	}
 
-	return membershipToDomain(membership, currentTrainingSession, unpaidBills), nil
+	return membershipToDomain(&membership, currentTrainingSession, unpaidBills), nil
 }
 
 func (g *GormMembershipRepository) Create(membership *domain.Membership, session *application_specific.Session) *application_specific.ApplicationException {
@@ -133,9 +101,11 @@ func (g *GormMembershipRepository) Create(membership *domain.Membership, session
 
 	}
 
-	result = db.Create(billsModels)
-	if result.Error != nil {
-		return application_specific.NewUnknownException("MEMBERSHIPS.INFRA.FAILED_TO_CREATE_MEMBERSHIP", result.Error.Error(), map[string]string{})
+	if billsModels != nil && len(billsModels) > 0 {
+		result = db.Create(billsModels)
+		if result.Error != nil {
+			return application_specific.NewUnknownException("MEMBERSHIPS.INFRA.FAILED_TO_CREATE_MEMBERSHIP", result.Error.Error(), map[string]string{})
+		}
 	}
 
 	return nil
@@ -158,9 +128,11 @@ func (g *GormMembershipRepository) Update(membership *domain.Membership, session
 		}
 	}
 
-	result = db.Save(billsModels)
-	if result.Error != nil {
-		return application_specific.NewUnknownException("MEMBERSHIPS.INFRA.FAILED_TO_UPDATE_MEMBERSHIP", result.Error.Error(), map[string]string{})
+	if billsModels != nil && len(billsModels) > 0 {
+		result = db.Save(billsModels)
+		if result.Error != nil {
+			return application_specific.NewUnknownException("MEMBERSHIPS.INFRA.FAILED_TO_UPDATE_MEMBERSHIP", result.Error.Error(), map[string]string{})
+		}
 	}
 
 	return nil
@@ -169,7 +141,7 @@ func (g *GormMembershipRepository) Update(membership *domain.Membership, session
 func (g *GormMembershipRepository) FindEnabledMemberships(session *application_specific.Session) ([]*domain.Membership, *application_specific.ApplicationException) {
 	db := lib.GormDB(session)
 
-	var memberships []*models.Membership
+	var memberships []models.Membership
 	result := db.Clauses(clause.Locking{Strength: "UPDATE"}).Find(&memberships, "enabled = true")
 	if result.Error != nil {
 		return nil, application_specific.NewUnknownException("MEMBERSHIPS.INFRA.FAILED_TO_FIND_MEMBERSHIPS", result.Error.Error(), map[string]string{})
@@ -177,7 +149,8 @@ func (g *GormMembershipRepository) FindEnabledMemberships(session *application_s
 
 	var domainMemberships []*domain.Membership
 	for _, membership := range memberships {
-		var currentTrainingSession *models.TrainingSession
+		var t models.TrainingSession
+		var currentTrainingSession = &t
 		result = db.First(currentTrainingSession, "membership_id = ? AND ended_at IS NULL", membership.Id)
 		if result.Error != nil {
 			if errors.Is(result.Error, gorm.ErrRecordNotFound) {
@@ -187,13 +160,13 @@ func (g *GormMembershipRepository) FindEnabledMemberships(session *application_s
 			}
 		}
 
-		var unpaidBills []*models.Bill
+		var unpaidBills []models.Bill
 		result = db.Find(&unpaidBills, "membership_id = ? AND paid = false", membership.Id)
 		if result.Error != nil {
 			return nil, application_specific.NewUnknownException("MEMBERSHIPS.INFRA.FAILED_TO_FIND_MEMBERSHIP", result.Error.Error(), map[string]string{})
 		}
 
-		domainMemberships = append(domainMemberships, membershipToDomain(membership, currentTrainingSession, unpaidBills))
+		domainMemberships = append(domainMemberships, membershipToDomain(&membership, currentTrainingSession, unpaidBills))
 	}
 
 	return domainMemberships, nil
@@ -202,7 +175,7 @@ func (g *GormMembershipRepository) FindEnabledMemberships(session *application_s
 func (g *GormMembershipRepository) FindEnabledMembershipsByGymID(gymId string, session *application_specific.Session) ([]*domain.Membership, *application_specific.ApplicationException) {
 	db := lib.GormDB(session)
 
-	var memberships []*models.Membership
+	var memberships []models.Membership
 	result := db.Clauses(clause.Locking{Strength: "UPDATE"}).Joins("Plan").Find(&memberships, "memberships.enabled = true AND plan.gym_id = ?", gymId)
 	if result.Error != nil {
 		return nil, application_specific.NewUnknownException("MEMBERSHIPS.INFRA.FAILED_TO_FIND_MEMBERSHIPS", result.Error.Error(), map[string]string{})
@@ -210,8 +183,9 @@ func (g *GormMembershipRepository) FindEnabledMembershipsByGymID(gymId string, s
 
 	var domainMemberships []*domain.Membership
 	for _, membership := range memberships {
+		var t models.TrainingSession
 		var currentTrainingSession *models.TrainingSession
-		result = db.First(currentTrainingSession, "membership_id = ? AND ended_at IS NULL", membership.Id)
+		result = db.First(&t, "membership_id = ? AND ended_at IS NULL", membership.Id)
 		if result.Error != nil {
 			if errors.Is(result.Error, gorm.ErrRecordNotFound) {
 				currentTrainingSession = nil
@@ -219,14 +193,15 @@ func (g *GormMembershipRepository) FindEnabledMembershipsByGymID(gymId string, s
 				return nil, application_specific.NewUnknownException("MEMBERSHIPS.INFRA.FAILED_TO_FIND_MEMBERSHIP", result.Error.Error(), map[string]string{})
 			}
 		}
+		currentTrainingSession = &t
 
-		var unpaidBills []*models.Bill
+		var unpaidBills []models.Bill
 		result = db.Find(&unpaidBills, "membership_id = ? AND paid = false", membership.Id)
 		if result.Error != nil {
 			return nil, application_specific.NewUnknownException("MEMBERSHIPS.INFRA.FAILED_TO_FIND_MEMBERSHIP", result.Error.Error(), map[string]string{})
 		}
 
-		domainMemberships = append(domainMemberships, membershipToDomain(membership, currentTrainingSession, unpaidBills))
+		domainMemberships = append(domainMemberships, membershipToDomain(&membership, currentTrainingSession, unpaidBills))
 	}
 
 	return domainMemberships, nil
@@ -296,7 +271,7 @@ func membershipToDB(membership *domain.Membership) (*models.Membership, *models.
 	return membershipModel, trainingSessionModel, billsModels
 }
 
-func membershipToDomain(membership *models.Membership, currentTrainingSession *models.TrainingSession, unpaidBills []*models.Bill) *domain.Membership {
+func membershipToDomain(membership *models.Membership, currentTrainingSession *models.TrainingSession, unpaidBills []models.Bill) *domain.Membership {
 	var currentTrainingSessionState *domain.TrainingSessionState = nil
 	if currentTrainingSession != nil {
 		currentTrainingSessionState = &domain.TrainingSessionState{

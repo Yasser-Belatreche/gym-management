@@ -1,4 +1,4 @@
-package registered_answers
+package registered_replies
 
 import (
 	"gym-management/src/components/auth/core/domain"
@@ -6,10 +6,10 @@ import (
 	"gym-management/src/lib/primitives/application_specific"
 )
 
-func BuildIsEmailUsedAnswer(userRepository domain.UserRepository) *messages_broker.Answer {
-	var answer = &messages_broker.Answer{
-		Question: "Emails.IsUsed",
-		Answer: func(params map[string]string, session *application_specific.Session) (map[string]string, *application_specific.ApplicationException) {
+func BuildIsEmailUsedReply(userRepository domain.UserRepository) *messages_broker.Reply {
+	var answer = &messages_broker.Reply{
+		Message: "Emails.IsUsed",
+		Handler: func(params map[string]string, session *application_specific.Session) (map[string]string, *application_specific.ApplicationException) {
 			query, err := parseParams(params, session)
 			if err != nil {
 				return nil, err

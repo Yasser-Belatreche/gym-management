@@ -7,17 +7,26 @@ type MessagesBroker interface {
 
 	Subscribe(subscribers ...*Subscriber)
 
-	Ask(question string, params map[string]string, session *application_specific.Session) (map[string]string, *application_specific.ApplicationException)
+	GetReply(message string, params map[string]string, session *application_specific.Session) (map[string]string, *application_specific.ApplicationException)
 
-	RegisterAnswer(answers ...*Answer)
+	RegisterReply(replies ...*Reply)
+
+	HealthCheck() *Health
+}
+
+type Health struct {
+	Provider string `json:"provider"`
+	Status   string `json:"status"`
+	Message  string `json:"message"`
 }
 
 type Subscriber struct {
-	Event   string
-	Handler func(event *application_specific.DomainEvent[interface{}], session *application_specific.Session) *application_specific.ApplicationException
+	Event     string
+	Component string
+	Handler   func(event *application_specific.DomainEvent[interface{}], session *application_specific.Session) *application_specific.ApplicationException
 }
 
-type Answer struct {
-	Question string
-	Answer   func(params map[string]string, session *application_specific.Session) (map[string]string, *application_specific.ApplicationException)
+type Reply struct {
+	Message string
+	Handler func(params map[string]string, session *application_specific.Session) (map[string]string, *application_specific.ApplicationException)
 }

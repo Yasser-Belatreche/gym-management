@@ -12,6 +12,7 @@ services:
       - "8080:8080"
     depends_on:
       - db
+      - rabbitmq
     env_file:
       - ../../.env.test
     environment:
@@ -20,8 +21,20 @@ services:
       - DB_USER=postgres
       - DB_PASSWORD=postgres
       - DB_NAME=postgres
+      - RABBITMQ_URI=amqp://user:password@rabbitmq:5672/
+      - PORT=8080
     volumes:
       - ../../:/home/app/
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: gym-management-rabbitmq-test
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      - RABBITMQ_DEFAULT_USER=user
+      - RABBITMQ_DEFAULT_PASS=password
 
   db:
     image: postgres:latest

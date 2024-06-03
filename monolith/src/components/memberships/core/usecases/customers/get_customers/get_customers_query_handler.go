@@ -1,9 +1,8 @@
 package get_customers
 
 import (
-	customers2 "gym-management/src/components/memberships/core/usecases/customers"
+	"gym-management/src/components/memberships/core/usecases/customers"
 	"gym-management/src/lib"
-	"gym-management/src/lib/persistence/psql/gorm/models"
 	"gym-management/src/lib/primitives/application_specific"
 )
 
@@ -14,78 +13,88 @@ func (h *GetCustomersQueryHandler) Handle(query *GetCustomersQuery) (*GetCustome
 
 	options := application_specific.NewPaginationOptions(&query.PaginatedQuery)
 
-	var customers []models.Customer
+	var list []customers.CustomerToReturn
 
-	dbQuery := db.Model(&models.Customer{})
-	dbQuery = dbQuery.Joins("Memberships", "ORDER BY memberships.updated_at DESC LIMIT 1")
-	dbQuery = dbQuery.Joins("Memberships.Plan")
+	membershipsSubQuery := db.Table("memberships").
+		Select("*").
+		Order("memberships.created_at DESC").
+		Limit(1)
+
+	dbQuery := db.Table("customers AS c").
+		Select(`
+			c.id AS id,
+			c.first_name AS first_name,
+			c.last_name AS last_name,
+			c.email AS email,
+			c.phone_number AS phone_number,
+			c.restricted AS restricted,
+			c.birth_year AS birth_year,
+			c.gender AS gender,
+			c.created_by AS created_by,
+			c.updated_by AS updated_by,
+			c.created_at AS created_at,
+			c.updated_at AS updated_at,
+			c.deleted_at AS deleted_at,
+			c.deleted_by AS deleted_by,
+
+			m.id AS membership_id,
+			m.enabled AS membership_enabled,
+			m.sessions_per_week AS membership_sessions_per_week,
+			m.with_coach AS membership_with_coach,
+			m.monthly_price AS membership_monthly_price,
+
+			p.id AS membership_plan_id,
+			p.gym_id AS gym_id,
+			p.name AS membership_plan_name
+		`).
+		Joins("INNER JOIN (?) AS m ON m.customer_id = c.id", membershipsSubQuery).
+		Joins("INNER JOIN plans AS p ON p.id = m.plan_id")
 
 	if len(query.Id) > 0 {
-		dbQuery = dbQuery.Where("id IN (?)", query.Id)
+		dbQuery.Where("c.id IN (?)", query.Id)
 	}
 
 	if len(query.GymId) > 0 {
-		dbQuery = dbQuery.Where("memberships.gym_id IN (?)", query.GymId)
+		dbQuery.Where("p.gym_id IN (?)", query.GymId)
 	}
 
 	if len(query.MembershipId) > 0 {
-		dbQuery = dbQuery.Where("memberships.plan_id IN (?)", query.MembershipId)
+		dbQuery.Where("m.plan_id IN (?)", query.MembershipId)
 	}
 
 	if len(query.PlanId) > 0 {
-		dbQuery = dbQuery.Where("memberships.plan_id IN (?)", query.PlanId)
+		dbQuery.Where("m.plan_id IN (?)", query.PlanId)
 	}
 
 	if query.Restricted != nil {
-		dbQuery = dbQuery.Where("restricted = ?", *query.Restricted)
+		dbQuery.Where("c.restricted = ?", *query.Restricted)
 	}
 
 	if query.Deleted {
-		dbQuery = dbQuery.Where("deleted_at IS NOT NULL")
+		dbQuery.Where("c.deleted_at IS NOT NULL")
 	} else {
-		dbQuery = dbQuery.Where("deleted_at IS NULL")
+		dbQuery.Where("c.deleted_at IS NULL")
 	}
 
-	result := dbQuery.Offset(options.Skip).Limit(options.PerPage).Order("customers.updated_at DESC").Find(&customers)
-	if result.Error != nil {
-		return nil, application_specific.NewUnknownException("CUSTOMERS.FAILED_TO_GET_CUSTOMERS", result.Error.Error(), nil)
+	err := dbQuery.
+		Offset(options.Skip).
+		Limit(options.PerPage).
+		Order("c.updated_at DESC").
+		Find(&list).
+		Error
+
+	if err != nil {
+		return nil, application_specific.NewUnknownException("CUSTOMERS.FAILED_TO_GET_CUSTOMERS", err.Error(), nil)
 	}
 
 	var total int64
-	result = dbQuery.Count(&total)
-	if result.Error != nil {
-		return nil, application_specific.NewUnknownException("CUSTOMERS.FAILED_TO_GET_CUSTOMERS", result.Error.Error(), nil)
+	err = dbQuery.Count(&total).Error
+	if err != nil {
+		return nil, application_specific.NewUnknownException("CUSTOMERS.FAILED_TO_GET_CUSTOMERS", err.Error(), nil)
 	}
 
-	response := GetCustomersQueryResponse(application_specific.NewPaginatedResponse(options, total, customers, func(item models.Customer) customers2.CustomerToReturn {
-		return customers2.CustomerToReturn{
-			Id:          item.Id,
-			FirstName:   item.FirstName,
-			LastName:    item.LastName,
-			Email:       item.Email,
-			PhoneNumber: item.PhoneNumber,
-			Restricted:  item.Restricted,
-			BirthYear:   item.BirthYear,
-			Gender:      item.Gender,
-			CreatedBy:   item.CreatedBy,
-			UpdatedBy:   item.UpdatedBy,
-			Membership: customers2.CustomerToReturnMembership{
-				Id:              item.Memberships[0].Id,
-				Enabled:         item.Memberships[0].Enabled,
-				SessionsPerWeek: item.Memberships[0].SessionsPerWeek,
-				WithCoach:       item.Memberships[0].WithCoach,
-				MonthlyPrice:    item.Memberships[0].MonthlyPrice,
-				Plan: customers2.CustomerToReturnMembershipPlan{
-					Id:   item.Memberships[0].Plan.Id,
-					Name: item.Memberships[0].Plan.Name,
-				},
-			},
-			GymId:     item.Memberships[0].Plan.GymId,
-			CreatedAt: item.CreatedAt,
-			UpdatedAt: item.UpdatedAt,
-			DeletedBy: item.DeletedBy,
-			DeletedAt: item.DeletedAt,
-		}
+	response := GetCustomersQueryResponse(application_specific.NewPaginatedResponse(options, total, list, func(item customers.CustomerToReturn) customers.CustomerToReturn {
+		return item
 	}))
 
 	return &response, nil

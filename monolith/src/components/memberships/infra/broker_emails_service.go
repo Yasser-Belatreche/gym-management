@@ -10,7 +10,7 @@ type BrokerEmailsService struct {
 }
 
 func (p *BrokerEmailsService) IsUsed(email application_specific.Email, session *application_specific.Session) bool {
-	res, err := p.Broker.Ask("Emails.IsUsed", map[string]string{
+	res, err := p.Broker.GetReply("Emails.IsUsed", map[string]string{
 		"email": email.Value,
 	}, session)
 

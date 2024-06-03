@@ -17,8 +17,8 @@ type HttpErrorResponseError struct {
 }
 
 type HttpPaginatedRequest struct {
-	Page    *int `form:"page"`
-	PerPage *int `form:"perPage"`
+	Page    *int `form:"page" json:"page"`
+	PerPage *int `form:"perPage" json:"perPage"`
 }
 
 type HttpPaginatedResponse[T interface{}] struct {

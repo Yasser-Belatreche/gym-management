@@ -15,12 +15,15 @@ func (h *GetBillQueryHandler) Handle(query *GetBillQuery) (*GetBillQueryResponse
 	db := lib.GormDB(query.Session)
 
 	var bill models.Bill
-	dbQuery := db.Model(&models.Bill{})
-	dbQuery = dbQuery.Joins("Membership").Select("")
-	dbQuery = dbQuery.Joins("Membership.Plan").Select("plans.id, plans.name, plans.gym_id")
-	dbQuery = dbQuery.Joins("Membership.Customer").Select("customers.id, customers.first_name, customers.last_name")
+	err := db.Model(&models.Bill{}).
+		Joins("Membership").
+		Joins("Membership.Plan").
+		Joins("Membership.Customer").
+		Where("bills.id = ?", query.BillId).
+		First(&bill).
+		Error
 
-	if err := dbQuery.Where("bills.id = ?", query.BillId).First(&bill).Error; err != nil {
+	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, application_specific.NewNotFoundException("BILLS.NOT_FOUND", "bill not found", map[string]string{
 				"id": query.BillId,

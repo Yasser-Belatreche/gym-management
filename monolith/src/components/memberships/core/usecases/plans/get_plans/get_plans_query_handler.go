@@ -16,7 +16,7 @@ func (h *GetPlansQueryHandler) Handle(query *GetPlansQuery) (*GetPlansQueryRespo
 
 	var plans []models.Plan
 
-	dbQuery := db.Model(&models.Plan{})
+	dbQuery := db.Table("plans")
 
 	if len(query.Id) > 0 {
 		dbQuery = dbQuery.Where("id IN (?)", query.Id)

@@ -1,9 +1,11 @@
 package application_specific
 
-import "gym-management/src/lib/primitives/generic"
+import (
+	"gym-management/src/lib/primitives/generic"
+)
 
 type Session struct {
-	CorrelationId string
+	CorrelationId string `json:"correlationId"`
 }
 
 func NewSession() *Session {
@@ -20,23 +22,23 @@ func NewSessionWithCorrelationId(correlationId string) *Session {
 
 type UserSession struct {
 	*Session
-	User *User
+	User *User `json:"user"`
 }
 
 type User struct {
-	Id      string
-	Role    string
-	Profile *UserProfile
+	Id      string       `json:"id"`
+	Role    string       `json:"role"`
+	Profile *UserProfile `json:"profile"`
 }
 
 type UserProfile struct {
-	FirstName string
-	LastName  string
-	Phone     string
-	Email     string
+	FirstName string `json:"firstName"`
+	LastName  string `json:"lastName"`
+	Phone     string `json:"phone"`
+	Email     string `json:"email"`
 
-	OwnedGyms        []string // in case the user is a gym owner
-	EnabledOwnedGyms []string // in case the user is a gym owner
+	OwnedGyms        []string `json:"ownedGyms"`        // in case the user is a gym owner
+	EnabledOwnedGyms []string `json:"enabledOwnedGyms"` // in case the user is a gym owner
 }
 
 func NewUserSession(userId string, userRole string, profile *UserProfile, session *Session) *UserSession {

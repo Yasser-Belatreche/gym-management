@@ -9,7 +9,8 @@ import (
 
 func BuildCustomerUpdatedEventHandler(userRepository domain.UserRepository) *messages_broker.Subscriber {
 	return &messages_broker.Subscriber{
-		Event: events.CustomerUpdatedEventType,
+		Event:     events.CustomerUpdatedEventType,
+		Component: "AuthManager",
 		Handler: func(event *application_specific.DomainEvent[interface{}], session *application_specific.Session) *application_specific.ApplicationException {
 			payload, ok := event.Payload.(events.CustomerUpdatedEventPayload)
 

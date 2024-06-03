@@ -22,6 +22,4 @@ type Customer struct {
 	CreatedAt     time.Time  `gorm:"not null; default:CURRENT_TIMESTAMP"`
 	UpdatedAt     time.Time  `gorm:"not null; default:CURRENT_TIMESTAMP"`
 	DeletedAt     *time.Time `gorm:"null;index"`
-
-	Memberships []Membership
 }

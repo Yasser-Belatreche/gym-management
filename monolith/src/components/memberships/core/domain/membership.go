@@ -380,11 +380,13 @@ func (m *Membership) State() *MembershipState {
 		SessionsPerWeek:        m.sessionsPerWeek,
 		WithCoach:              m.withCoach,
 		MonthlyPrice:           m.monthlyPrice,
-		CurrentTrainingSession: currentTrainingSession,
 		UnpaidBills:            unpaidBillsState,
-		RenewedAt:              m.renewedAt,
+		CurrentTrainingSession: currentTrainingSession,
 		PlanId:                 m.planId,
+		RenewedAt:              m.renewedAt,
 		CustomerId:             m.customerId,
+		CreatedBy:              m.createdBy,
+		UpdatedBy:              m.updatedBy,
 	}
 }
 
