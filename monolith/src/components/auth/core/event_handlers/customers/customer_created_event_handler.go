@@ -1,6 +1,7 @@
 package customers
 
 import (
+	"github.com/mitchellh/mapstructure"
 	"gym-management/src/components/auth/core/domain"
 	"gym-management/src/components/memberships/core/domain/events"
 	"gym-management/src/lib/messages_broker"
@@ -12,13 +13,23 @@ func BuildCustomerCreatedEventHandler(userRepository domain.UserRepository) *mes
 		Event:     events.CustomerCreatedEventType,
 		Component: "AuthManager",
 		Handler: func(event *application_specific.DomainEvent[interface{}], session *application_specific.Session) *application_specific.ApplicationException {
-			payload, ok := event.Payload.(events.CustomerCreatedEventPayload)
+			switch payload := event.Payload.(type) {
+			case events.CustomerCreatedEventPayload:
+				return createdEventHandler(userRepository, payload, session)
+			case *events.CustomerCreatedEventPayload:
+				return createdEventHandler(userRepository, *payload, session)
+			case map[string]interface{}:
+				var decodedPayload events.CustomerCreatedEventPayload
 
-			if !ok {
+				err := mapstructure.Decode(payload, &decodedPayload)
+				if err != nil {
+					return application_specific.NewDeveloperException("INVALID_EVENT_PAYLOAD_TYPE", events.CustomerCreatedEventType+" payload is not as expected")
+				}
+
+				return createdEventHandler(userRepository, decodedPayload, session)
+			default:
 				return application_specific.NewDeveloperException("INVALID_EVENT_PAYLOAD_TYPE", events.CustomerCreatedEventType+" payload is not as expected")
 			}
-
-			return createdEventHandler(userRepository, payload, session)
 		},
 	}
 }
