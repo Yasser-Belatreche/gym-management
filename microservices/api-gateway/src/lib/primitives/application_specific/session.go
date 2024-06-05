@@ -3,7 +3,6 @@ package application_specific
 import (
 	"encoding/base64"
 	"encoding/json"
-	"gym-management-api-gateway/src/lib/primitives/generic"
 )
 
 type Session struct {
@@ -17,12 +16,6 @@ func (s *Session) ToBase64() (string, error) {
 	}
 
 	return base64.StdEncoding.EncodeToString(bytes), nil
-}
-
-func NewSession() *Session {
-	return &Session{
-		CorrelationId: generic.GenerateUUID(),
-	}
 }
 
 func NewSessionWithCorrelationId(correlationId string) *Session {
@@ -52,19 +45,6 @@ type UserProfile struct {
 	EnabledOwnedGyms []string `json:"enabledOwnedGyms"` // in case the user is a gym owner
 }
 
-func NewUserSession(userId string, userRole string, profile *UserProfile, session *Session) *UserSession {
-	return &UserSession{
-		Session: &Session{
-			CorrelationId: generic.GenerateUUID(),
-		},
-		User: &User{
-			Id:      userId,
-			Role:    userRole,
-			Profile: profile,
-		},
-	}
-}
-
 func (s *UserSession) ToBase64() (string, error) {
 	bytes, err := json.Marshal(s)
 	if err != nil {
@@ -72,32 +52,4 @@ func (s *UserSession) ToBase64() (string, error) {
 	}
 
 	return base64.StdEncoding.EncodeToString(bytes), nil
-}
-
-func (s *UserSession) UserId() string {
-	return s.User.Id
-}
-
-func (s *UserSession) RoleIsOneOf(roles ...string) bool {
-	for _, role := range roles {
-		if s.User.Role == role {
-			return true
-		}
-	}
-
-	return false
-}
-
-func (s *UserSession) IsOwnerOfEnabledGym(gymId string) bool {
-	if s.User.Profile.EnabledOwnedGyms == nil {
-		return false
-	}
-
-	for _, gym := range s.User.Profile.EnabledOwnedGyms {
-		if gym == gymId {
-			return true
-		}
-	}
-
-	return false
 }
