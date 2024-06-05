@@ -1,0 +1,3 @@
+package gyms
+
+func initialize() {}
