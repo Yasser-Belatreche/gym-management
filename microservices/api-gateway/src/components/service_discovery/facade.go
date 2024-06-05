@@ -11,16 +11,40 @@ type facade struct {
 	apiSecret           string
 }
 
-func (f *facade) GetAuthServiceUrl() (string, error) {
-	return f.GetServiceUrl("auth")
+func (f *facade) GetAuthService() (*Service, error) {
+	url, err := f.GetServiceUrl("auth")
+	if err != nil {
+		return nil, err
+	}
+
+	return &Service{
+		Url:       url,
+		ApiSecret: f.apiSecret,
+	}, nil
 }
 
-func (f *facade) GetMembershipsServiceUrl() (string, error) {
-	return f.GetServiceUrl("memberships")
+func (f *facade) GetMembershipsService() (*Service, error) {
+	url, err := f.GetServiceUrl("memberships")
+	if err != nil {
+		return nil, err
+	}
+
+	return &Service{
+		Url:       url,
+		ApiSecret: f.apiSecret,
+	}, nil
 }
 
-func (f *facade) GetGymsServiceUrl() (string, error) {
-	return f.GetServiceUrl("gyms")
+func (f *facade) GetGymsService() (*Service, error) {
+	url, err := f.GetServiceUrl("gyms")
+	if err != nil {
+		return nil, err
+	}
+
+	return &Service{
+		Url:       url,
+		ApiSecret: f.apiSecret,
+	}, nil
 }
 
 func (f *facade) GetHealth() (map[string]interface{}, error) {

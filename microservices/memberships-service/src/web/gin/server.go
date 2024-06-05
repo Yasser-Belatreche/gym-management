@@ -33,8 +33,8 @@ func StartWebServer() {
 	r.Use(g.CustomRecovery(utils.GlobalErrorHandler))
 
 	r.Use(middlewares.SessionExtractorMiddleware())
-	r.Use(middlewares.ServiceAuthMiddleware())
 	r.Use(middlewares.RequestLoggerMiddleware())
+	r.Use(middlewares.ServiceAuthMiddleware())
 
 	router := r.Group("/api/v1")
 
