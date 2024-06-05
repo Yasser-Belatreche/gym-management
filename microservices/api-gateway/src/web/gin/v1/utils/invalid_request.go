@@ -4,11 +4,11 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/go-playground/validator/v10"
-	"gym-management/src/lib/primitives/application_specific"
+	"gym-management-api-gateway/src/lib/primitives/application_specific"
 )
 
 func NewInvalidRequestError(err error) *application_specific.ApplicationException {
-	var errors = make(map[string]string)
+	var errors = make(map[string]interface{})
 
 	switch ve := err.(type) {
 	case validator.ValidationErrors:
@@ -51,8 +51,4 @@ func formatErrorMessage(field, tag string) string {
 
 func NewRouteNotFoundError() *application_specific.ApplicationException {
 	return application_specific.NewNotFoundException("ROUTE_NOT_FOUND", "Route not found", nil)
-}
-
-func NewNoTokenError() *application_specific.ApplicationException {
-	return application_specific.NewAuthenticationException("NO_TOKEN", "No token provided", nil)
 }

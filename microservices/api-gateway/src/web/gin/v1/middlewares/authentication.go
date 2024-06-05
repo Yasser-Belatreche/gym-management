@@ -1,36 +1,58 @@
 package middlewares
 
 import (
+	"encoding/json"
 	"github.com/gin-gonic/gin"
-	"gym-management/src/components"
-	"gym-management/src/components/auth/core/usecases/get_session"
-	"gym-management/src/web/gin/v1/utils"
-	"strings"
+	"gym-management-api-gateway/src/components"
+	"gym-management-api-gateway/src/lib/primitives/application_specific"
+	"gym-management-api-gateway/src/web/gin/v1/utils"
+	"net/http"
 )
 
 func AuthMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		authHeader := c.GetHeader("Authorization")
-		chunks := strings.Split(authHeader, " ")
-		if len(chunks) != 2 || chunks[0] != "Bearer" {
-			utils.HandleError(c, utils.NewNoTokenError())
-			return
-		}
-
-		token := strings.Split(authHeader, " ")[1]
-
 		session := utils.ExtractSession(c)
-
-		res, err := components.Auth().GetUserSession(&get_session.GetSessionQuery{
-			Token:   token,
-			Session: session,
-		})
+		sessionBase64, err := session.ToBase64()
 		if err != nil {
 			utils.HandleError(c, err)
 			return
 		}
 
-		c.Set("session", res.Session)
+		authHeader := c.GetHeader("Authorization")
+
+		httpClient := http.Client{}
+
+		authUrl, err := components.ServiceDiscovery().GetAuthServiceUrl()
+		request, err := http.NewRequest("GET", authUrl+"/session", nil)
+		if err != nil {
+			utils.HandleError(c, err)
+			return
+		}
+
+		request.Header.Add("Authorization", authHeader)
+		request.Header.Add("X-Session", sessionBase64)
+
+		resp, err := httpClient.Do(request)
+		if err != nil {
+			utils.HandleError(c, err)
+			return
+		}
+
+		if resp.StatusCode != http.StatusOK {
+			c.JSON(resp.StatusCode, resp.Body)
+			c.Abort()
+			return
+		}
+
+		var userSession application_specific.UserSession
+
+		err = json.NewDecoder(resp.Body).Decode(&userSession)
+		if err != nil {
+			utils.HandleError(c, err)
+			return
+		}
+
+		c.Set("session", userSession)
 
 		c.Next()
 	}

@@ -2,7 +2,8 @@ package gyms
 
 import (
 	"github.com/gin-gonic/gin"
-	"gym-management/src/web/gin/v1/middlewares"
+	"gym-management-api-gateway/src/web/gin/v1/middlewares"
+	"gym-management-api-gateway/src/web/gin/v1/utils"
 )
 
 func GymsRouter(router *gin.RouterGroup) {
@@ -10,23 +11,23 @@ func GymsRouter(router *gin.RouterGroup) {
 
 	g.Use(middlewares.AuthMiddleware())
 	{
-		g.GET("/:ownerId", GetGymOwnerHandler)
-		g.GET("/", GetGymOwnersHandler)
-		g.POST("/", middlewares.TransactionMiddleware(), CreateGymOwnerHandler)
-		g.PUT("/:ownerId", middlewares.TransactionMiddleware(), UpdateGymOwnerHandler)
-		g.DELETE("/:ownerId", middlewares.TransactionMiddleware(), DeleteGymOwnerHandler)
-		g.PATCH("/:ownerId/restrict", middlewares.TransactionMiddleware(), RestrictGymOwnerHandler)
-		g.PATCH("/:ownerId/unrestrict", middlewares.TransactionMiddleware(), UnrestrictGymOwnerHandler)
+		g.GET("/:ownerId", utils.RedirectToGymsService)
+		g.GET("/", utils.RedirectToGymsService)
+		g.POST("/", utils.RedirectToGymsService)
+		g.PUT("/:ownerId", utils.RedirectToGymsService)
+		g.DELETE("/:ownerId", utils.RedirectToGymsService)
+		g.PATCH("/:ownerId/restrict", utils.RedirectToGymsService)
+		g.PATCH("/:ownerId/unrestrict", utils.RedirectToGymsService)
 	}
 
 	gyms := g.Group("/:ownerId/gyms")
 	{
-		gyms.GET("/:gymId", GetGymHandler)
-		gyms.GET("/", GetGymsHandler)
-		gyms.POST("/", middlewares.TransactionMiddleware(), CreateGymHandler)
-		gyms.PUT("/:gymId", middlewares.TransactionMiddleware(), UpdateGymHandler)
-		gyms.DELETE("/:gymId", middlewares.TransactionMiddleware(), DeleteGymHandler)
-		gyms.PATCH("/:gymId/enable", middlewares.TransactionMiddleware(), EnableGymHandler)
-		gyms.PATCH("/:gymId/disable", middlewares.TransactionMiddleware(), DisableGymHandler)
+		gyms.GET("/:gymId", utils.RedirectToGymsService)
+		gyms.GET("/", utils.RedirectToGymsService)
+		gyms.POST("/", utils.RedirectToGymsService)
+		gyms.PUT("/:gymId", utils.RedirectToGymsService)
+		gyms.DELETE("/:gymId", utils.RedirectToGymsService)
+		gyms.PATCH("/:gymId/enable", utils.RedirectToGymsService)
+		gyms.PATCH("/:gymId/disable", utils.RedirectToGymsService)
 	}
 }

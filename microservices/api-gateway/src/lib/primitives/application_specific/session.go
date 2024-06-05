@@ -1,11 +1,22 @@
 package application_specific
 
 import (
-	"gym-management/src/lib/primitives/generic"
+	"encoding/base64"
+	"encoding/json"
+	"gym-management-api-gateway/src/lib/primitives/generic"
 )
 
 type Session struct {
 	CorrelationId string `json:"correlationId"`
+}
+
+func (s *Session) ToBase64() (string, error) {
+	bytes, err := json.Marshal(s)
+	if err != nil {
+		return "", NewUnknownException("ERROR_MARSHALLING_SESSION", err.Error(), nil)
+	}
+
+	return base64.StdEncoding.EncodeToString(bytes), nil
 }
 
 func NewSession() *Session {
@@ -52,6 +63,15 @@ func NewUserSession(userId string, userRole string, profile *UserProfile, sessio
 			Profile: profile,
 		},
 	}
+}
+
+func (s *UserSession) ToBase64() (string, error) {
+	bytes, err := json.Marshal(s)
+	if err != nil {
+		return "", NewUnknownException("ERROR_MARSHALLING_USER_SESSION", err.Error(), nil)
+	}
+
+	return base64.StdEncoding.EncodeToString(bytes), nil
 }
 
 func (s *UserSession) UserId() string {

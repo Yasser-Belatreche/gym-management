@@ -1,6 +1,6 @@
 package logger
 
-import "gym-management/src/lib/primitives/application_specific"
+import "gym-management-api-gateway/src/lib/primitives/application_specific"
 
 type Logger interface {
 	Info(

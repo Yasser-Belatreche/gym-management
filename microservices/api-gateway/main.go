@@ -1,8 +1,8 @@
 package main
 
 import (
-	"gym-management/src/components"
-	"gym-management/src/web/gin"
+	"gym-management-api-gateway/src/components"
+	"gym-management-api-gateway/src/web/gin"
 )
 
 func main() {

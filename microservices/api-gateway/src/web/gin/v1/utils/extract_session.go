@@ -2,7 +2,7 @@ package utils
 
 import (
 	"github.com/gin-gonic/gin"
-	"gym-management/src/lib/primitives/application_specific"
+	"gym-management-api-gateway/src/lib/primitives/application_specific"
 )
 
 func ExtractSession(c *gin.Context) *application_specific.Session {
@@ -37,4 +37,15 @@ func ExtractUserSession(c *gin.Context) *application_specific.UserSession {
 	}
 
 	return session
+}
+
+func CheckUserSession(c *gin.Context) bool {
+	session, ok := c.Get("session")
+	if !ok {
+		return false
+	}
+
+	_, ok = session.(*application_specific.UserSession)
+
+	return ok
 }

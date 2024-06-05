@@ -4,7 +4,7 @@ import (
 	"github.com/mitchellh/mapstructure"
 	"time"
 )
-import "gym-management/src/lib/primitives/generic"
+import "gym-management-api-gateway/src/lib/primitives/generic"
 
 type DomainEvent[T interface{}] struct {
 	EventId    string

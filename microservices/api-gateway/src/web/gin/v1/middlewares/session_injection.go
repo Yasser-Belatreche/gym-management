@@ -2,8 +2,8 @@ package middlewares
 
 import (
 	"github.com/gin-gonic/gin"
-	"gym-management/src/lib/primitives/application_specific"
-	"gym-management/src/lib/primitives/generic"
+	"gym-management-api-gateway/src/lib/primitives/application_specific"
+	"gym-management-api-gateway/src/lib/primitives/generic"
 )
 
 func SessionInjectorMiddleware() gin.HandlerFunc {

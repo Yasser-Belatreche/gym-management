@@ -12,7 +12,7 @@ const (
 type ApplicationException struct {
 	Code      string
 	Message   string
-	Payload   map[string]string
+	Payload   map[string]interface{}
 	exception string
 }
 
@@ -20,7 +20,7 @@ func (exception *ApplicationException) Error() string {
 	return exception.Message
 }
 
-func NewValidationException(code string, message string, payload map[string]string) *ApplicationException {
+func NewValidationException(code string, message string, payload map[string]interface{}) *ApplicationException {
 	return &ApplicationException{
 		Code:      code,
 		Message:   message,
@@ -29,7 +29,7 @@ func NewValidationException(code string, message string, payload map[string]stri
 	}
 }
 
-func NewNotFoundException(code string, message string, payload map[string]string) *ApplicationException {
+func NewNotFoundException(code string, message string, payload map[string]interface{}) *ApplicationException {
 	return &ApplicationException{
 		Code:      code,
 		Message:   message,
@@ -38,7 +38,7 @@ func NewNotFoundException(code string, message string, payload map[string]string
 	}
 }
 
-func NewAuthenticationException(code string, message string, payload map[string]string) *ApplicationException {
+func NewAuthenticationException(code string, message string, payload map[string]interface{}) *ApplicationException {
 	return &ApplicationException{
 		Code:      code,
 		Message:   message,
@@ -47,7 +47,7 @@ func NewAuthenticationException(code string, message string, payload map[string]
 	}
 }
 
-func NewForbiddenException(code string, message string, payload map[string]string) *ApplicationException {
+func NewForbiddenException(code string, message string, payload map[string]interface{}) *ApplicationException {
 	return &ApplicationException{
 		Code:      code,
 		Message:   message,
@@ -56,7 +56,7 @@ func NewForbiddenException(code string, message string, payload map[string]strin
 	}
 }
 
-func NewUnknownException(code string, message string, payload map[string]string) *ApplicationException {
+func NewUnknownException(code string, message string, payload map[string]interface{}) *ApplicationException {
 	return &ApplicationException{
 		Code:      code,
 		Message:   message,
@@ -67,7 +67,7 @@ func NewUnknownException(code string, message string, payload map[string]string)
 
 func NewDeveloperException(code string, message string) *ApplicationException {
 	return &ApplicationException{
-		Code:      code,
+		Code:      "DEVELOPER." + code,
 		Message:   message,
 		Payload:   nil,
 		exception: developerExceptionType,

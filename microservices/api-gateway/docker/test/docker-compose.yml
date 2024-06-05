@@ -1,46 +1,16 @@
-version: '3.3'
-name: gym-management-golang-test
+version: '3.8'
+name: gym-management-api-gateway-golang-test
 
 services:
   app:
     build:
       context: ../..
       dockerfile: docker/test/Dockerfile
-    image: gym-management-golang:test
-    container_name: gym-management-golang-test
+    image: gym-management-api-gateway-golang:test
+    container_name: gym-management-api-gateway-golang-test
     ports:
       - "8080:8080"
-    depends_on:
-      - db
-      - rabbitmq
     env_file:
       - ../../.env.test
-    environment:
-      - DB_HOST=db
-      - DB_PORT=5432
-      - DB_USER=postgres
-      - DB_PASSWORD=postgres
-      - DB_NAME=postgres
-      - RABBITMQ_URI=amqp://user:password@rabbitmq:5672/
     volumes:
       - ../../:/home/app/
-
-  rabbitmq:
-    image: rabbitmq:3-management
-    container_name: gym-management-rabbitmq-test
-    ports:
-      - "5672:5672"
-      - "15672:15672"
-    environment:
-      - RABBITMQ_DEFAULT_USER=user
-      - RABBITMQ_DEFAULT_PASS=password
-
-  db:
-    image: postgres:latest
-    container_name: gym-management-postgres-test
-    ports:
-      - "5432:5432"
-    environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=postgres

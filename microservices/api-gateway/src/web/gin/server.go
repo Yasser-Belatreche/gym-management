@@ -4,13 +4,12 @@ import (
 	g "github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 	"github.com/go-playground/validator/v10"
-	"gym-management/src/concurrency"
-	"gym-management/src/web/gin/v1/controllers/auth"
-	"gym-management/src/web/gin/v1/controllers/gyms"
-	"gym-management/src/web/gin/v1/controllers/health"
-	"gym-management/src/web/gin/v1/controllers/memberships"
-	"gym-management/src/web/gin/v1/middlewares"
-	"gym-management/src/web/gin/v1/utils"
+	"gym-management-api-gateway/src/web/gin/v1/controllers/auth"
+	"gym-management-api-gateway/src/web/gin/v1/controllers/gyms"
+	"gym-management-api-gateway/src/web/gin/v1/controllers/health"
+	"gym-management-api-gateway/src/web/gin/v1/controllers/memberships"
+	"gym-management-api-gateway/src/web/gin/v1/middlewares"
+	"gym-management-api-gateway/src/web/gin/v1/utils"
 	"net/http"
 	"reflect"
 	"strings"
@@ -44,7 +43,6 @@ func StartWebServer() {
 	gyms.GymsRouter(router)
 	memberships.MembershipsRouter(router)
 	health.HealthRoutes(router)
-	concurrency.ConcurrencyRouter(router)
 
 	r.GET("/", func(c *g.Context) {
 		c.JSON(http.StatusOK, g.H{"message": "Hello, World!"})

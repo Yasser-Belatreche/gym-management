@@ -3,7 +3,7 @@ package utils
 import (
 	"errors"
 	"github.com/gin-gonic/gin"
-	"gym-management/src/lib/primitives/application_specific"
+	"gym-management-api-gateway/src/lib/primitives/application_specific"
 	"net/http"
 )
 
