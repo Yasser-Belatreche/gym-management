@@ -11,4 +11,5 @@ func AuthRouter(router *gin.RouterGroup) {
 	g.POST("/login", middlewares.TransactionMiddleware(), LoginHandler)
 
 	g.GET("/me", middlewares.AuthMiddleware(), GetCurrentUser)
+	g.GET("/session", middlewares.AuthMiddleware(), GetSession)
 }

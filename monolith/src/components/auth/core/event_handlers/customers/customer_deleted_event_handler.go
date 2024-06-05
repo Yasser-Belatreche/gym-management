@@ -12,10 +12,9 @@ func BuildCustomerDeletedEventHandler(userRepository domain.UserRepository) *mes
 		Event:     events.CustomerDeletedEventType,
 		Component: "AuthManager",
 		Handler: func(event *application_specific.DomainEvent[interface{}], session *application_specific.Session) *application_specific.ApplicationException {
-			payload, ok := event.Payload.(events.CustomerDeletedEventPayload)
-
-			if !ok {
-				return application_specific.NewDeveloperException("INVALID_EVENT_PAYLOAD_TYPE", events.CustomerDeletedEventType+" payload is not as expected")
+			payload, err := application_specific.ParsePayload[events.CustomerDeletedEventPayload](event)
+			if err != nil {
+				return err
 			}
 
 			return deletedEventHandler(userRepository, payload, session)
@@ -23,7 +22,7 @@ func BuildCustomerDeletedEventHandler(userRepository domain.UserRepository) *mes
 	}
 }
 
-func deletedEventHandler(userRepository domain.UserRepository, payload events.CustomerDeletedEventPayload, session *application_specific.Session) *application_specific.ApplicationException {
+func deletedEventHandler(userRepository domain.UserRepository, payload *events.CustomerDeletedEventPayload, session *application_specific.Session) *application_specific.ApplicationException {
 	user, err := userRepository.FindByID(payload.Id, session)
 	if err != nil {
 		return err

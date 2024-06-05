@@ -12,10 +12,9 @@ func BuildGymOwnerCreatedEventHandler(userRepository domain.UserRepository) *mes
 		Event:     events.GymOwnerCreatedEventType,
 		Component: "AuthManager",
 		Handler: func(event *application_specific.DomainEvent[interface{}], session *application_specific.Session) *application_specific.ApplicationException {
-			payload, ok := event.Payload.(events.GymOwnerCreatedEventPayload)
-
-			if !ok {
-				return application_specific.NewDeveloperException("INVALID_EVENT_PAYLOAD_TYPE", events.GymOwnerCreatedEventType+" payload is not as expected")
+			payload, err := application_specific.ParsePayload[events.GymOwnerCreatedEventPayload](event)
+			if err != nil {
+				return err
 			}
 
 			return createdEventHandler(userRepository, payload, session)
@@ -23,7 +22,7 @@ func BuildGymOwnerCreatedEventHandler(userRepository domain.UserRepository) *mes
 	}
 }
 
-func createdEventHandler(userRepository domain.UserRepository, payload events.GymOwnerCreatedEventPayload, session *application_specific.Session) *application_specific.ApplicationException {
+func createdEventHandler(userRepository domain.UserRepository, payload *events.GymOwnerCreatedEventPayload, session *application_specific.Session) *application_specific.ApplicationException {
 	username, err := domain.UsernameFrom(payload.Email)
 	if err != nil {
 		return err

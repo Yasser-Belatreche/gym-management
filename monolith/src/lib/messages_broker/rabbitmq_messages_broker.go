@@ -3,6 +3,7 @@ package messages_broker
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	amqp "github.com/rabbitmq/amqp091-go"
 	"gym-management/src/lib/primitives/application_specific"
 	"time"
@@ -118,6 +119,7 @@ func (r *RabbitMQMessagesBroker) Subscribe(subscribers ...*Subscriber) {
 					er := subscriber.Handler(&event, application_specific.NewSessionWithCorrelationId(d.CorrelationId))
 					if er != nil {
 						//TODO log error
+						fmt.Println(er)
 
 						d.Nack(false, false)
 						return

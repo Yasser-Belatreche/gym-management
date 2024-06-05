@@ -11,15 +11,36 @@ services:
     ports:
       - "8080:8080"
     depends_on:
-      - db
+      rabbitmq:
+        condition: service_healthy
+      db:
+        condition: service_healthy
     env_file:
-      - ../../.env
+      - ../../.env.prod
     environment:
       - DB_HOST=db
       - DB_PORT=5432
       - DB_USER=postgres
       - DB_PASSWORD=postgres
       - DB_NAME=postgres
+      - RABBITMQ_URI=amqp://user:password@rabbitmq:5672/
+    volumes:
+      - ../../:/home/app/
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: gym-management-rabbitmq-prod
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      - RABBITMQ_DEFAULT_USER=user
+      - RABBITMQ_DEFAULT_PASS=password
+    healthcheck:
+      test: ["CMD", "rabbitmqctl", "status"]
+      interval: 10s
+      timeout: 10s
+      retries: 5
 
   db:
     image: postgres:latest
@@ -32,6 +53,11 @@ services:
       - POSTGRES_DB=postgres
     volumes:
       - postgres_data:/var/lib/postgresql/data/
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
 volumes:
   postgres_data:

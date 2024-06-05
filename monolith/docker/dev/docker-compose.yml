@@ -11,8 +11,10 @@ services:
     ports:
       - "8080:8080"
     depends_on:
-      - db
-      - rabbitmq
+      rabbitmq:
+          condition: service_healthy
+      db:
+          condition: service_healthy
     env_file:
       - ../../.env.dev
     environment:
@@ -34,6 +36,11 @@ services:
     environment:
       - RABBITMQ_DEFAULT_USER=user
       - RABBITMQ_DEFAULT_PASS=password
+    healthcheck:
+      test: ["CMD", "rabbitmqctl", "status"]
+      interval: 10s
+      timeout: 10s
+      retries: 5
 
   db:
     image: postgres:latest
@@ -46,6 +53,11 @@ services:
       - POSTGRES_DB=postgres
     volumes:
       - postgres_data:/var/lib/postgresql/data/
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
 volumes:
   postgres_data:

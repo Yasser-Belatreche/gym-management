@@ -55,3 +55,9 @@ func GetCurrentUser(c *gin.Context) {
 		LastLogin: res.LastLogin,
 	})
 }
+
+func GetSession(c *gin.Context) {
+	session := utils.ExtractUserSession(c)
+
+	c.JSON(http.StatusOK, session)
+}

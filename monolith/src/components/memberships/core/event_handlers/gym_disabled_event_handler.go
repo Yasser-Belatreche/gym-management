@@ -12,10 +12,9 @@ func BuildGymDisabledEventHandler(membershipRepository domain.MembershipReposito
 		Event:     events.GymDisabledEventType,
 		Component: "MembershipsManager",
 		Handler: func(event *application_specific.DomainEvent[interface{}], session *application_specific.Session) *application_specific.ApplicationException {
-			payload, ok := event.Payload.(events.GymDisabledEventPayload)
-
-			if !ok {
-				return application_specific.NewDeveloperException("INVALID_EVENT_PAYLOAD_TYPE", events.GymDisabledEventType+" payload is not as expected")
+			payload, err := application_specific.ParsePayload[events.GymDisabledEventPayload](event)
+			if err != nil {
+				return err
 			}
 
 			return handlerGymDisabledEvent(membershipRepository, eventsPublisher, payload, session)
@@ -23,7 +22,7 @@ func BuildGymDisabledEventHandler(membershipRepository domain.MembershipReposito
 	}
 }
 
-func handlerGymDisabledEvent(membershipRepository domain.MembershipRepository, eventsPublisher domain.EventsPublisher, payload events.GymDisabledEventPayload, session *application_specific.Session) *application_specific.ApplicationException {
+func handlerGymDisabledEvent(membershipRepository domain.MembershipRepository, eventsPublisher domain.EventsPublisher, payload *events.GymDisabledEventPayload, session *application_specific.Session) *application_specific.ApplicationException {
 	gymId := payload.Id
 	disabledBy := payload.DisabledBy
 

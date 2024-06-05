@@ -1,0 +1,226 @@
+version: '3.8'
+name: gym-management-microservices-dev
+
+services:
+  # ---------------- api gateway ----------------
+  api-gateway:
+    build:
+      context: ../../../api-gateway
+      dockerfile: docker/dev/Dockerfile
+    image: gym-management-api-gateway:dev
+    container_name: gym-management-api-gateway-dev
+    ports:
+      - "8080:8080"
+    depends_on:
+      - auth-service
+      - gyms-service
+      - memberships-service
+      - service-discovery
+    env_file:
+      - ../../../api-gateway/.env.dev
+    environment:
+      - API_SECRET=devsecret
+      - SERVICE_DISCOVERY_URL=http://service-discovery:3000
+    volumes:
+      - ../../../api-gateway/:/home/app/
+
+
+  # ---------------- service discovery ----------------
+  service-discovery:
+    build:
+      context: ../../../service-discovery
+      dockerfile: docker/dev/Dockerfile
+    image: gym-management-service-discovery:dev
+    container_name: gym-management-service-discovery-dev
+    depends_on:
+      service-discovery-redis:
+        condition: service_healthy
+    ports:
+      - "8081:3000"
+    env_file:
+      - ../../../service-discovery/.env.dev
+    environment:
+      - REDIS_URL=redis://service-discovery-redis:6379
+      - PORT=3000
+      - API_SECRET=devsecret
+    volumes:
+      - ../../../service-discovery/:/home/app/
+
+  service-discovery-redis:
+    image: redis/redis-stack:latest
+    container_name: service-discovery-redis-dev
+    ports:
+      - "8082:6379"
+      - "8001:8001"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 10s
+      retries: 5
+    volumes:
+      - service-discovery-redis-data:/data
+
+  # ---------------- auth service ----------------
+  auth-service:
+    build:
+      context: ../../../auth-service
+      dockerfile: docker/dev/Dockerfile
+    image: gym-management-auth-service:dev
+    container_name: gym-management-auth-service-dev
+    ports:
+      - "8083:8080"
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      auth-service-db:
+        condition: service_healthy
+    env_file:
+      - ../../../auth-service/.env.dev
+    environment:
+      - DB_HOST=auth-service-db
+      - DB_PORT=5432
+      - DB_USER=postgres
+      - DB_PASSWORD=postgres
+      - DB_NAME=postgres
+      - RABBITMQ_URI=amqp://user:password@rabbitmq:5672/
+      - API_SECRET=devsecret
+    volumes:
+      - ../../../auth-service/:/home/app/
+
+  auth-service-db:
+    image: postgres:latest
+    container_name: gym-management-auth-service-postgres-dev
+    ports:
+      - "8084:5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=postgres
+    volumes:
+      - auth-service-postgres-data:/var/lib/postgresql/data/
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+
+  # ---------------- gyms service ----------------
+  gyms-service:
+    build:
+      context: ../../../gyms-service
+      dockerfile: docker/dev/Dockerfile
+    image: gym-management-gyms-service:dev
+    container_name: gym-management-gyms-service-dev
+    ports:
+      - "8085:8080"
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      gyms-service-db:
+        condition: service_healthy
+    env_file:
+      - ../../../gyms-service/.env.dev
+    environment:
+      - DB_HOST=gyms-service-db
+      - DB_PORT=5432
+      - DB_USER=postgres
+      - DB_PASSWORD=postgres
+      - DB_NAME=postgres
+      - RABBITMQ_URI=amqp://user:password@rabbitmq:5672/
+      - API_SECRET=devsecret
+    volumes:
+      - ../../../gyms-service/:/home/app/
+
+  gyms-service-db:
+    image: postgres:latest
+    container_name: gym-management-gyms-service-postgres-dev
+    ports:
+      - "8086:5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=postgres
+    volumes:
+      - gyms-service-postgres-data:/var/lib/postgresql/data/
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+
+  # ---------------- memberships service ----------------
+  memberships-service:
+    build:
+      context: ../../../memberships-service
+      dockerfile: docker/dev/Dockerfile
+    image: gym-management-memberships-service:dev
+    container_name: gym-management-memberships-service-dev
+    ports:
+      - "8087:8080"
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      memberships-service-db:
+        condition: service_healthy
+    env_file:
+      - ../../../memberships-service/.env.dev
+    environment:
+      - DB_HOST=gyms-service-db
+      - DB_PORT=5432
+      - DB_USER=postgres
+      - DB_PASSWORD=postgres
+      - DB_NAME=postgres
+      - RABBITMQ_URI=amqp://user:password@rabbitmq:5672/
+      - API_SECRET=devsecret
+    volumes:
+      - ../../../memberships-service/:/home/app/
+
+  memberships-service-db:
+    image: postgres:latest
+    container_name: gym-management-memberships-postgres-dev
+    ports:
+      - "8088:5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=postgres
+    volumes:
+      - memberships-service-postgres-data:/var/lib/postgresql/data/
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+
+  # ---------------- shared ----------------
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: gym-management-microservices-rabbitmq-dev
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      - RABBITMQ_DEFAULT_USER=user
+      - RABBITMQ_DEFAULT_PASS=password
+    healthcheck:
+      test: ["CMD", "rabbitmqctl", "status"]
+      interval: 10s
+      timeout: 10s
+      retries: 5
+    volumes:
+      - rabbitmq-data:/var/lib/rabbitmq/
+
+volumes:
+  service-discovery-redis-data:
+    driver: local
+  auth-service-postgres-data:
+    driver: local
+  gyms-service-postgres-data:
+    driver: local
+  memberships-service-postgres-data:
+    driver: local
+  rabbitmq-data:
+      driver: local
