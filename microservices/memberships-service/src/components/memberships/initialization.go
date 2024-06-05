@@ -1,11 +1,11 @@
 package memberships
 
 import (
-	"gym-management/src/components/memberships/core/cron_jobs"
-	"gym-management/src/components/memberships/core/domain"
-	"gym-management/src/components/memberships/core/event_handlers"
-	"gym-management/src/lib/jobs_scheduler"
-	"gym-management/src/lib/messages_broker"
+	"gym-management-memberships/src/components/memberships/core/cron_jobs"
+	"gym-management-memberships/src/components/memberships/core/domain"
+	"gym-management-memberships/src/components/memberships/core/event_handlers"
+	"gym-management-memberships/src/lib/jobs_scheduler"
+	"gym-management-memberships/src/lib/messages_broker"
 )
 
 func initialize(

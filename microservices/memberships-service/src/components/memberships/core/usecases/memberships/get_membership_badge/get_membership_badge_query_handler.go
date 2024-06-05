@@ -3,9 +3,9 @@ package get_membership_badge
 import (
 	"errors"
 	"gorm.io/gorm"
-	"gym-management/src/components/memberships/core/usecases/memberships"
-	"gym-management/src/lib"
-	"gym-management/src/lib/primitives/application_specific"
+	"gym-management-memberships/src/components/memberships/core/usecases/memberships"
+	"gym-management-memberships/src/lib"
+	"gym-management-memberships/src/lib/primitives/application_specific"
 )
 
 type GetMembershipBadgeQueryHandler struct {

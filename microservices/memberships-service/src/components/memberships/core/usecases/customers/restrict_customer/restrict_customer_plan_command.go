@@ -1,7 +1,7 @@
 package restrict_customer
 
 import (
-	"gym-management/src/lib/primitives/application_specific"
+	"gym-management-memberships/src/lib/primitives/application_specific"
 )
 
 type RestrictCustomerCommand struct {

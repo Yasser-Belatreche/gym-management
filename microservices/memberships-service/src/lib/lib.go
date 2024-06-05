@@ -2,11 +2,11 @@ package lib
 
 import (
 	"gorm.io/gorm"
-	"gym-management/src/lib/jobs_scheduler"
-	"gym-management/src/lib/logger"
-	"gym-management/src/lib/messages_broker"
-	"gym-management/src/lib/persistence"
-	"gym-management/src/lib/primitives/application_specific"
+	"gym-management-memberships/src/lib/jobs_scheduler"
+	"gym-management-memberships/src/lib/logger"
+	"gym-management-memberships/src/lib/messages_broker"
+	"gym-management-memberships/src/lib/persistence"
+	"gym-management-memberships/src/lib/primitives/application_specific"
 )
 
 func InitializeLib() {

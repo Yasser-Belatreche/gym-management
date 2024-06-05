@@ -1,7 +1,7 @@
 package application_specific
 
 import (
-	"gym-management/src/lib/primitives/generic"
+	"gym-management-memberships/src/lib/primitives/generic"
 )
 
 type Session struct {

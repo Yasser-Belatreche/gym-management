@@ -2,8 +2,8 @@ package jobs_scheduler
 
 import (
 	"github.com/robfig/cron"
-	"gym-management/src/lib/persistence"
-	"gym-management/src/lib/primitives/application_specific"
+	"gym-management-memberships/src/lib/persistence"
+	"gym-management-memberships/src/lib/primitives/application_specific"
 )
 
 type CronScheduler struct {

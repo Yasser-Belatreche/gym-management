@@ -51,3 +51,8 @@ func CheckUserSession(c *gin.Context) bool {
 	_, ok := session.(*application_specific.UserSession)
 	return ok
 }
+
+func CheckSession(c *gin.Context) bool {
+	_, exists := c.Get("session")
+	return exists
+}

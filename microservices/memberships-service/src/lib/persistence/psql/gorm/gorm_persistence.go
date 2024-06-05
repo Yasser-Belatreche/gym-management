@@ -4,7 +4,7 @@ import (
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
-import "gym-management/src/lib/primitives/application_specific"
+import "gym-management-memberships/src/lib/primitives/application_specific"
 
 type GormPsqlPersistence struct {
 	host     string

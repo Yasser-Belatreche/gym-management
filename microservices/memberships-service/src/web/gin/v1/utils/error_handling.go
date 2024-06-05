@@ -3,7 +3,7 @@ package utils
 import (
 	"errors"
 	"github.com/gin-gonic/gin"
-	"gym-management/src/lib/primitives/application_specific"
+	"gym-management-memberships/src/lib/primitives/application_specific"
 	"net/http"
 )
 
@@ -28,13 +28,18 @@ func HandleError(c *gin.Context, err error) {
 }
 
 func handleGenericError(c *gin.Context, err error) {
-	session := ExtractSession(c)
+	var correlationId string
+
+	exists := CheckSession(c)
+	if exists {
+		correlationId = ExtractSession(c).CorrelationId
+	}
 
 	c.JSON(http.StatusInternalServerError, HttpErrorResponse{
 		Method:        c.Request.Method,
 		Path:          c.Request.RequestURI,
 		Status:        http.StatusInternalServerError,
-		CorrelationId: session.CorrelationId,
+		CorrelationId: correlationId,
 		Error: HttpErrorResponseError{
 			Code:    "INTERNAL_SERVER_ERROR",
 			Message: err.Error(),
@@ -45,7 +50,12 @@ func handleGenericError(c *gin.Context, err error) {
 }
 
 func handleApplicationException(c *gin.Context, err *application_specific.ApplicationException) {
-	session := ExtractSession(c)
+	var correlationId string
+
+	exists := CheckSession(c)
+	if exists {
+		correlationId = ExtractSession(c).CorrelationId
+	}
 
 	var status int
 
@@ -73,7 +83,7 @@ func handleApplicationException(c *gin.Context, err *application_specific.Applic
 		Method:        c.Request.Method,
 		Path:          c.Request.RequestURI,
 		Status:        status,
-		CorrelationId: session.CorrelationId,
+		CorrelationId: correlationId,
 		Error: HttpErrorResponseError{
 			Code:    err.Code,
 			Message: err.Message,

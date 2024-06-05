@@ -1,9 +1,9 @@
 package infra
 
 import (
-	"gym-management/src/components/memberships/core/domain/events"
-	"gym-management/src/lib/messages_broker"
-	"gym-management/src/lib/primitives/application_specific"
+	"gym-management-memberships/src/components/memberships/core/domain/events"
+	"gym-management-memberships/src/lib/messages_broker"
+	"gym-management-memberships/src/lib/primitives/application_specific"
 )
 
 type BrokerEventsPublisher struct {

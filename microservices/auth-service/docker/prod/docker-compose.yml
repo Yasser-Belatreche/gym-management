@@ -1,5 +1,5 @@
 version: '3.8'
-name: gym-management-golang-prod
+name: gym-management-auth-service-prod
 
 services:
   app:
@@ -7,12 +7,14 @@ services:
       context: ../..
       dockerfile: docker/prod/Dockerfile
     image: gym-management-golang:prod
-    container_name: gym-management-golang-prod
+    container_name: gym-management-auth-service-prod
     ports:
       - "8080:8080"
     depends_on:
-      - db
-      - rabbitmq
+      rabbitmq:
+        condition: service_healthy
+      db:
+        condition: service_healthy
     env_file:
       - ../../.env
     environment:
@@ -25,17 +27,22 @@ services:
 
   rabbitmq:
     image: rabbitmq:3-management
-    container_name: gym-management-rabbitmq-prod
+    container_name: gym-management-auth-service-rabbitmq-prod
     ports:
       - "5672:5672"
       - "15672:15672"
     environment:
       - RABBITMQ_DEFAULT_USER=user
       - RABBITMQ_DEFAULT_PASS=password
+    healthcheck:
+      test: ["CMD", "rabbitmqctl", "status"]
+      interval: 10s
+      timeout: 10s
+      retries: 5
 
   db:
     image: postgres:latest
-    container_name: gym-management-postgres-prod
+    container_name: gym-management-auth-service-postgres-prod
     ports:
       - "5432:5432"
     environment:
@@ -44,6 +51,11 @@ services:
       - POSTGRES_DB=postgres
     volumes:
       - postgres_data:/var/lib/postgresql/data/
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
 volumes:
   postgres_data:

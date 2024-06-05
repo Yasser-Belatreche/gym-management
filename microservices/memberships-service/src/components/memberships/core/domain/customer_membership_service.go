@@ -1,7 +1,7 @@
 package domain
 
 import (
-	"gym-management/src/lib/primitives/application_specific"
+	"gym-management-memberships/src/lib/primitives/application_specific"
 	"time"
 )
 

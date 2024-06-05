@@ -1,26 +1,14 @@
 package components
 
 import (
-	"gym-management/src/components/auth"
-	"gym-management/src/components/gyms"
-	"gym-management/src/components/memberships"
-	"gym-management/src/lib"
+	"gym-management-memberships/src/components/memberships"
+	"gym-management-memberships/src/lib"
 )
 
 func Initialize() {
 	lib.InitializeLib()
 
-	auth.InitializeAuthManager(lib.MessagesBroker())
-	gyms.InitializeGymsManager()
 	memberships.InitializeMembershipsManager(lib.MessagesBroker(), lib.JobsScheduler())
-}
-
-func Auth() auth.Manager {
-	return auth.NewAuthManager()
-}
-
-func Gyms() gyms.Manager {
-	return gyms.NewGymsManager(lib.MessagesBroker())
 }
 
 func Memberships() memberships.Manager {

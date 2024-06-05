@@ -1,3 +1,2 @@
-# Gym Management System (Modular Monolith)
+# Gyms Service
 
-this is the monolith version of the gym management system.

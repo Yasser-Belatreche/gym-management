@@ -20,9 +20,7 @@ type Membership struct {
 	Customer        Customer   `gorm:"foreignKey:CustomerId;references:Id;constraint:OnUpdate:CASCADE,OnDelete:RESTRICT"`
 	RenewedAt       *time.Time `gorm:"null"`
 	CreatedBy       string     `gorm:"not null"`
-	CreatedByUser   User       `gorm:"foreignKey:CreatedBy;references:Id;constraint:OnUpdate:CASCADE,OnDelete:RESTRICT"`
 	UpdatedBy       string     `gorm:"not null"`
-	UpdatedByUser   User       `gorm:"foreignKey:UpdatedBy;references:Id;constraint:OnUpdate:CASCADE,OnDelete:RESTRICT"`
 	CreatedAt       time.Time  `gorm:"not null; default:CURRENT_TIMESTAMP"`
 	UpdatedAt       time.Time  `gorm:"not null; default:CURRENT_TIMESTAMP"`
 }

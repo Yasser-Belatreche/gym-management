@@ -1,13 +1,13 @@
 version: '3.8'
-name: gym-management-golang-test
+name: gym-management-memberships-golang-test
 
 services:
   app:
     build:
       context: ../..
       dockerfile: docker/test/Dockerfile
-    image: gym-management-golang:test
-    container_name: gym-management-golang-test
+    image: gym-management-memberships-golang:test
+    container_name: gym-management-memberships-golang-test
     ports:
       - "8080:8080"
     depends_on:
@@ -29,7 +29,7 @@ services:
 
   rabbitmq:
     image: rabbitmq:3-management
-    container_name: gym-management-rabbitmq-test
+    container_name: gym-management-memberships-rabbitmq-test
     ports:
       - "5672:5672"
       - "15672:15672"
@@ -44,7 +44,7 @@ services:
 
   db:
     image: postgres:latest
-    container_name: gym-management-postgres-test
+    container_name: gym-management-memberships-postgres-test
     ports:
       - "5432:5432"
     environment:

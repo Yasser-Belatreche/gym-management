@@ -2,7 +2,7 @@ package utils
 
 import (
 	"github.com/gin-gonic/gin"
-	"gym-management/src/lib/primitives/application_specific"
+	"gym-management-memberships/src/lib/primitives/application_specific"
 )
 
 func ExtractSession(c *gin.Context) *application_specific.Session {
@@ -16,7 +16,7 @@ func ExtractSession(c *gin.Context) *application_specific.Session {
 	case *application_specific.UserSession:
 		session = s.Session
 	default:
-		panic("Should register the SessionInjectorMiddleware first")
+		panic("Should register the SessionExtractorMiddleware first")
 	}
 
 	return session
@@ -25,16 +25,34 @@ func ExtractSession(c *gin.Context) *application_specific.Session {
 func ExtractUserSession(c *gin.Context) *application_specific.UserSession {
 	var session *application_specific.UserSession
 
-	val, _ := c.Get("session")
+	val, exists := c.Get("session")
+	if !exists {
+		panic("Should register the SessionExtractorMiddleware first")
+	}
 
 	switch s := val.(type) {
 	case *application_specific.Session:
-		panic("Should register the AuthMiddleware after the SessionInjectorMiddleware, and the end point should not be public")
+		panic("Should check if the session is a user session first")
 	case *application_specific.UserSession:
 		session = s
 	default:
-		panic("Should register the SessionInjectorMiddleware first")
+		panic("Should register the SessionExtractorMiddleware first")
 	}
 
 	return session
+}
+
+func CheckUserSession(c *gin.Context) bool {
+	session, exists := c.Get("session")
+	if !exists {
+		return false
+	}
+
+	_, ok := session.(*application_specific.UserSession)
+	return ok
+}
+
+func CheckSession(c *gin.Context) bool {
+	_, exists := c.Get("session")
+	return exists
 }

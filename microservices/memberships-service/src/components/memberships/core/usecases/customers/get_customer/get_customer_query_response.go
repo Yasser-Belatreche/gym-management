@@ -1,5 +1,5 @@
 package get_customer
 
-import "gym-management/src/components/memberships/core/usecases/customers"
+import "gym-management-memberships/src/components/memberships/core/usecases/customers"
 
 type GetCustomerQueryResponse customers.CustomerToReturn

@@ -1,6 +1,6 @@
 package get_plan
 
-import "gym-management/src/lib/primitives/application_specific"
+import "gym-management-memberships/src/lib/primitives/application_specific"
 
 type GetPlanQuery struct {
 	Id      string

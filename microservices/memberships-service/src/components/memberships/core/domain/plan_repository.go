@@ -1,6 +1,6 @@
 package domain
 
-import "gym-management/src/lib/primitives/application_specific"
+import "gym-management-memberships/src/lib/primitives/application_specific"
 
 type PlanRepository interface {
 	FindByID(id string, session *application_specific.Session) (*Plan, *application_specific.ApplicationException)

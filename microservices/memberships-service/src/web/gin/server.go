@@ -4,13 +4,10 @@ import (
 	g "github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 	"github.com/go-playground/validator/v10"
-	"gym-management/src/concurrency"
-	"gym-management/src/web/gin/v1/controllers/auth"
-	"gym-management/src/web/gin/v1/controllers/gyms"
-	"gym-management/src/web/gin/v1/controllers/health"
-	"gym-management/src/web/gin/v1/controllers/memberships"
-	"gym-management/src/web/gin/v1/middlewares"
-	"gym-management/src/web/gin/v1/utils"
+	"gym-management-memberships/src/web/gin/v1/controllers/health"
+	"gym-management-memberships/src/web/gin/v1/controllers/memberships"
+	"gym-management-memberships/src/web/gin/v1/middlewares"
+	"gym-management-memberships/src/web/gin/v1/utils"
 	"net/http"
 	"reflect"
 	"strings"
@@ -35,16 +32,14 @@ func StartWebServer() {
 
 	r.Use(g.CustomRecovery(utils.GlobalErrorHandler))
 
-	r.Use(middlewares.SessionInjectorMiddleware())
+	r.Use(middlewares.SessionExtractorMiddleware())
+	r.Use(middlewares.ServiceAuthMiddleware())
 	r.Use(middlewares.RequestLoggerMiddleware())
 
 	router := r.Group("/api/v1")
 
-	auth.AuthRouter(router)
-	gyms.GymsRouter(router)
-	memberships.MembershipsRouter(router)
 	health.HealthRoutes(router)
-	concurrency.ConcurrencyRouter(router)
+	memberships.MembershipsRouter(router)
 
 	r.GET("/", func(c *g.Context) {
 		c.JSON(http.StatusOK, g.H{"message": "Hello, World!"})

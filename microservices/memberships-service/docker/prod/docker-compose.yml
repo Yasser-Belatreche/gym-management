@@ -1,13 +1,13 @@
 version: '3.8'
-name: gym-management-golang-prod
+name: gym-management-memberships-golang-prod
 
 services:
   app:
     build:
       context: ../..
       dockerfile: docker/prod/Dockerfile
-    image: gym-management-golang:prod
-    container_name: gym-management-golang-prod
+    image: gym-management-memberships-golang:prod
+    container_name: gym-management-memberships-golang-prod
     ports:
       - "8080:8080"
     depends_on:
@@ -29,7 +29,7 @@ services:
 
   rabbitmq:
     image: rabbitmq:3-management
-    container_name: gym-management-rabbitmq-prod
+    container_name: gym-management-memberships-rabbitmq-prod
     ports:
       - "5672:5672"
       - "15672:15672"
@@ -44,7 +44,7 @@ services:
 
   db:
     image: postgres:latest
-    container_name: gym-management-postgres-prod
+    container_name: gym-management-memberships-postgres-prod
     ports:
       - "5432:5432"
     environment:

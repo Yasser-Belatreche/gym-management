@@ -1,7 +1,7 @@
 package persistence
 
 import (
-	"gym-management/src/lib/persistence/psql/gorm"
+	"gym-management-memberships/src/lib/persistence/psql/gorm"
 	"os"
 )
 

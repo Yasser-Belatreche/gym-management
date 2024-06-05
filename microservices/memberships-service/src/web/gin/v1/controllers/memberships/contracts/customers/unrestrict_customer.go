@@ -1,6 +1,6 @@
 package customers
 
-import "gym-management/src/web/gin/v1/controllers/memberships/contracts"
+import "gym-management-memberships/src/web/gin/v1/controllers/memberships/contracts"
 
 type UnrestrictCustomerUrl struct {
 	contracts.MembershipsUrl

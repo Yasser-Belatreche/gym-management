@@ -1,6 +1,6 @@
 package get_memberships
 
-import "gym-management/src/lib/primitives/application_specific"
+import "gym-management-memberships/src/lib/primitives/application_specific"
 
 type GetMembershipsQuery struct {
 	application_specific.PaginatedQuery

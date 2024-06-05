@@ -2,35 +2,40 @@ package middlewares
 
 import (
 	"github.com/gin-gonic/gin"
-	"gym-management/src/components"
-	"gym-management/src/components/auth/core/usecases/get_session"
-	"gym-management/src/web/gin/v1/utils"
-	"strings"
+	"gym-management-memberships/src/web/gin/v1/utils"
+	"os"
 )
 
 func AuthMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		authHeader := c.GetHeader("Authorization")
-		chunks := strings.Split(authHeader, " ")
-		if len(chunks) != 2 || chunks[0] != "Bearer" {
-			utils.HandleError(c, utils.NewNoTokenError())
+		exists := utils.CheckUserSession(c)
+		if !exists {
+			utils.HandleError(c, utils.NewNoUserSessionError())
 			return
 		}
 
-		token := strings.Split(authHeader, " ")[1]
+		c.Next()
+	}
+}
 
-		session := utils.ExtractSession(c)
+func ServiceAuthMiddleware() gin.HandlerFunc {
+	apiSecret, ok := os.LookupEnv("API_SECRET")
+	if !ok {
+		panic("API_SECRET env var is required")
+	}
 
-		res, err := components.Auth().GetUserSession(&get_session.GetSessionQuery{
-			Token:   token,
-			Session: session,
-		})
-		if err != nil {
-			utils.HandleError(c, err)
+	return func(c *gin.Context) {
+		secret := c.GetHeader("X-Api-Secret")
+
+		if secret == "" {
+			utils.HandleError(c, utils.NewNoApiSecretError())
 			return
 		}
 
-		c.Set("session", res.Session)
+		if secret != apiSecret {
+			utils.HandleError(c, utils.NewWrongApiSecretError())
+			return
+		}
 
 		c.Next()
 	}

@@ -1,1 +1,1 @@
-# Memberships Service
+# Service Discovery

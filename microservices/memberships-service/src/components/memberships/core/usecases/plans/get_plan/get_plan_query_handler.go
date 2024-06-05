@@ -3,10 +3,10 @@ package get_plan
 import (
 	"errors"
 	"gorm.io/gorm"
-	plans2 "gym-management/src/components/memberships/core/usecases/plans"
-	"gym-management/src/lib"
-	"gym-management/src/lib/persistence/psql/gorm/models"
-	"gym-management/src/lib/primitives/application_specific"
+	plans2 "gym-management-memberships/src/components/memberships/core/usecases/plans"
+	"gym-management-memberships/src/lib"
+	"gym-management-memberships/src/lib/persistence/psql/gorm/models"
+	"gym-management-memberships/src/lib/primitives/application_specific"
 )
 
 type GetPlanQueryHandler struct{}

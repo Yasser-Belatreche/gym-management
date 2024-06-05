@@ -1,9 +1,9 @@
 package domain
 
 import (
-	"gym-management/src/components/memberships/core/domain/events"
-	"gym-management/src/lib/primitives/application_specific"
-	"gym-management/src/lib/primitives/generic"
+	"gym-management-memberships/src/components/memberships/core/domain/events"
+	"gym-management-memberships/src/lib/primitives/application_specific"
+	"gym-management-memberships/src/lib/primitives/generic"
 	"strconv"
 	"strings"
 	"time"

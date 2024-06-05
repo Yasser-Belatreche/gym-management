@@ -1,6 +1,6 @@
 package logger
 
-import "gym-management/src/lib/logger/printer"
+import "gym-management-memberships/src/lib/logger/printer"
 
 var instance Logger
 

@@ -19,7 +19,7 @@ const StartWebServer = async () => {
     app.use(express.urlencoded({ extended: true }));
 
     app.use((req, res, next) => {
-        const secretHeader = req.headers['x-secret'];
+        const secretHeader = req.headers['x-api-secret'];
 
         if (secretHeader !== config.secret) {
             res.status(401).json({ error: 'Unauthorized' });

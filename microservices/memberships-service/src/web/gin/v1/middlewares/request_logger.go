@@ -3,8 +3,8 @@ package middlewares
 import (
 	"bytes"
 	"github.com/gin-gonic/gin"
-	"gym-management/src/lib"
-	"gym-management/src/web/gin/v1/utils"
+	"gym-management-memberships/src/lib"
+	"gym-management-memberships/src/web/gin/v1/utils"
 	"io"
 	"strconv"
 	"time"

@@ -2,9 +2,9 @@ package middlewares
 
 import (
 	"github.com/gin-gonic/gin"
-	"gym-management/src/lib"
-	"gym-management/src/lib/primitives/application_specific"
-	"gym-management/src/web/gin/v1/utils"
+	"gym-management-memberships/src/lib"
+	"gym-management-memberships/src/lib/primitives/application_specific"
+	"gym-management-memberships/src/web/gin/v1/utils"
 )
 
 func TransactionMiddleware() gin.HandlerFunc {

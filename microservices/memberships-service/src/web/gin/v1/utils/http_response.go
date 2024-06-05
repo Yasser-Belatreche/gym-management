@@ -1,6 +1,6 @@
 package utils
 
-import "gym-management/src/lib/primitives/application_specific"
+import "gym-management-memberships/src/lib/primitives/application_specific"
 
 type HttpErrorResponse struct {
 	Method        string                 `json:"method"`

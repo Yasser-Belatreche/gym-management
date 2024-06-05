@@ -1,6 +1,6 @@
 package domain
 
-import exceptions "gym-management/src/lib/primitives/application_specific"
+import exceptions "gym-management-memberships/src/lib/primitives/application_specific"
 
 type Gender string
 

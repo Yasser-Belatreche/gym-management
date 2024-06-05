@@ -1,8 +1,8 @@
 package end_training_session
 
 import (
-	"gym-management/src/components/memberships/core/domain"
-	"gym-management/src/lib/primitives/application_specific"
+	"gym-management-memberships/src/components/memberships/core/domain"
+	"gym-management-memberships/src/lib/primitives/application_specific"
 )
 
 type EndTrainingSessionCommandHandler struct {

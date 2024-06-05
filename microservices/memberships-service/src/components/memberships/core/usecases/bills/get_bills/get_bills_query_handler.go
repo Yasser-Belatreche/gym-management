@@ -1,10 +1,10 @@
 package get_bills
 
 import (
-	bills2 "gym-management/src/components/memberships/core/usecases/bills"
-	"gym-management/src/lib"
-	"gym-management/src/lib/persistence/psql/gorm/models"
-	"gym-management/src/lib/primitives/application_specific"
+	bills2 "gym-management-memberships/src/components/memberships/core/usecases/bills"
+	"gym-management-memberships/src/lib"
+	"gym-management-memberships/src/lib/persistence/psql/gorm/models"
+	"gym-management-memberships/src/lib/primitives/application_specific"
 )
 
 type GetBillsQueryHandler struct{}

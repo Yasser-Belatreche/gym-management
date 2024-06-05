@@ -17,7 +17,6 @@ services:
         environment:
           - REDIS_URL=redis://redis:6379
           - PORT=3000
-        restart: always
         volumes:
           - "../..:/home/app/"
 

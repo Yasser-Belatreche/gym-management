@@ -12,9 +12,9 @@ const GetConfig = (): Config => {
 
     const port = parseInt(process.env.PORT || '3000');
 
-    if (!process.env.SECRET) throw new Error(`SECRET env variable is required`);
+    if (!process.env.API_SECRET) throw new Error(`API_SECRET env variable is required`);
 
-    const secret = process.env.SECRET;
+    const secret = process.env.API_SECRET;
 
     return { redisUrl, port, secret };
 };

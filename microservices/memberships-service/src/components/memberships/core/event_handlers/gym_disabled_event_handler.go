@@ -1,10 +1,10 @@
 package event_handlers
 
 import (
-	"gym-management/src/components/gyms/core/domain/events"
-	"gym-management/src/components/memberships/core/domain"
-	"gym-management/src/lib/messages_broker"
-	"gym-management/src/lib/primitives/application_specific"
+	"gym-management-memberships/src/components/gyms/events"
+	"gym-management-memberships/src/components/memberships/core/domain"
+	"gym-management-memberships/src/lib/messages_broker"
+	"gym-management-memberships/src/lib/primitives/application_specific"
 )
 
 func BuildGymDisabledEventHandler(membershipRepository domain.MembershipRepository, eventsPublisher domain.EventsPublisher) *messages_broker.Subscriber {

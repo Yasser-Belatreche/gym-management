@@ -4,10 +4,10 @@ import (
 	"errors"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
-	"gym-management/src/components/memberships/core/domain"
-	"gym-management/src/lib"
-	"gym-management/src/lib/persistence/psql/gorm/models"
-	"gym-management/src/lib/primitives/application_specific"
+	"gym-management-memberships/src/components/memberships/core/domain"
+	"gym-management-memberships/src/lib"
+	"gym-management-memberships/src/lib/persistence/psql/gorm/models"
+	"gym-management-memberships/src/lib/primitives/application_specific"
 )
 
 type GormCustomerRepository struct {

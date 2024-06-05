@@ -1,9 +1,9 @@
 package cron_jobs
 
 import (
-	"gym-management/src/components/memberships/core/domain"
-	"gym-management/src/lib/jobs_scheduler"
-	"gym-management/src/lib/primitives/application_specific"
+	"gym-management-memberships/src/components/memberships/core/domain"
+	"gym-management-memberships/src/lib/jobs_scheduler"
+	"gym-management-memberships/src/lib/primitives/application_specific"
 )
 
 func BuildGenerateMonthlyBillsCronJob(membershipRepository domain.MembershipRepository, eventsPublisher domain.EventsPublisher) *jobs_scheduler.Job {

@@ -1,9 +1,9 @@
 package memberships
 
 import (
-	"gym-management/src/components/memberships/infra"
-	"gym-management/src/lib/jobs_scheduler"
-	"gym-management/src/lib/messages_broker"
+	"gym-management-memberships/src/components/memberships/infra"
+	"gym-management-memberships/src/lib/jobs_scheduler"
+	"gym-management-memberships/src/lib/messages_broker"
 )
 
 var manager Manager = nil

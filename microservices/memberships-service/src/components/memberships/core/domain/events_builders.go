@@ -1,7 +1,7 @@
 package domain
 
 import (
-	"gym-management/src/components/memberships/core/domain/events"
+	"gym-management-memberships/src/components/memberships/core/domain/events"
 )
 
 func NewCustomerCreatedEvent(state *CustomerState, password string, planId string) *events.MembershipEvent[interface{}] {

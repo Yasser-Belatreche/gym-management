@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/go-playground/validator/v10"
-	"gym-management/src/lib/primitives/application_specific"
+	"gym-management-memberships/src/lib/primitives/application_specific"
 )
 
 func NewInvalidRequestError(err error) *application_specific.ApplicationException {
@@ -53,6 +53,22 @@ func NewRouteNotFoundError() *application_specific.ApplicationException {
 	return application_specific.NewNotFoundException("ROUTE_NOT_FOUND", "Route not found", nil)
 }
 
-func NewNoTokenError() *application_specific.ApplicationException {
-	return application_specific.NewAuthenticationException("NO_TOKEN", "No token provided", nil)
+func NewNoApiSecretError() *application_specific.ApplicationException {
+	return application_specific.NewDeveloperException("NO_API_SECRET", "No api secret provided")
+}
+
+func NewWrongApiSecretError() *application_specific.ApplicationException {
+	return application_specific.NewDeveloperException("WRONG_API_SECRET", "Wrong api secret")
+}
+
+func NewNoSessionError() *application_specific.ApplicationException {
+	return application_specific.NewDeveloperException("NO_SESSION", "No session provided")
+}
+
+func NewInvalidSessionError() *application_specific.ApplicationException {
+	return application_specific.NewDeveloperException("INVALID_SESSION", "Session should be an encoded json string in base64")
+}
+
+func NewNoUserSessionError() *application_specific.ApplicationException {
+	return application_specific.NewAuthenticationException("NO_USER_SESSION", "No user session provided", nil)
 }

@@ -2,7 +2,7 @@ package memberships
 
 import (
 	"github.com/gin-gonic/gin"
-	"gym-management/src/web/gin/v1/middlewares"
+	"gym-management-memberships/src/web/gin/v1/middlewares"
 )
 
 func MembershipsRouter(r *gin.RouterGroup) {

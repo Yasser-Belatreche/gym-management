@@ -1,8 +1,8 @@
 package infra
 
 import (
-	"gym-management/src/lib/messages_broker"
-	"gym-management/src/lib/primitives/application_specific"
+	"gym-management-memberships/src/lib/messages_broker"
+	"gym-management-memberships/src/lib/primitives/application_specific"
 )
 
 type BrokerEmailsService struct {

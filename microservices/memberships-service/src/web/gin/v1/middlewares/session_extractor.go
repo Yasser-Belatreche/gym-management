@@ -4,8 +4,8 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"github.com/gin-gonic/gin"
-	"gym-management-gyms/src/lib/primitives/application_specific"
-	"gym-management-gyms/src/web/gin/v1/utils"
+	"gym-management-memberships/src/lib/primitives/application_specific"
+	"gym-management-memberships/src/web/gin/v1/utils"
 )
 
 func SessionExtractorMiddleware() gin.HandlerFunc {

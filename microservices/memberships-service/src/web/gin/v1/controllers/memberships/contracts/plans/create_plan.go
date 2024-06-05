@@ -1,7 +1,7 @@
 package plans
 
 import (
-	"gym-management/src/web/gin/v1/controllers/memberships/contracts"
+	"gym-management-memberships/src/web/gin/v1/controllers/memberships/contracts"
 )
 
 type CreatePlanUrl struct {

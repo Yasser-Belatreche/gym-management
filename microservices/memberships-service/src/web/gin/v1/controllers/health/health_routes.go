@@ -2,7 +2,7 @@ package health
 
 import (
 	"github.com/gin-gonic/gin"
-	"gym-management/src/lib"
+	"gym-management-memberships/src/lib"
 )
 
 func HealthRoutes(router *gin.RouterGroup) {

@@ -2,8 +2,8 @@ package logger
 
 import (
 	"encoding/json"
-	"gym-management/src/lib/logger/printer"
-	"gym-management/src/lib/primitives/application_specific"
+	"gym-management-memberships/src/lib/logger/printer"
+	"gym-management-memberships/src/lib/primitives/application_specific"
 	"strconv"
 	"time"
 )
