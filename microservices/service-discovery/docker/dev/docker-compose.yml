@@ -1,5 +1,5 @@
 version: "3.8"
-name: "service-discovery-dev"
+name: "service_discovery-dev"
 
 services:
     app:
@@ -7,7 +7,7 @@ services:
           context: ../..
           dockerfile: docker/dev/Dockerfile
         image: service-discovery:dev
-        container_name: service-discovery-dev
+        container_name: service_discovery-dev
         depends_on:
           - redis
         ports:
@@ -22,7 +22,7 @@ services:
 
     redis:
       image: "redis/redis-stack:latest"
-      container_name: "service-discovery-redis-dev"
+      container_name: "service_discovery-redis-dev"
       ports:
         - "6379:6379"
         - "8001:8001"

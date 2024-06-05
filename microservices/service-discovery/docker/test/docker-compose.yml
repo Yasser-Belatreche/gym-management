@@ -1,9 +1,9 @@
 version: "3.8"
-name: "service-discovery-test"
+name: "service_discovery-test"
 
 services:
   redis:
     image: "redis/redis-stack-server:latest"
-    container_name: "service-discovery-redis-test"
+    container_name: "service_discovery-redis-test"
     ports:
       - "6379:6379"

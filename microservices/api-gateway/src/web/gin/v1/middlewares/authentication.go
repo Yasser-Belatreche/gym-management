@@ -22,8 +22,8 @@ func AuthMiddleware() gin.HandlerFunc {
 
 		httpClient := http.Client{}
 
-		authUrl, err := components.ServiceDiscovery().GetAuthServiceUrl()
-		request, err := http.NewRequest("GET", authUrl+"/session", nil)
+		service, err := components.ServiceDiscovery().GetAuthService()
+		request, err := http.NewRequest("GET", service.Url+"/api/v1/auth/session", nil)
 		if err != nil {
 			utils.HandleError(c, err)
 			return
@@ -31,6 +31,7 @@ func AuthMiddleware() gin.HandlerFunc {
 
 		request.Header.Add("Authorization", authHeader)
 		request.Header.Add("X-Session", sessionBase64)
+		request.Header.Add("X-Api-Secret", service.ApiSecret)
 
 		resp, err := httpClient.Do(request)
 		if err != nil {
@@ -39,7 +40,7 @@ func AuthMiddleware() gin.HandlerFunc {
 		}
 
 		if resp.StatusCode != http.StatusOK {
-			c.JSON(resp.StatusCode, resp.Body)
+			utils.CopyResponse(resp, c)
 			c.Abort()
 			return
 		}
@@ -52,7 +53,7 @@ func AuthMiddleware() gin.HandlerFunc {
 			return
 		}
 
-		c.Set("session", userSession)
+		c.Set("session", &userSession)
 
 		c.Next()
 	}

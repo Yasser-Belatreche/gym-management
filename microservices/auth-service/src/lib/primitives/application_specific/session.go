@@ -43,9 +43,7 @@ type UserProfile struct {
 
 func NewUserSession(userId string, userRole string, profile *UserProfile, session *Session) *UserSession {
 	return &UserSession{
-		Session: &Session{
-			CorrelationId: generic.GenerateUUID(),
-		},
+		Session: session,
 		User: &User{
 			Id:      userId,
 			Role:    userRole,

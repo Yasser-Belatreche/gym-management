@@ -3,10 +3,9 @@ package utils
 import (
 	"github.com/gin-gonic/gin"
 	"gym-management-api-gateway/src/components"
+	"gym-management-api-gateway/src/components/service_discovery"
 	"gym-management-api-gateway/src/lib/primitives/application_specific"
-	"io"
 	"net/http"
-	"os"
 )
 
 func RedirectToAuthService(c *gin.Context) {
@@ -21,21 +20,21 @@ func RedirectToMembershipsService(c *gin.Context) {
 	redirectToService("memberships", c)
 }
 
-func redirectToService(service string, c *gin.Context) {
-	url, err := getServiceUrl(service)
+func redirectToService(name string, c *gin.Context) {
+	service, err := getService(name)
 	if err != nil {
 		HandleError(c, err)
 		return
 	}
 
 	client := http.Client{}
-	req, err := http.NewRequest(c.Request.Method, url+c.Request.RequestURI, c.Request.Body)
+	req, err := http.NewRequest(c.Request.Method, service.Url+c.Request.RequestURI, c.Request.Body)
 	if err != nil {
 		HandleError(c, err)
 		return
 	}
 
-	prepareHeaders(c, &req.Header)
+	prepareHeaders(c, service, &req.Header)
 
 	res, err := client.Do(req)
 	if err != nil {
@@ -43,24 +42,24 @@ func redirectToService(service string, c *gin.Context) {
 		return
 	}
 
-	copyResponse(res, c)
+	CopyResponse(res, c)
 }
 
-func getServiceUrl(service string) (string, error) {
-	switch service {
+func getService(name string) (*service_discovery.Service, error) {
+	switch name {
 	case "auth":
-		return components.ServiceDiscovery().GetAuthServiceUrl()
+		return components.ServiceDiscovery().GetAuthService()
 	case "gyms":
-		return components.ServiceDiscovery().GetGymsServiceUrl()
+		return components.ServiceDiscovery().GetGymsService()
 	case "memberships":
-		return components.ServiceDiscovery().GetMembershipsServiceUrl()
+		return components.ServiceDiscovery().GetMembershipsService()
 	default:
-		return "", application_specific.NewDeveloperException("CASE_NOT_IMPLEMENTED", "Service "+service+" is not implemented")
+		return nil, application_specific.NewDeveloperException("CASE_NOT_IMPLEMENTED", "Service "+name+" is not implemented")
 	}
 
 }
 
-func prepareHeaders(c *gin.Context, headers *http.Header) {
+func prepareHeaders(c *gin.Context, service *service_discovery.Service, headers *http.Header) {
 	var session interface{ ToBase64() (string, error) }
 
 	userSession := CheckUserSession(c)
@@ -76,20 +75,12 @@ func prepareHeaders(c *gin.Context, headers *http.Header) {
 		return
 	}
 
-	apiSecret, exists := os.LookupEnv("API_SECRET")
-	if !exists {
-		panic("API_SECRET environment variable is not set")
+	for k, v := range c.Request.Header {
+		for _, vv := range v {
+			headers.Set(k, vv)
+		}
 	}
 
 	headers.Set("X-Session", base64)
-	headers.Set("X-Api-Secret", apiSecret)
-}
-
-func copyResponse(res *http.Response, c *gin.Context) {
-	for k, v := range res.Header {
-		c.Header(k, v[0])
-	}
-
-	c.Status(res.StatusCode)
-	io.Copy(c.Writer, res.Body)
+	headers.Set("X-Api-Secret", service.ApiSecret)
 }

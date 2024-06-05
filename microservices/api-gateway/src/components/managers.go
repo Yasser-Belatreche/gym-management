@@ -1,7 +1,7 @@
 package components
 
 import (
-	service_discovery "gym-management-api-gateway/src/components/service-discovery"
+	service_discovery "gym-management-api-gateway/src/components/service_discovery"
 )
 
 func Initialize() {

@@ -8,7 +8,7 @@ on:
 env:
     DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
     DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-    IMAGE: ${{ secrets.DOCKER_USERNAME }}/gym-management-service-discovery
+    IMAGE: ${{ secrets.DOCKER_USERNAME }}/gym-management-service_discovery
 
 jobs:
     build-test:
@@ -63,5 +63,5 @@ jobs:
 #            PORT: ${{ secrets.PORT }}
 #            SECRET: ${{ secrets.SECRET }}
 
-#            CONTAINER_NAME: gym-management-service-discovery
+#            CONTAINER_NAME: gym-management-service_discovery
 #            CONTAINER_PORT: 8080

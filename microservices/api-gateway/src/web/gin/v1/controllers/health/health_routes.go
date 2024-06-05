@@ -4,39 +4,50 @@ import (
 	"encoding/json"
 	"github.com/gin-gonic/gin"
 	"gym-management-api-gateway/src/components"
+	"gym-management-api-gateway/src/components/service_discovery"
 	"gym-management-api-gateway/src/web/gin/v1/utils"
 	"net/http"
-	"os"
 )
 
 func HealthRoutes(router *gin.RouterGroup) {
 	router.GET("/health", func(c *gin.Context) {
+		serviceDiscovery, err := components.ServiceDiscovery().GetHealth()
+		if err != nil {
+			serviceDiscovery = map[string]interface{}{
+				"status":  "DOWN",
+				"message": err.Error(),
+			}
+		}
+
 		auth, err := getAuthHealth(c)
 		if err != nil {
-			utils.HandleError(c, err)
-			return
+			auth = map[string]interface{}{
+				"status":  "DOWN",
+				"message": err.Error(),
+			}
 		}
 
 		memberships, err := getMembershipsHealth(c)
 		if err != nil {
-			utils.HandleError(c, err)
-			return
+			memberships = map[string]interface{}{
+				"status":  "DOWN",
+				"message": err.Error(),
+			}
 		}
 
 		gyms, err := getGymsHealth(c)
 		if err != nil {
-			utils.HandleError(c, err)
-			return
-		}
-
-		serviceDiscovery, err := components.ServiceDiscovery().GetHealth()
-		if err != nil {
-			utils.HandleError(c, err)
-			return
+			gyms = map[string]interface{}{
+				"status":  "DOWN",
+				"message": err.Error(),
+			}
 		}
 
 		status := "UP"
 
+		if serviceDiscovery["status"] != "UP" {
+			status = "DOWN"
+		}
 		if auth["status"] != "UP" {
 			status = "DOWN"
 		}
@@ -46,57 +57,54 @@ func HealthRoutes(router *gin.RouterGroup) {
 		if memberships["status"] != "UP" {
 			status = "DOWN"
 		}
-		if serviceDiscovery["status"] != "UP" {
-			status = "DOWN"
-		}
 
 		c.JSON(200, gin.H{
 			"status":              status,
 			"auth-service":        auth,
 			"gyms-service":        gyms,
 			"memberships-service": memberships,
-			"service-discovery":   serviceDiscovery,
+			"service_discovery":   serviceDiscovery,
 		})
 	})
 }
 
 func getAuthHealth(c *gin.Context) (map[string]interface{}, error) {
-	authUrl, err := components.ServiceDiscovery().GetAuthServiceUrl()
+	service, err := components.ServiceDiscovery().GetAuthService()
 	if err != nil {
 		return nil, err
 	}
 
-	url := authUrl + "/api/v1/health"
+	service.Url = service.Url + "/api/v1/health"
 
-	return getHealth(url, c)
+	return getHealth(service, c)
 }
 
 func getGymsHealth(c *gin.Context) (map[string]interface{}, error) {
-	authUrl, err := components.ServiceDiscovery().GetGymsServiceUrl()
+	service, err := components.ServiceDiscovery().GetGymsService()
 	if err != nil {
 		return nil, err
 	}
 
-	url := authUrl + "/api/v1/health"
+	service.Url = service.Url + "/api/v1/health"
 
-	return getHealth(url, c)
+	return getHealth(service, c)
 }
 
 func getMembershipsHealth(c *gin.Context) (map[string]interface{}, error) {
-	authUrl, err := components.ServiceDiscovery().GetMembershipsServiceUrl()
+	service, err := components.ServiceDiscovery().GetMembershipsService()
 	if err != nil {
 		return nil, err
 	}
 
-	url := authUrl + "/api/v1/health"
+	service.Url = service.Url + "/api/v1/health"
 
-	return getHealth(url, c)
+	return getHealth(service, c)
 }
 
-func getHealth(url string, c *gin.Context) (map[string]interface{}, error) {
+func getHealth(service *service_discovery.Service, c *gin.Context) (map[string]interface{}, error) {
 	client := http.Client{}
 
-	req, err := http.NewRequest("GET", url, nil)
+	req, err := http.NewRequest("GET", service.Url, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -115,13 +123,8 @@ func getHealth(url string, c *gin.Context) (map[string]interface{}, error) {
 		return nil, err
 	}
 
-	apiSecret, exists := os.LookupEnv("API_SECRET")
-	if !exists {
-		panic("API_SECRET environment variable is not set")
-	}
-
 	req.Header.Set("X-Session", base64)
-	req.Header.Set("X-Api-Secret", apiSecret)
+	req.Header.Set("X-Api-Secret", service.ApiSecret)
 
 	response, err := client.Do(req)
 	if err != nil {

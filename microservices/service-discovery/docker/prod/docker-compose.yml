@@ -1,5 +1,5 @@
 version: '3.8'
-name: "service-discovery-prod"
+name: "service_discovery-prod"
 
 services:
     app:
@@ -7,7 +7,7 @@ services:
             context: ../..
             dockerfile: docker/prod/Dockerfile
         image: service-discovery:prod
-        container_name: service-discovery-prod
+        container_name: service_discovery-prod
         depends_on:
             - redis
         ports:
@@ -21,7 +21,7 @@ services:
 
     redis:
         image: "redis/redis-stack-server:latest"
-        container_name: "service-discovery-redis-dev"
+        container_name: "service_discovery-redis-dev"
         command: redis-server --requirepass password
         ports:
             - "6379:6379"
