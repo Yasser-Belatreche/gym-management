@@ -7,7 +7,7 @@ on:
 
 defaults:
     run:
-        working-directory: ./microservices/monolith
+        working-directory: ./monolith
 
 env:
     DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
