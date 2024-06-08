@@ -40,4 +40,10 @@ git commit -m "$2"
 
 git push origin deploy/microservices/service-discovery
 
+git checkout master
+
+git merge deploy/microservices/service-discovery
+
+git push origin master
+
 echo "Deployment of version $1 is triggered successfully!"

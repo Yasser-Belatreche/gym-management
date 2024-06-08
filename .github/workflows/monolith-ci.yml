@@ -1,4 +1,4 @@
-name: Continuous Integration
+name: Monolith CI
 
 on:
     push:

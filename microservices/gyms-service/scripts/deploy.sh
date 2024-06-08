@@ -40,6 +40,12 @@ git commit -m "$2"
 
 git push origin deploy/microservices/gyms-service
 
+git checkout master
+
+git merge deploy/microservices/gyms-service
+
+git push origin master
+
 echo "Deployment of version $1 is triggered successfully!"
 
 
