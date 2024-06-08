@@ -32,19 +32,20 @@ echo "
 $2
 " >> RELEASE.md
 
-git checkout deploy/microservices/api-gateway 2> /dev/null || git checkout -b deploy/microservices/api-gateway
 
 git add .
 
 git commit -m "$2"
 
+git push origin master
+
+git checkout deploy/microservices/api-gateway 2> /dev/null || git checkout -b deploy/microservices/api-gateway
+
+git merge master
+
 git push origin deploy/microservices/api-gateway
 
 git checkout master
-
-git merge deploy/microservices/api-gateway
-
-git push origin master
 
 echo "Deployment of version $1 is triggered successfully!"
 
