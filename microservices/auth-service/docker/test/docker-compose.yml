@@ -28,18 +28,17 @@ services:
       - ../../:/home/app/
 
   rabbitmq:
-    image: rabbitmq:3-management
+    image: rabbitmq:3
     container_name: gym-management-auth-service-rabbitmq-test
     ports:
       - "5672:5672"
-      - "15672:15672"
     environment:
       - RABBITMQ_DEFAULT_USER=user
       - RABBITMQ_DEFAULT_PASS=password
     healthcheck:
       test: ["CMD", "rabbitmqctl", "status"]
-      interval: 10s
-      timeout: 10s
+      interval: 5s
+      timeout: 5s
       retries: 5
 
   db:
