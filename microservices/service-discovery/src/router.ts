@@ -1,16 +1,17 @@
-import { ServiceDiscovery } from './service';
 import { Router } from 'express';
 
-const GetRouter = (service: ServiceDiscovery) => {
+import { ServiceDiscovery } from './service';
+
+const GetRouter = (service: ServiceDiscovery): Router => {
     const router = Router();
 
-    router.get('/', async (req, res) => {
+    router.get('/', async (req, res): Promise<void> => {
         const services = await service.getServices();
 
         res.json(services);
     });
 
-    router.get('/:name', async (req, res) => {
+    router.get('/:name', async (req, res): Promise<void> => {
         const { name } = req.params;
 
         const result = await service.getService(name);
@@ -23,7 +24,7 @@ const GetRouter = (service: ServiceDiscovery) => {
         res.json(result);
     });
 
-    router.post('/', async (req, res) => {
+    router.post('/', async (req, res): Promise<void> => {
         const { name, url } = req.body;
 
         if (!name || !url) {
@@ -40,7 +41,7 @@ const GetRouter = (service: ServiceDiscovery) => {
         }
     });
 
-    router.delete('/:name', async (req, res) => {
+    router.delete('/:name', async (req, res): Promise<void> => {
         const { name } = req.params;
 
         await service.deleteService(name);

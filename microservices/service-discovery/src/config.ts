@@ -10,7 +10,7 @@ const GetConfig = (): Config => {
         throw new Error('REDIS_URL env variable is required');
     }
 
-    const port = parseInt(process.env.PORT || '3000');
+    const port = parseInt(process.env.PORT ?? '3000');
 
     if (!process.env.API_SECRET) throw new Error(`API_SECRET env variable is required`);
 
