@@ -1,5 +1,5 @@
 version: '3.3'
-name: gym-management-auth-service-test
+#name: gym-management-auth-service-test
 
 services:
   app:

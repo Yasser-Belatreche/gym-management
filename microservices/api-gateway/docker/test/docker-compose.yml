@@ -1,5 +1,5 @@
 version: '3.3'
-name: gym-management-api-gateway-golang-test
+#name: gym-management-api-gateway-golang-test
 
 services:
   app:
