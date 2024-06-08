@@ -32,8 +32,6 @@ echo "
 $2
 " >> RELEASE.md
 
-git checkout deploy/microservices/gyms-service 2> /dev/null || git checkout -b deploy/microservices/gyms-service
-
 git add .
 
 git commit -m "$2"
