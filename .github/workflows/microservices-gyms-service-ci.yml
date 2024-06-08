@@ -1,0 +1,52 @@
+name: Continuous Integration
+
+on:
+    push:
+        branches:
+            - 'deploy/microservices/auth-service'
+
+env:
+    DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+    DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+    IMAGE: ${{ secrets.DOCKER_USERNAME }}/gym-management-auth-service
+
+jobs:
+    build-test:
+        name: Build & Test
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v2
+            - name: CD to auth service directory
+              run: cd microservices/auth-service
+            - name: Setup Go
+              uses: actions/setup-go@v5
+              with:
+                  go-version: 1.22.2
+            - name: Install Dependencies
+              run: go mod download && go mod verify
+            - name: Setup Test Environment
+              run: scripts/start-test.sh -d
+            - name: Run Tests
+              run: scripts/run-tests.sh
+
+    dockerize:
+        name: Dockerized and Push to Docker Hub
+        runs-on: ubuntu-latest
+        needs: build-test
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v2
+            - name: CD to monolith
+              run: cd monolith
+            - name: Set up Docker Buildx
+              uses: docker/setup-buildx-action@v1
+            - name: Build The Image
+              run: docker build . -f docker/prod/Dockerfile -t ${{ env.IMAGE }}:latest
+            - name: Login to Docker Hub
+              uses: docker/login-action@v1
+              with:
+                  username: ${{ env.DOCKER_USERNAME }}
+                  password: ${{ env.DOCKER_PASSWORD }}
+            - name: Push The new Image To Docker Hub
+              run: docker push ${{ env.IMAGE }}:latest
