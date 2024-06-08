@@ -10,4 +10,11 @@ if [ -z "$1" ]
     exit 1
 fi
 
+# Check if atlas command exists
+if ! command -v atlas &> /dev/null
+then
+    echo "atlas could not be found, downloading..."
+    curl -sSf https://atlasgo.sh | sh
+fi
+
 atlas migrate diff --env gorm "$1"
