@@ -1,11 +1,22 @@
 package application_specific
 
 import (
+	"encoding/base64"
+	"encoding/json"
 	"gym-management-memberships/src/lib/primitives/generic"
 )
 
 type Session struct {
 	CorrelationId string `json:"correlationId"`
+}
+
+func (s *Session) ToBase64() (string, error) {
+	bytes, err := json.Marshal(s)
+	if err != nil {
+		return "", NewUnknownException("ERROR_MARSHALLING_SESSION", err.Error(), nil)
+	}
+
+	return base64.StdEncoding.EncodeToString(bytes), nil
 }
 
 func NewSession() *Session {
