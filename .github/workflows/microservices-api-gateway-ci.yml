@@ -5,6 +5,10 @@ on:
         branches:
             - 'deploy/microservices/api-gateway'
 
+defaults:
+    run:
+        working-directory: ./microservices/api-gateway
+
 env:
     DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
     DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
@@ -17,8 +21,6 @@ jobs:
         steps:
             - name: Checkout
               uses: actions/checkout@v2
-            - name: CD to api gateway directory
-              run: cd microservices/api-gateway
             - name: Eco current directory
               run: echo $PWD
             - name: Setup Go

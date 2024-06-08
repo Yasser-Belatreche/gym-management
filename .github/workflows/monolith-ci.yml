@@ -5,6 +5,10 @@ on:
         branches:
             - 'deploy/monolith'
 
+defaults:
+    run:
+        working-directory: ./microservices/monolith
+
 env:
     DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
     DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
@@ -17,8 +21,6 @@ jobs:
         steps:
             - name: Checkout
               uses: actions/checkout@v2
-            - name: CD to monolith
-              run: cd monolith
             - name: Setup Go
               uses: actions/setup-go@v5
               with:

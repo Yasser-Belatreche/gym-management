@@ -5,6 +5,10 @@ on:
         branches:
             - 'deploy/microservices/service-discovery'
 
+defaults:
+    run:
+        working-directory: ./microservices/service-discovery
+
 env:
     DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
     DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
@@ -17,8 +21,6 @@ jobs:
       steps:
         - name: Checkout
           uses: actions/checkout@v2
-        - name: CD to Service Discovery Directory
-          run: cd microservices/service-discovery
         - name: Get node version from .nvmrc
           id: nvmrc
           run: echo ::set-output name=NODE_VERSION::$(cat .nvmrc)

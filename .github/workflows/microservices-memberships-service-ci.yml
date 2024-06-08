@@ -5,6 +5,10 @@ on:
         branches:
             - 'deploy/microservices/memberships-service'
 
+defaults:
+    run:
+        working-directory: ./microservices/memberships-service
+
 env:
     DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
     DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
@@ -17,8 +21,6 @@ jobs:
         steps:
             - name: Checkout
               uses: actions/checkout@v2
-            - name: CD to memberships service directory
-              run: cd microservices/memberships-service
             - name: Setup Go
               uses: actions/setup-go@v5
               with:

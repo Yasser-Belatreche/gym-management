@@ -38,13 +38,15 @@ git add .
 
 git commit -m "$2"
 
+git push origin master
+
+git checkout deploy/microservices/gyms-service 2> /dev/null || git checkout -b deploy/microservices/gyms-service
+
+git merge master
+
 git push origin deploy/microservices/gyms-service
 
 git checkout master
-
-git merge deploy/microservices/gyms-service
-
-git push origin master
 
 echo "Deployment of version $1 is triggered successfully!"
 
