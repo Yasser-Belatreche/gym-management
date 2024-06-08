@@ -5,7 +5,7 @@ import { GetConfig } from './config';
 import { GetRouter } from './router';
 import { ServiceDiscovery } from './service';
 
-const StartWebServer = async () => {
+const StartWebServer = async (): Promise<void> => {
     const config = GetConfig();
 
     const redis = Redis.Instance({ url: config.redisUrl });
