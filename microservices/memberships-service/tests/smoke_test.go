@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"gym-management-memberships/src/lib/primitives/application_specific"
 	"net/http"
-	"os"
 	"testing"
 )
 
@@ -22,7 +21,7 @@ func TestSmoke(t *testing.T) {
 	}
 
 	req.Header.Set("X-Session", session)
-	req.Header.Set("X-Api-Secret", os.Getenv("API_SECRET"))
+	req.Header.Set("X-Api-Secret", "devsecret")
 
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
