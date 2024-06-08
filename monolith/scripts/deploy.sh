@@ -32,12 +32,18 @@ echo "
 $2
 " >> RELEASE.md
 
-git checkout deploy/monolith 2> /dev/null || git checkout -b deploy/monolith
-
 git add .
 
 git commit -m "$2"
 
+git push origin master
+
+git checkout deploy/monolith 2> /dev/null || git checkout -b deploy/monolith
+
+git merge master
+
 git push origin deploy/monolith
+
+git checkout master
 
 echo "Deployment of version $1 is triggered successfully!"
