@@ -3,12 +3,12 @@ name: Continuous Integration
 on:
     push:
         branches:
-            - 'deploy/microservices/gyms-service'
+            - 'deploy/microservices/memberships-service'
 
 env:
     DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
     DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-    IMAGE: ${{ secrets.DOCKER_USERNAME }}/gym-management-gyms-service
+    IMAGE: ${{ secrets.DOCKER_USERNAME }}/gym-management-memberships-service
 
 jobs:
     build-test:
@@ -17,8 +17,8 @@ jobs:
         steps:
             - name: Checkout
               uses: actions/checkout@v2
-            - name: CD to gyms service directory
-              run: cd microservices/gyms-service
+            - name: CD to memberships service directory
+              run: cd microservices/memberships-service
             - name: Setup Go
               uses: actions/setup-go@v5
               with:

@@ -3,34 +3,38 @@ name: Continuous Integration
 on:
     push:
         branches:
-            - 'deploy/monolith'
+            - 'deploy/microservices/service-discovery'
 
 env:
     DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
     DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-    IMAGE: ${{ secrets.DOCKER_USERNAME }}/gym-management-monolith
+    IMAGE: ${{ secrets.DOCKER_USERNAME }}/gym-management-service-discovery
 
 jobs:
-    build-test:
-        name: Build & Test
-        runs-on: ubuntu-latest
-        steps:
-            - name: Checkout
-              uses: actions/checkout@v2
-            - name: CD to monolith
-              run: cd monolith
-            - name: Setup Go
-              uses: actions/setup-go@v5
-              with:
-                  go-version: 1.22.2
-            - name: Install Dependencies
-              run: go mod download && go mod verify
-            - name: Setup Test Environment
-              run: scripts/start-test.sh -d
-            - name: Apply Migrations
-              run: scripts/apply-migrations.sh
-            - name: Run Tests
-              run: scripts/run-tests.sh
+    lint-test:
+      name: Lint & Test
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v2
+        - name: CD to Service Discovery Directory
+          run: cd microservices/service-discovery
+        - name: Get node version from .nvmrc
+          id: nvmrc
+          run: echo ::set-output name=NODE_VERSION::$(cat .nvmrc)
+        - name: Setup Node
+          uses: actions/setup-node@v3
+          with:
+            node-version: ${{ steps.nvmrc.outputs.NODE_VERSION }}
+            cache: npm
+        - name: Install Dependencies
+          run: npm install
+        - name: Run Lint
+          run: npm run lint
+        - name: Setup Test Environment
+          run: npm run docker:test -- -d
+        - name: Run Tests
+          run: npm test
 
     dockerize:
         name: Dockerized and Push to Docker Hub
@@ -39,8 +43,8 @@ jobs:
         steps:
             - name: Checkout
               uses: actions/checkout@v2
-            - name: CD to monolith
-              run: cd monolith
+            - name: CD to Service Discovery Directory
+              run: cd microservices/service-discovery
             - name: Set up Docker Buildx
               uses: docker/setup-buildx-action@v1
             - name: Build The Image
@@ -52,19 +56,3 @@ jobs:
                   password: ${{ env.DOCKER_PASSWORD }}
             - name: Push The new Image To Docker Hub
               run: docker push ${{ env.IMAGE }}:latest
-
-#    deploy:
-#        name: Deploy To Production & Staging
-#        runs-on: ubuntu-latest
-#        needs: dockerize
-#        env:
-#            DB_HOST: ${{ secrets.DB_HOST }}
-#            DB_PORT: ${{ secrets.DB_PORT }}
-#            DB_USER: ${{ secrets.DB_USER }}
-#            DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-#            DB_NAME: ${{ secrets.DB_NAME }}
-#            PORT: ${{ secrets.PORT }}
-#            JWT_SECRET: ${{ secrets.JWT_SECRET }}
-#
-#            CONTAINER_NAME: gym-management-backend-prod
-#            CONTAINER_PORT: 8080

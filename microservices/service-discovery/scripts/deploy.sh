@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# a script that trigger the deployment of the memberships-service service
+# a script that trigger the deployment of the service-discovery service
 # Usage: ./scripts/deploy.sh <version> <description>
 # Example: ./scripts/deploy.sh 1.0.0 "first version"
 
@@ -32,12 +32,12 @@ echo "
 $2
 " >> RELEASE.md
 
-git checkout deploy/microservices/memberships-service 2> /dev/null || git checkout -b deploy/microservices/memberships-service
+git checkout deploy/microservices/service-discovery 2> /dev/null || git checkout -b deploy/microservices/service-discovery
 
 git add .
 
 git commit -m "$2"
 
-git push origin deploy/microservices/memberships-service
+git push origin deploy/microservices/service-discovery
 
 echo "Deployment of version $1 is triggered successfully!"

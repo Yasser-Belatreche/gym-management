@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# a script that trigger the deployment of the api-gateway service
+# a script that trigger the deployment of the auth-service service
 # Usage: ./scripts/deploy.sh <version> <description>
 # Example: ./scripts/deploy.sh 1.0.0 "first version"
 
@@ -32,13 +32,13 @@ echo "
 $2
 " >> RELEASE.md
 
-git checkout deploy/microservices/api-gateway 2> /dev/null || git checkout -b deploy/microservices/api-gateway
+git checkout deploy/microservices/auth-service 2> /dev/null || git checkout -b deploy/microservices/auth-service
 
 git add .
 
 git commit -m "$2"
 
-git push origin deploy/microservices/api-gateway
+git push origin deploy/microservices/auth-service
 
 echo "Deployment of version $1 is triggered successfully!"
 

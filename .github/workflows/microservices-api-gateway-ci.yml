@@ -3,12 +3,12 @@ name: Continuous Integration
 on:
     push:
         branches:
-            - 'deploy/monolith'
+            - 'deploy/microservices/api-gateway'
 
 env:
     DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
     DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-    IMAGE: ${{ secrets.DOCKER_USERNAME }}/gym-management-monolith
+    IMAGE: ${{ secrets.DOCKER_USERNAME }}/gym-management-api-gateway
 
 jobs:
     build-test:
@@ -17,8 +17,8 @@ jobs:
         steps:
             - name: Checkout
               uses: actions/checkout@v2
-            - name: CD to monolith
-              run: cd monolith
+            - name: CD to api gateway directory
+              run: cd microservices/api-gateway
             - name: Setup Go
               uses: actions/setup-go@v5
               with:
@@ -50,19 +50,3 @@ jobs:
                   password: ${{ env.DOCKER_PASSWORD }}
             - name: Push The new Image To Docker Hub
               run: docker push ${{ env.IMAGE }}:latest
-
-#    deploy:
-#        name: Deploy To Production & Staging
-#        runs-on: ubuntu-latest
-#        needs: dockerize
-#        env:
-#            DB_HOST: ${{ secrets.DB_HOST }}
-#            DB_PORT: ${{ secrets.DB_PORT }}
-#            DB_USER: ${{ secrets.DB_USER }}
-#            DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-#            DB_NAME: ${{ secrets.DB_NAME }}
-#            PORT: ${{ secrets.PORT }}
-#            JWT_SECRET: ${{ secrets.JWT_SECRET }}
-#
-#            CONTAINER_NAME: gym-management-backend-prod
-#            CONTAINER_PORT: 8080
