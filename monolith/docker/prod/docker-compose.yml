@@ -16,7 +16,7 @@ services:
       db:
         condition: service_healthy
     env_file:
-      - ../../.env.prod
+      - ../../.env
     environment:
       - DB_HOST=db
       - DB_PORT=5432
