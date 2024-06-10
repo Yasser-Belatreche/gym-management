@@ -47,7 +47,7 @@ func StartWebServer() {
 	concurrency.ConcurrencyRouter(router)
 
 	r.GET("/", func(c *g.Context) {
-		c.JSON(http.StatusOK, g.H{"message": "Hello, World!"})
+		c.JSON(http.StatusOK, g.H{"message": "Hello, LD Academy!"})
 	})
 
 	r.NoRoute(func(c *g.Context) {
