@@ -140,7 +140,7 @@ jobs:
                           -e DB_USER=${{ env.DB_USER }} \
                           -e DB_PASSWORD=${{ env.DB_PASSWORD }} \
                           -e DB_NAME=${{ env.DB_NAME }} \
-                          -e JWT_SECRET=${{ env.JWT_SECRET }} \
+                          -e JWT_SECRET="${{ env.JWT_SECRET }}" \
                           -e ADMIN_PASSWORD=${{ env.ADMIN_PASSWORD }} \
                           -e ADMIN_EMAIL=${{ env.ADMIN_EMAIL }} \
                           -e GIN_MODE=${{ env.GIN_MODE }} \
