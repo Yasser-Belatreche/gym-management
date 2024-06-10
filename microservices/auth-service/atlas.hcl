@@ -1,3 +1,7 @@
+variable "url" {
+  type = string
+}
+
 data "external_schema" "gorm" {
   program = [
     "go",
@@ -12,7 +16,7 @@ data "external_schema" "gorm" {
 
 env "gorm" {
   src = data.external_schema.gorm.url
-  url = "postgres://postgres:postgres@localhost:5432/postgres?search_path=public&sslmode=disable"
+  url = var.url
   dev = "docker://postgres/latest/dev?search_path=public"
   migration {
     dir = "file://src/lib/persistence/psql/gorm/migrations"

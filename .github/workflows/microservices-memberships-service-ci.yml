@@ -13,6 +13,7 @@ env:
     DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
     DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
     IMAGE: ${{ secrets.DOCKER_USERNAME }}/gym-management-memberships-service
+    VERSION: 1.0.0
 
 jobs:
     build-test:
@@ -42,11 +43,15 @@ jobs:
             - name: Set up Docker Buildx
               uses: docker/setup-buildx-action@v1
             - name: Build The Image
-              run: docker build . -f docker/prod/Dockerfile -t ${{ env.IMAGE }}:latest
+              run: docker build . -f docker/prod/Dockerfile -t ${{ env.IMAGE }}:${{ env.VERSION }}
             - name: Login to Docker Hub
               uses: docker/login-action@v1
               with:
                   username: ${{ env.DOCKER_USERNAME }}
                   password: ${{ env.DOCKER_PASSWORD }}
-            - name: Push The new Image To Docker Hub
+            - name: Push The current version To Docker Hub
+              run: docker push ${{ env.IMAGE }}:${{ env.VERSION }}
+            - name: Update latest tag
+              run: docker tag ${{ env.IMAGE }}:${{ env.VERSION }} ${{ env.IMAGE }}:latest
+            - name: Push latest tag to Docker Hub
               run: docker push ${{ env.IMAGE }}:latest

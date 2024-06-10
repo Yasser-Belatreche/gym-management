@@ -13,6 +13,7 @@ env:
     DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
     DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
     IMAGE: ${{ secrets.DOCKER_USERNAME }}/gym-management-monolith
+    VERSION: 1.0.2
 
 jobs:
     build-test:
@@ -44,27 +45,103 @@ jobs:
             - name: Set up Docker Buildx
               uses: docker/setup-buildx-action@v1
             - name: Build The Image
-              run: docker build . -f docker/prod/Dockerfile -t ${{ env.IMAGE }}:latest
+              run: docker build . -f docker/prod/Dockerfile -t ${{ env.IMAGE }}:${{ env.VERSION }}
             - name: Login to Docker Hub
               uses: docker/login-action@v1
               with:
                   username: ${{ env.DOCKER_USERNAME }}
                   password: ${{ env.DOCKER_PASSWORD }}
-            - name: Push The new Image To Docker Hub
+            - name: Push The current version To Docker Hub
+              run: docker push ${{ env.IMAGE }}:${{ env.VERSION }}
+            - name: Update latest tag
+              run: docker tag ${{ env.IMAGE }}:${{ env.VERSION }} ${{ env.IMAGE }}:latest
+            - name: Push latest tag to Docker Hub
               run: docker push ${{ env.IMAGE }}:latest
 
-#    deploy:
-#        name: Deploy To Production & Staging
-#        runs-on: ubuntu-latest
-#        needs: dockerize
-#        env:
-#            DB_HOST: ${{ secrets.DB_HOST }}
-#            DB_PORT: ${{ secrets.DB_PORT }}
-#            DB_USER: ${{ secrets.DB_USER }}
-#            DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-#            DB_NAME: ${{ secrets.DB_NAME }}
-#            PORT: ${{ secrets.PORT }}
-#            JWT_SECRET: ${{ secrets.JWT_SECRET }}
-#
-#            CONTAINER_NAME: gym-management-backend-prod
-#            CONTAINER_PORT: 8080
+    deploy:
+        name: Deploy To Production
+        runs-on: ubuntu-latest
+        needs: dockerize
+        env:
+            SERVER_HOST: ${{ secrets.SERVER_HOST }}
+            SERVER_USERNAME: ${{ secrets.SERVER_USERNAME }}
+            SERVER_PASSWORD: ${{ secrets.SERVER_PASSWORD }}
+
+            DB_HOST: ${{ secrets.DB_HOST }}
+            DB_PORT: 80081
+            DB_USER: ${{ secrets.DB_USER }}
+            DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+            DB_NAME: ${{ secrets.DB_NAME }}
+            JWT_SECRET: ${{ secrets.JWT_SECRET }}
+            ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD }}
+            ADMIN_EMAIL: ${{ secrets.ADMIN_EMAIL }}
+            GIN_MODE: release
+
+            APP_CONTAINER_NAME: gym-management-prod
+            APP_CONTAINER_PORT: 80080
+
+            DB_CONTAINER_NAME: gym-management-db-prod
+            DB_CONTAINER_PORT: 80081
+            DB_CONTAINER_VOLUME_PATH: /home/yalitec/apps/gym-management/volumes/db
+
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v2
+
+            - name: Pull & Start PostgresDB container if not running
+              uses: appleboy/ssh-action@v1.0.0
+              with:
+                  host: ${{ env.SERVER_HOST }}
+                  username: ${{ env.SERVER_USERNAME }}
+                  password: ${{ env.SERVER_PASSWORD }}
+                  script: |
+                      docker pull postgres:latest
+                      docker run \
+                          -d \
+                          --expose 5432 \
+                          --restart=always \
+                          -p ${{ env.DB_CONTAINER_PORT }}:5432 \
+                          --name ${{ env.DB_CONTAINER_NAME }} \
+                          -v ${{ env.DB_CONTAINER_VOLUME_PATH }}:/var/lib/postgresql/data \
+                          -e POSTGRES_USER=${{ env.DB_USER }} \
+                          -e POSTGRES_PASSWORD=${{ env.DB_PASSWORD }} \
+                          -e POSTGRES_DB=${{ env.DB_NAME }} \
+                          postgres:latest || true
+
+            - name: Apply the migrations
+              run: scripts/apply-migrations.sh --url "postgres://${{ env.DB_USER }}:${{ env.DB_PASSWORD }}@${{ env.SERVER_HOST }}:${{ env.DB_CONTAINER_PORT }}/${{ env.DB_NAME }}?sslmode=disable"
+
+            - name: Stop the current container & Pull the latest image
+              uses: appleboy/ssh-action@v1.0.0
+              with:
+                  host: ${{ env.SERVER_HOST }}
+                  username: ${{ env.SERVER_USERNAME }}
+                  password: ${{ env.SERVER_PASSWORD }}
+                  script: |
+                      docker rm --force ${{ env.APP_CONTAINER_NAME }} || true
+                      docker rmi ${{ env.IMAGE }}:latest || true
+                      docker pull ${{ env.IMAGE }}:latest
+
+            - name: Run the new container
+              uses: appleboy/ssh-action@v1.0.0
+              with:
+                  host: ${{ env.SERVER_HOST }}
+                  username: ${{ env.SERVER_USERNAME }}
+                  password: ${{ env.SERVER_PASSWORD }}
+                  script: |
+                      docker run \
+                          -d \
+                          --expose 8080 \
+                          --restart=always \
+                           -p ${{ env.APP_CONTAINER_PORT }}:8080 \
+                          --name ${{ env.APP_CONTAINER_NAME }} \
+                          -e DB_HOST=${{ env.DB_HOST }} \
+                          -e DB_PORT=${{ env.DB_PORT }} \
+                          -e DB_USER=${{ env.DB_USER }} \
+                          -e DB_PASSWORD=${{ env.DB_PASSWORD }} \
+                          -e DB_NAME=${{ env.DB_NAME }} \
+                          -e JWT_SECRET=${{ env.JWT_SECRET }} \
+                          -e ADMIN_PASSWORD=${{ env.ADMIN_PASSWORD }} \
+                          -e ADMIN_EMAIL=${{ env.ADMIN_EMAIL }} \
+                          -e GIN_MODE=${{ env.GIN_MODE }} \
+                          ${{ env.IMAGE }}:latest
