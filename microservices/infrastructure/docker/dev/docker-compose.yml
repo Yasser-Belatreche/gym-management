@@ -223,4 +223,4 @@ volumes:
   memberships-service-postgres-data:
     driver: local
   rabbitmq-data:
-      driver: local
+    driver: local
