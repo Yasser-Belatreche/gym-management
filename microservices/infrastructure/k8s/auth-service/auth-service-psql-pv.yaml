@@ -7,6 +7,8 @@ spec:
   volumeMode: Filesystem
   storageClassName: local-storage
   persistentVolumeReclaimPolicy: Delete
+  capacity:
+    storage: 10Gi
   accessModes:
     - ReadWriteOnce
   local:

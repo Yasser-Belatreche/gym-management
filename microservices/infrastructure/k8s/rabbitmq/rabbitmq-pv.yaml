@@ -4,6 +4,8 @@ metadata:
   name: rabbitmq-pv
 
 spec:
+  capacity:
+    storage: 10Gi
   volumeMode: Filesystem
   storageClassName: local-storage
   persistentVolumeReclaimPolicy: Delete
