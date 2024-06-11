@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: api-gateway
-          image: yasserbelatreche/gym-management-api-gateway:1.16
+          image: yasserbelatreche/gym-management-api-gateway:1.0.3
           env:
             - name: API_SECRET
               valueFrom:
