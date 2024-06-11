@@ -7,3 +7,8 @@ First Version
 
 Testing Deployment of gyms service
 
+
+### V 1.0.0 (11-06-2024, 23:58)
+
+Testing Deployment of memberships service
+
