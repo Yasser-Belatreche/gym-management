@@ -38,6 +38,9 @@ cd ../..
 # Update the version in .github action
 sed -i "s/VERSION: .*/VERSION: $1/g" .github/workflows/microservices-gyms-service-ci.yml
 
+# Update the version in k8s config file
+sed -i "s/gym-management-gyms-service:.*/gym-management-gyms-service:$1/g" microservices/infrastructure/k8s/gyms-service/gyms-service.yaml
+
 git add .
 
 git commit -m "$2"
