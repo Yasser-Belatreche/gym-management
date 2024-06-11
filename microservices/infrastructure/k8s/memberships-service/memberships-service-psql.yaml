@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: memberships-service-psql-deployment
+  labels:
+    app: memberships-service-psql
+  namespace: memberships-service-namespace
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: memberships-service-psql
+  template:
+    metadata:
+      labels:
+        app: memberships-service-psql
+    spec:
+      containers:
+        - name: memberships-service-psql
+          image: postgres:latest
+          env:
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  key: DB_USER
+                  name: memberships-service-secret
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: DB_PASSWORD
+                  name: memberships-service-secret
+            - name: POSTGRES_DB
+              valueFrom:
+                configMapKeyRef:
+                  name: memberships-service-configmap
+                  key: DB_NAME
+          volumeMounts:
+            - name: postgres-data
+              mountPath: /var/lib/postgresql/data/
+
+          ports:
+            - containerPort: 5432
+
+      volumes:
+        - name: postgres-data
+          persistentVolumeClaim:
+            claimName: memberships-service-psql-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: memberships-service-psql-service
+  namespace: memberships-service-namespace
+spec:
+  selector:
+    app: memberships-service-psql
+  ports:
+    - protocol: TCP
+      port: 5432
+      targetPort: 5432

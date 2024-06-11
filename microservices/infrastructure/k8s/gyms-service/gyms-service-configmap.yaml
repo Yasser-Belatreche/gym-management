@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: gyms-service-configmap
+  namespace: gyms-service-namespace
+data:
+    GIN_MODE: "release"
+    DB_HOST: "gyms-service-psql-service:5432"
+    DB_NAME: "gyms-service"
+    DB_PORT: "5432"

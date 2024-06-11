@@ -1,5 +1,6 @@
 variable "url" {
   type = string
+  default = "postgres://postgres:postgres@localhost:5432/postgres?search_path=public&sslmode=disable"
 }
 
 data "external_schema" "gorm" {

@@ -1,0 +1,76 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gyms-service-deployment
+  labels:
+    app: gyms-service
+  namespace: gyms-service-namespace
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: gyms-service
+  template:
+    metadata:
+      labels:
+        app: gyms-service
+    spec:
+      containers:
+        - name: gyms-service
+          image: yasserbelatreche/gym-management-gyms-service:1.16
+          env:
+            - name: GIN_MODE
+              valueFrom:
+                configMapKeyRef:
+                  name: gyms-service-configmap
+                  key: GIN_MODE
+            - name: DB_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: gyms-service-configmap
+                  key: DB_HOST
+            - name: DB_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: gyms-service-configmap
+                  key: DB_PORT
+            - name: DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: gyms-service-secret
+                  key: DB_USER
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: gyms-service-secret
+                  key: DB_PASSWORD
+            - name: DB_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: gyms-service-configmap
+                  key: DB_NAME
+            - name: RABBITMQ_URI
+              valueFrom:
+                secretKeyRef:
+                  name: gyms-service-secret
+                  key: RABBITMQ_URI
+            - name: API_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: gyms-service-secret
+                  key: API_SECRET
+          ports:
+            - containerPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: gyms-service-service
+  namespace: gyms-service-namespace
+spec:
+  selector:
+    app: gyms-service
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080

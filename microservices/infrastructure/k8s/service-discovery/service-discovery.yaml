@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: service-discovery-deployment
+  labels:
+    app: service-discovery
+  namespace: service-discovery-namespace
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: service-discovery
+  template:
+    metadata:
+      labels:
+        app: service-discovery
+    spec:
+      containers:
+        - name: service-discovery
+          image: yasserbelatreche/gym-management-service-discovery:1.16
+          env:
+            - name: PORT
+              value: "3000"
+            - name: API_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: service-discovery-secret
+                  key: API_SECRET
+            - name: REDIS_URL
+              valueFrom:
+                secretKeyRef:
+                  name: service-discovery-secret
+                  key: REDIS_URL
+          ports:
+            - containerPort: 3000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: service-discovery-service
+  namespace: service-discovery-namespace
+spec:
+  selector:
+    app: service-discovery
+  ports:
+    - protocol: TCP
+      port: 3000
+      targetPort: 3000
+      nodePort: 30001
+  type: LoadBalancer

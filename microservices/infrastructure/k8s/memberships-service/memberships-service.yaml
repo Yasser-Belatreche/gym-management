@@ -1,0 +1,76 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: memberships-service-deployment
+  labels:
+    app: memberships-service
+  namespace: memberships-service-namespace
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: memberships-service
+  template:
+    metadata:
+      labels:
+        app: memberships-service
+    spec:
+      containers:
+        - name: memberships-service
+          image: yasserbelatreche/gym-management-memberships-service:1.16
+          env:
+            - name: GIN_MODE
+              valueFrom:
+                configMapKeyRef:
+                  name: memberships-service-configmap
+                  key: GIN_MODE
+            - name: DB_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: memberships-service-configmap
+                  key: DB_HOST
+            - name: DB_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: memberships-service-configmap
+                  key: DB_PORT
+            - name: DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: memberships-service-secret
+                  key: DB_USER
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: memberships-service-secret
+                  key: DB_PASSWORD
+            - name: DB_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: memberships-service-configmap
+                  key: DB_NAME
+            - name: RABBITMQ_URI
+              valueFrom:
+                secretKeyRef:
+                  name: memberships-service-secret
+                  key: RABBITMQ_URI
+            - name: API_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: memberships-service-secret
+                  key: API_SECRET
+          ports:
+            - containerPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: memberships-service-service
+  namespace: memberships-service-namespace
+spec:
+  selector:
+    app: memberships-service
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080

@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: service-discovery-redis-deployment
+  labels:
+    app: service-discovery-redis
+  namespace: service-discovery-namespace
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: service-discovery-redis
+  template:
+    metadata:
+      labels:
+        app: service-discovery-redis
+    spec:
+      containers:
+        - name: service-discovery-redis
+          image: redis/redis-stack-server:latest
+          volumeMounts:
+            - name: redis-data
+              mountPath: /data
+
+          ports:
+            - containerPort: 6379
+
+      volumes:
+        - name: redis-data
+          persistentVolumeClaim:
+            claimName: service-discovery-redis-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: service-discovery-redis-service
+  namespace: service-discovery-namespace
+spec:
+  selector:
+    app: service-discovery-redis
+  ports:
+    - protocol: TCP
+      port: 6379
+      targetPort: 6379

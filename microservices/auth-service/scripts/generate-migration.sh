@@ -35,11 +35,11 @@ do
     fi
 done
 
-if [ -z "$URL_VALUE" ]
+EXTRA_ARGS=""
+
+if [ -n "$URL_VALUE" ]
 then
-    echo "Please provide a URL as an argument"
-    echo "Usage: ./apply-migrations.sh --url <url>"
-    exit 1
+    EXTRA_ARGS="--var url=$URL_VALUE"
 fi
 
-atlas migrate diff --env gorm --var "url=$URL_VALUE" "$1"
+atlas migrate diff --env gorm $EXTRA_ARGS "$1"

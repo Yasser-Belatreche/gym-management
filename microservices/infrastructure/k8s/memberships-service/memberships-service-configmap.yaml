@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: memberships-service-configmap
+  namespace: memberships-service-namespace
+data:
+    GIN_MODE: "release"
+    DB_HOST: "memberships-service-psql-service:5432"
+    DB_NAME: "memberships-service"
+    DB_PORT: "5432"

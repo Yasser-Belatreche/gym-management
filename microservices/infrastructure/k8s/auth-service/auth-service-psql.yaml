@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: auth-service-psql-deployment
+  labels:
+    app: auth-service-psql
+  namespace: auth-service-namespace
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: auth-service-psql
+  template:
+    metadata:
+      labels:
+        app: auth-service-psql
+    spec:
+      containers:
+        - name: auth-service-psql
+          image: postgres:latest
+          env:
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  key: DB_USER
+                  name: auth-service-secret
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: DB_PASSWORD
+                  name: auth-service-secret
+            - name: POSTGRES_DB
+              valueFrom:
+                configMapKeyRef:
+                  name: auth-service-configmap
+                  key: DB_NAME
+          volumeMounts:
+            - name: postgres-data
+              mountPath: /var/lib/postgresql/data/
+
+          ports:
+            - containerPort: 5432
+
+      volumes:
+        - name: postgres-data
+          persistentVolumeClaim:
+            claimName: auth-service-psql-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: auth-service-psql-service
+  namespace: auth-service-namespace
+spec:
+  selector:
+    app: auth-service-psql
+  ports:
+    - protocol: TCP
+      port: 5432
+      targetPort: 5432

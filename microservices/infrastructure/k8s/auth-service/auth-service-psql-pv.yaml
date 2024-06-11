@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: auth-service-psql-pv
+
+spec:
+  volumeMode: Filesystem
+  storageClassName: local-storage
+  persistentVolumeReclaimPolicy: Delete
+  accessModes:
+    - ReadWriteOnce
+  local:
+    path: /home/yasser/Desktop/projects/lasting-dynamics/gym-management/data/auth-service/psql
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+        - matchExpressions:
+          - key: kubernetes.io/hostname
+            operator: In
+            values:
+              - minikube

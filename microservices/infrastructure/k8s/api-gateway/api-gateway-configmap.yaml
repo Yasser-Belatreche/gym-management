@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: api-gateway-configmap
+data:
+  GIN_MODE: "release"
+  SERVICE_DISCOVERY_URL: "http://service-discovery.service-discovery-namespace.svc.cluster.local:8080"

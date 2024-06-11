@@ -32,6 +32,12 @@ echo "
 $2
 " >> RELEASE.md
 
+# cd to the root directory
+cd ../..
+
+# Update the version in .github action
+sed -i "s/VERSION: .*/VERSION: $1/g" .github/workflows/microservices-memberships-service-ci.yml
+
 git add .
 
 git commit -m "$2"
@@ -45,5 +51,7 @@ git merge master
 git push origin deploy/microservices/memberships-service
 
 git checkout master
+
+cd microservices/memberships-service
 
 echo "Deployment of version $1 is triggered successfully!"
