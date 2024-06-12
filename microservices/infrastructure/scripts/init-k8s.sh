@@ -26,7 +26,7 @@ kubectl apply -f ./k8s/auth-service/auth-service-psql-pvc.yaml
 kubectl apply -f ./k8s/auth-service/auth-service-secret.yaml
 kubectl apply -f ./k8s/auth-service/auth-service-configmap.yaml
 kubectl apply -f ./k8s/auth-service/auth-service-psql.yaml
-#kubectl apply -f ./k8s/auth-service/auth-service.yaml
+kubectl apply -f ./k8s/auth-service/auth-service.yaml
 
 # Gyms Service
 kubectl apply -f ./k8s/gyms-service/gyms-service-psql-pv.yaml
@@ -34,7 +34,7 @@ kubectl apply -f ./k8s/gyms-service/gyms-service-psql-pvc.yaml
 kubectl apply -f ./k8s/gyms-service/gyms-service-secret.yaml
 kubectl apply -f ./k8s/gyms-service/gyms-service-configmap.yaml
 kubectl apply -f ./k8s/gyms-service/gyms-service-psql.yaml
-#kubectl apply -f ./k8s/gyms-service/gyms-service.yaml
+kubectl apply -f ./k8s/gyms-service/gyms-service.yaml
 
 # Memberships Service
 kubectl apply -f ./k8s/memberships-service/memberships-service-psql-pv.yaml
@@ -42,4 +42,4 @@ kubectl apply -f ./k8s/memberships-service/memberships-service-psql-pvc.yaml
 kubectl apply -f ./k8s/memberships-service/memberships-service-secret.yaml
 kubectl apply -f ./k8s/memberships-service/memberships-service-configmap.yaml
 kubectl apply -f ./k8s/memberships-service/memberships-service-psql.yaml
-#kubectl apply -f ./k8s/memberships-service/memberships-service.yaml
+kubectl apply -f ./k8s/memberships-service/memberships-service.yaml

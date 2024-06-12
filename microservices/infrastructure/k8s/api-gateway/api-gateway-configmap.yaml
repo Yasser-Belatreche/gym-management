@@ -4,4 +4,4 @@ metadata:
   name: api-gateway-configmap
 data:
   GIN_MODE: "release"
-  SERVICE_DISCOVERY_URL: "http://service-discovery:3000"
+  SERVICE_DISCOVERY_URL: "http://service-discovery-service:3000"

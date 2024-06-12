@@ -10,3 +10,8 @@ Deploy
 
 Testing Deployment
 
+
+### V 1.0.6 (12-06-2024, 13:51)
+
+Testing Deployment of Monolith
+
