@@ -13,7 +13,7 @@ env:
     DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
     DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
     IMAGE: ${{ secrets.DOCKER_USERNAME }}/gym-management-monolith
-    VERSION: 1.0.8
+    VERSION: 1.0.9
 
 jobs:
     build-test:
@@ -107,20 +107,10 @@ jobs:
                           -e POSTGRES_PASSWORD=${{ env.DB_PASSWORD }} \
                           -e POSTGRES_DB=${{ env.DB_NAME }} \
                           postgres:latest \
-                          || \
-                      docker start \
-                          -d \
-                          --expose 5432 \
-                          --restart=always \
-                          -p ${{ env.DB_CONTAINER_PORT }}:5432 \
-                          -v ${{ env.DB_CONTAINER_VOLUME_PATH }}:/var/lib/postgresql/data \
-                          -e POSTGRES_USER=${{ env.DB_USER }} \
-                          -e POSTGRES_PASSWORD=${{ env.DB_PASSWORD }} \
-                          -e POSTGRES_DB=${{ env.DB_NAME }} \
-                          ${{ env.DB_CONTAINER_NAME }} || true
+                          || docker start ${{ env.DB_CONTAINER_NAME }} || true
 
-#            - name: Apply the migrations
-#              run: scripts/apply-migrations.sh --url "postgres://${{ env.DB_USER }}:${{ env.DB_PASSWORD }}@${{ env.SERVER_HOST }}:${{ env.DB_CONTAINER_PORT }}/${{ env.DB_NAME }}?sslmode=disable"
+            - name: Apply the migrations
+              run: scripts/apply-migrations.sh --url "postgres://${{ env.DB_USER }}:${{ env.DB_PASSWORD }}@${{ env.SERVER_HOST }}:${{ env.DB_CONTAINER_PORT }}/${{ env.DB_NAME }}?sslmode=disable"
 
             - name: Stop the current container & Pull the latest image
               uses: appleboy/ssh-action@v1.0.0
