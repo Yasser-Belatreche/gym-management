@@ -6,3 +6,8 @@ First Version
 
 Testing Deployment
 
+
+### V 1.0.4 (12-06-2024, 11:03)
+
+Fix prod docker file
+

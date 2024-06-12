@@ -13,7 +13,7 @@ env:
     DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
     DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
     IMAGE: ${{ secrets.DOCKER_USERNAME }}/gym-management-api-gateway
-    VERSION: 1.0.3
+    VERSION: 1.0.4
 
 jobs:
     build-test:

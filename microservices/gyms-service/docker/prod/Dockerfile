@@ -21,8 +21,13 @@ FROM alpine:latest AS production
 # Set the Current Working Directory inside the container
 WORKDIR /home/app
 
+# needed for the binary to run
+RUN apk add --no-cache libc6-compat
+
 # Copy the Pre-built binary file from the previous stage
-COPY --from=builder /home/app/main .
+COPY --from=builder /home/app/main ./main
+
+RUN chmod +x main
 
 # Expose port 8080 to the outside world
 EXPOSE 8080
