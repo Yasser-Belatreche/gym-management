@@ -12,7 +12,7 @@ spec:
   accessModes:
     - ReadWriteOnce
   local:
-    path: /home/yasser/Desktop/projects/lasting-dynamics/gym-management/data/rabbitmq
+    path: /data/rabbitmq
   nodeAffinity:
     required:
       nodeSelectorTerms:

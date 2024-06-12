@@ -6,13 +6,13 @@ metadata:
 spec:
   volumeMode: Filesystem
   storageClassName: local-storage
-  persistentVolumeReclaimPolicy: Delete
+  persistentVolumeReclaimPolicy: Retain
   capacity:
     storage: 10Gi
   accessModes:
     - ReadWriteOnce
   local:
-    path: /home/yasser/Desktop/projects/lasting-dynamics/gym-management/data/memberships-service/psql
+    path: /data/memberships-service/psql
   nodeAffinity:
     required:
       nodeSelectorTerms:
