@@ -1,6 +1,6 @@
 import { Router } from 'express';
 
-import { ServiceDiscovery } from './service';
+import { ServiceDiscovery } from './service.js';
 
 const GetRouter = (service: ServiceDiscovery): Router => {
     const router = Router();

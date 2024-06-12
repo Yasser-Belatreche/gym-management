@@ -1,9 +1,9 @@
 import express from 'express';
 
-import { Redis } from './redis';
-import { GetConfig } from './config';
-import { GetRouter } from './router';
-import { ServiceDiscovery } from './service';
+import { Redis } from './redis.js';
+import { GetConfig } from './config.js';
+import { GetRouter } from './router.js';
+import { ServiceDiscovery } from './service.js';
 
 const StartWebServer = async (): Promise<void> => {
     const config = GetConfig();

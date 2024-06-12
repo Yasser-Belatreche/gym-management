@@ -1,4 +1,4 @@
-import { RedisClient } from './redis';
+import { RedisClient } from './redis.js';
 
 class ServiceDiscovery {
     private readonly KEY = 'services';

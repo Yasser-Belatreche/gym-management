@@ -1,3 +1,3 @@
-import { StartWebServer } from './server';
+import { StartWebServer } from './server.js';
 
 await StartWebServer();

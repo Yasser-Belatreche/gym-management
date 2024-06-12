@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: service-discovery
-          image: yasserbelatreche/gym-management-service-discovery:1.0.0
+          image: yasserbelatreche/gym-management-service-discovery:1.0.4
           env:
             - name: PORT
               value: "3000"

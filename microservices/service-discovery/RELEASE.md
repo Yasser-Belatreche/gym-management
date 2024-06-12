@@ -7,3 +7,8 @@ First Version
 
 Testing Deployment of service discovery
 
+
+### V 1.0.4 (12-06-2024, 11:26)
+
+Fix prod build
+

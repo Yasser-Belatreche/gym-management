@@ -12,6 +12,7 @@
     "start:prod": "node dist/index.js",
     "test": "node --env-file .env.test --test --import tsx tests/*.test.ts",
     "docker:dev": "docker compose -f docker/dev/docker-compose.yml up",
+    "docker:prod": "docker compose -f docker/prod/docker-compose.yml up",
     "docker:test": "docker compose -f docker/test/docker-compose.yml up"
   },
   "keywords": [

@@ -1,8 +1,8 @@
 import assert from 'node:assert';
 import { after, before, beforeEach, describe, it } from 'node:test';
 
-import { Redis } from '../src/redis';
-import { ServiceDiscovery } from '../src/service';
+import { Redis } from '../src/redis.js';
+import { ServiceDiscovery } from '../src/service.js';
 
 await describe('Service Discovery', async () => {
     let redis: Redis;
