@@ -1,7 +1,6 @@
 package gyms
 
 import (
-	"gym-management-gyms/src/components/auth"
 	"gym-management-gyms/src/components/gyms/core/usecases/gym_owners/create_gym_owner"
 	"gym-management-gyms/src/components/gyms/core/usecases/gym_owners/delete_gym_owner"
 	"gym-management-gyms/src/components/gyms/core/usecases/gym_owners/get_gym_owner"
@@ -29,11 +28,11 @@ func (d *AuthorizationDecorator) GetGymOwner(query *get_gym_owner.GetGymOwnerQue
 		return owner, err
 	}
 
-	if query.Session.User.Role == auth.RoleAdmin {
+	if query.Session.User.Role == application_specific.RoleAdmin {
 		return owner, err
 	}
 
-	if query.Session.User.Role == auth.RoleGymOwner {
+	if query.Session.User.Role == application_specific.RoleGymOwner {
 		if query.Session.User.Id == owner.Id {
 			return owner, err
 		}
@@ -45,11 +44,11 @@ func (d *AuthorizationDecorator) GetGymOwner(query *get_gym_owner.GetGymOwnerQue
 }
 
 func (d *AuthorizationDecorator) GetGymOwners(query *get_gym_owners.GetGymOwnersQuery) (*get_gym_owners.GetGymOwnersQueryResponse, *application_specific.ApplicationException) {
-	if query.Session.User.Role == auth.RoleAdmin {
+	if query.Session.User.Role == application_specific.RoleAdmin {
 		return d.manager.GetGymOwners(query)
 	}
 
-	if query.Session.User.Role == auth.RoleGymOwner {
+	if query.Session.User.Role == application_specific.RoleGymOwner {
 		query.Id = make([]string, 0)
 		query.Id = append(query.Id, query.Session.User.Id)
 
@@ -60,7 +59,7 @@ func (d *AuthorizationDecorator) GetGymOwners(query *get_gym_owners.GetGymOwners
 }
 
 func (d *AuthorizationDecorator) CreateGymOwner(command *create_gym_owner.CreateGymOwnerCommand) (*create_gym_owner.CreateGymOwnerCommandResponse, *application_specific.ApplicationException) {
-	if command.Session.User.Role != auth.RoleAdmin {
+	if command.Session.User.Role != application_specific.RoleAdmin {
 		return nil, application_specific.NewForbiddenException("GYMS.OWNERS.CREATE_NOT_ALLOWED", "You are not allowed to create a gym owner", map[string]string{})
 	}
 
@@ -76,11 +75,11 @@ func (d *AuthorizationDecorator) UpdateGymOwner(command *update_gym_owner.Update
 		return nil, err
 	}
 
-	if command.Session.User.Role == auth.RoleAdmin {
+	if command.Session.User.Role == application_specific.RoleAdmin {
 		return d.manager.UpdateGymOwner(command)
 	}
 
-	if command.Session.User.Role == auth.RoleGymOwner {
+	if command.Session.User.Role == application_specific.RoleGymOwner {
 		if command.Session.User.Id == owner.Id {
 			return d.manager.UpdateGymOwner(command)
 		}
@@ -92,7 +91,7 @@ func (d *AuthorizationDecorator) UpdateGymOwner(command *update_gym_owner.Update
 }
 
 func (d *AuthorizationDecorator) DeleteGymOwner(command *delete_gym_owner.DeleteGymOwnerCommand) (*delete_gym_owner.DeleteGymOwnerCommandResponse, *application_specific.ApplicationException) {
-	if command.Session.User.Role == auth.RoleAdmin {
+	if command.Session.User.Role == application_specific.RoleAdmin {
 		return d.manager.DeleteGymOwner(command)
 	}
 
@@ -102,7 +101,7 @@ func (d *AuthorizationDecorator) DeleteGymOwner(command *delete_gym_owner.Delete
 }
 
 func (d *AuthorizationDecorator) RestrictGymOwner(command *restrict_gym_owner.RestrictGymOwnerCommand) (*restrict_gym_owner.RestrictGymOwnerCommandResponse, *application_specific.ApplicationException) {
-	if command.Session.User.Role == auth.RoleAdmin {
+	if command.Session.User.Role == application_specific.RoleAdmin {
 		return d.manager.RestrictGymOwner(command)
 	}
 
@@ -112,7 +111,7 @@ func (d *AuthorizationDecorator) RestrictGymOwner(command *restrict_gym_owner.Re
 }
 
 func (d *AuthorizationDecorator) UnrestrictGymOwner(command *unrestrict_gym_owner.UnrestrictGymOwnerCommand) (*unrestrict_gym_owner.UnrestrictGymOwnerCommandResponse, *application_specific.ApplicationException) {
-	if command.Session.User.Role == auth.RoleAdmin {
+	if command.Session.User.Role == application_specific.RoleAdmin {
 		return d.manager.UnrestrictGymOwner(command)
 	}
 
@@ -127,11 +126,11 @@ func (d *AuthorizationDecorator) GetGym(query *get_gym.GetGymQuery) (*get_gym.Ge
 		return gym, err
 	}
 
-	if query.Session.User.Role == auth.RoleAdmin {
+	if query.Session.User.Role == application_specific.RoleAdmin {
 		return gym, err
 	}
 
-	if query.Session.User.Role == auth.RoleGymOwner {
+	if query.Session.User.Role == application_specific.RoleGymOwner {
 		if query.Session.User.Id == gym.OwnerId {
 			return gym, err
 		}
@@ -143,11 +142,11 @@ func (d *AuthorizationDecorator) GetGym(query *get_gym.GetGymQuery) (*get_gym.Ge
 }
 
 func (d *AuthorizationDecorator) GetGyms(query *get_gyms.GetGymsQuery) (*get_gyms.GetGymsQueryResponse, *application_specific.ApplicationException) {
-	if query.Session.User.Role == auth.RoleAdmin {
+	if query.Session.User.Role == application_specific.RoleAdmin {
 		return d.manager.GetGyms(query)
 	}
 
-	if query.Session.User.Role == auth.RoleGymOwner {
+	if query.Session.User.Role == application_specific.RoleGymOwner {
 		query.OwnerId = make([]string, 0)
 		query.OwnerId = append(query.OwnerId, query.Session.User.Id)
 
@@ -158,11 +157,11 @@ func (d *AuthorizationDecorator) GetGyms(query *get_gyms.GetGymsQuery) (*get_gym
 }
 
 func (d *AuthorizationDecorator) CreateGym(command *create_gym.CreateGymCommand) (*create_gym.CreateGymCommandResponse, *application_specific.ApplicationException) {
-	if command.Session.User.Role == auth.RoleAdmin {
+	if command.Session.User.Role == application_specific.RoleAdmin {
 		return d.manager.CreateGym(command)
 	}
 
-	if command.Session.User.Role == auth.RoleGymOwner {
+	if command.Session.User.Role == application_specific.RoleGymOwner {
 		command.OwnerId = command.Session.User.Id
 
 		return d.manager.CreateGym(command)
@@ -180,11 +179,11 @@ func (d *AuthorizationDecorator) UpdateGym(command *update_gym.UpdateGymCommand)
 		return nil, err
 	}
 
-	if command.Session.User.Role == auth.RoleAdmin {
+	if command.Session.User.Role == application_specific.RoleAdmin {
 		return d.manager.UpdateGym(command)
 	}
 
-	if command.Session.User.Role == auth.RoleGymOwner {
+	if command.Session.User.Role == application_specific.RoleGymOwner {
 		command.OwnerId = command.Session.User.Id
 
 		if command.Session.User.Id == gym.OwnerId {
@@ -206,11 +205,11 @@ func (d *AuthorizationDecorator) DeleteGym(command *delete_gym.DeleteGymCommand)
 		return nil, err
 	}
 
-	if command.Session.User.Role == auth.RoleAdmin {
+	if command.Session.User.Role == application_specific.RoleAdmin {
 		return d.manager.DeleteGym(command)
 	}
 
-	if command.Session.User.Role == auth.RoleGymOwner {
+	if command.Session.User.Role == application_specific.RoleGymOwner {
 		command.OwnerId = command.Session.User.Id
 
 		if command.Session.User.Id == gym.OwnerId {
@@ -232,11 +231,11 @@ func (d *AuthorizationDecorator) EnableGym(command *enable_gym.EnableGymCommand)
 		return nil, err
 	}
 
-	if command.Session.User.Role == auth.RoleAdmin {
+	if command.Session.User.Role == application_specific.RoleAdmin {
 		return d.manager.EnableGym(command)
 	}
 
-	if command.Session.User.Role == auth.RoleGymOwner {
+	if command.Session.User.Role == application_specific.RoleGymOwner {
 		command.OwnerId = command.Session.User.Id
 
 		if command.Session.User.Id == gym.OwnerId {
@@ -258,11 +257,11 @@ func (d *AuthorizationDecorator) DisableGym(command *disable_gym.DisableGymComma
 		return nil, err
 	}
 
-	if command.Session.User.Role == auth.RoleAdmin {
+	if command.Session.User.Role == application_specific.RoleAdmin {
 		return d.manager.DisableGym(command)
 	}
 
-	if command.Session.User.Role == auth.RoleGymOwner {
+	if command.Session.User.Role == application_specific.RoleGymOwner {
 		command.OwnerId = command.Session.User.Id
 
 		if command.Session.User.Id == gym.OwnerId {

@@ -1,4 +1,4 @@
-package auth
+package application_specific
 
 const (
 	RoleAdmin    = "admin"
