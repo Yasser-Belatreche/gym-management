@@ -30,3 +30,8 @@ Testing Deployment of Monolith
 
 Testing Deployment of Monolith
 
+
+### V 1.1.0 (19-06-2024, 13:44)
+
+Testing Deployment of Monolith 19 Jun
+

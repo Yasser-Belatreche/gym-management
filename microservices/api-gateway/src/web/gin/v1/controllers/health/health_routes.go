@@ -63,7 +63,7 @@ func HealthRoutes(router *gin.RouterGroup) {
 			"auth-service":        auth,
 			"gyms-service":        gyms,
 			"memberships-service": memberships,
-			"service_discovery":   serviceDiscovery,
+			"service-discovery":   serviceDiscovery,
 		})
 	})
 }
