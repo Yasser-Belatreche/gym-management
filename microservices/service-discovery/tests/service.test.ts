@@ -24,22 +24,48 @@ await describe('Service Discovery', async () => {
     });
 
     await it('should register a service', async () => {
-        await service.register('test', 'http://localhost:3000');
+        const { id } = await service.register('test', 'http://localhost:3000');
 
-        const s = await service.getService('test');
+        const s = await service.getService(id);
 
         assert.strictEqual(s?.name, 'test');
         assert.strictEqual(s?.url, 'http://localhost:3000');
     });
 
-    await it('should be able to update a service', async () => {
-        await service.register('test', 'http://localhost:3000');
-        await service.register('test', 'http://localhost:3001');
+    await it('should give each service a unique id', async () => {
+        const { id: id1 } = await service.register('test', 'http://localhost:3000');
+        const { id: id2 } = await service.register('test', 'http://localhost:3001');
 
-        const s = await service.getService('test');
+        assert.notStrictEqual(id1, id2);
+    });
 
-        assert.strictEqual(s?.name, 'test');
+    await it('should not be able to register a service with an invalid url', async () => {
+        try {
+            await service.register('test', 'localhost:3000');
+            assert.fail('Should have thrown an error');
+        } catch (error) {
+            assert.ok(error instanceof Error);
+        }
+    });
+
+    await it('should be able to update a service by id', async () => {
+        const { id } = await service.register('test', 'http://localhost:3000');
+
+        await service.updateService(id, 'newName', 'http://localhost:3001');
+
+        const s = await service.getService(id);
+
+        assert.strictEqual(s?.name, 'newName');
         assert.strictEqual(s?.url, 'http://localhost:3001');
+    });
+
+    await it("should not be able to update a service that doesn't exist", async () => {
+        try {
+            await service.updateService('invalidId', 'newName', 'http://localhost:3000');
+            assert.fail('Should have thrown an error');
+        } catch (error) {
+            assert.ok(error instanceof Error);
+        }
     });
 
     await it('should get all services', async () => {
@@ -52,11 +78,20 @@ await describe('Service Discovery', async () => {
     });
 
     await it('should delete a service', async () => {
-        await service.register('test', 'http://localhost:3000');
-        await service.deleteService('test');
+        const { id } = await service.register('test', 'http://localhost:3000');
+        await service.deleteService(id);
 
         const s = await service.getService('test');
 
         assert.strictEqual(s, undefined);
+    });
+
+    await it('should not be able to delete a service that does not exist', async () => {
+        try {
+            await service.deleteService('invalidId');
+            assert.fail('Should have thrown an error');
+        } catch (error) {
+            assert.ok(error instanceof Error);
+        }
     });
 });

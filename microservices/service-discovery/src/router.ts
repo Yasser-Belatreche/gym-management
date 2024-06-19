@@ -11,10 +11,10 @@ const GetRouter = (service: ServiceDiscovery): Router => {
         res.json(services);
     });
 
-    router.get('/:name', async (req, res): Promise<void> => {
-        const { name } = req.params;
+    router.get('/:id', async (req, res): Promise<void> => {
+        const { id } = req.params;
 
-        const result = await service.getService(name);
+        const result = await service.getService(id);
 
         if (!result) {
             res.status(404).json({ error: 'Service not found' });
@@ -41,12 +41,46 @@ const GetRouter = (service: ServiceDiscovery): Router => {
         }
     });
 
-    router.delete('/:name', async (req, res): Promise<void> => {
-        const { name } = req.params;
+    router.patch('/:id', async (req, res): Promise<void> => {
+        const { id } = req.params;
+        const { name, url } = req.body;
 
-        await service.deleteService(name);
+        if (!name || !url) {
+            res.status(400).json({ error: 'Invalid name or URL' });
+            return;
+        }
 
-        res.json({ message: 'Service deleted' });
+        try {
+            const s = await service.updateService(id, name, url);
+
+            res.json(s);
+        } catch (error) {
+            const message = (error as Error).message;
+
+            if (message === 'Service not found') {
+                res.status(404).json({ error: message });
+            } else {
+                res.status(400).json({ error: message });
+            }
+        }
+    });
+
+    router.delete('/:id', async (req, res): Promise<void> => {
+        const { id } = req.params;
+
+        try {
+            await service.deleteService(id);
+
+            res.json({ message: 'Service deleted' });
+        } catch (error) {
+            const message = (error as Error).message;
+
+            if (message === 'Service not found') {
+                res.status(404).json({ error: message });
+            } else {
+                res.status(400).json({ error: message });
+            }
+        }
     });
 
     return router;
