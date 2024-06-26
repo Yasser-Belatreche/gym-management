@@ -13,7 +13,7 @@ env:
     DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
     DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
     IMAGE: ${{ secrets.DOCKER_USERNAME }}/gym-management-monolith
-    VERSION: 1.3.0
+    VERSION: 1.5.0
 
 jobs:
     build-test:
