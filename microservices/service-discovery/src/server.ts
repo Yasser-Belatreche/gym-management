@@ -13,7 +13,7 @@ const StartWebServer = async (): Promise<void> => {
 
     const service = new ServiceDiscovery(redis.Client());
 
-    const app = express();
+    const app = express(); 
 
     app.use(express.json());
     app.use(express.urlencoded({ extended: true }));

@@ -12,7 +12,7 @@ type facade struct {
 }
 
 func (f *facade) GetAuthService() (*Service, error) {
-	url, err := f.GetServiceUrl("auth")
+	url, err := f.GetServiceUrl("8a5d85bf-9473-4522-8cc4-4319cd15877a")
 	if err != nil {
 		return nil, err
 	}
@@ -24,7 +24,7 @@ func (f *facade) GetAuthService() (*Service, error) {
 }
 
 func (f *facade) GetMembershipsService() (*Service, error) {
-	url, err := f.GetServiceUrl("memberships")
+	url, err := f.GetServiceUrl("a969807f-ed74-44b5-9ca8-413a7a769e2e")
 	if err != nil {
 		return nil, err
 	}
@@ -36,7 +36,7 @@ func (f *facade) GetMembershipsService() (*Service, error) {
 }
 
 func (f *facade) GetGymsService() (*Service, error) {
-	url, err := f.GetServiceUrl("gyms")
+	url, err := f.GetServiceUrl("be6379be-255d-4ea0-8995-24477bb326bc")
 	if err != nil {
 		return nil, err
 	}
@@ -72,10 +72,10 @@ func (f *facade) GetHealth() (map[string]interface{}, error) {
 	return response, nil
 }
 
-func (f *facade) GetServiceUrl(service string) (string, error) {
+func (f *facade) GetServiceUrl(id string) (string, error) {
 	client := http.Client{}
 
-	request, err := http.NewRequest(http.MethodGet, f.serviceDiscoveryUrl+"/api/v1/services/"+service, nil)
+	request, err := http.NewRequest(http.MethodGet, f.serviceDiscoveryUrl+"/api/v1/services/"+id, nil)
 	if err != nil {
 		return "", application_specific.NewUnknownException("ERROR_CREATING_REQUEST", err.Error(), nil)
 	}
@@ -111,6 +111,7 @@ func (f *facade) GetServiceUrl(service string) (string, error) {
 }
 
 type successResponse struct {
+	Id   string `json:"id"`
 	Name string `json:"name"`
 	Url  string `json:"url"`
 }
