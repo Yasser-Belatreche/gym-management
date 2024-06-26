@@ -35,13 +35,13 @@ const GetRouter = (service: ServiceDiscovery): Router => {
         try {
             const s = await service.register(name, url);
 
-            res.json(s);
+            res.status(201).json(s);
         } catch (error) {
             res.status(400).json({ error: (error as Error).message });
         }
     });
 
-    router.patch('/:id', async (req, res): Promise<void> => {
+    router.put('/:id', async (req, res): Promise<void> => {
         const { id } = req.params;
         const { name, url } = req.body;
 
@@ -71,7 +71,7 @@ const GetRouter = (service: ServiceDiscovery): Router => {
         try {
             await service.deleteService(id);
 
-            res.json({ message: 'Service deleted' });
+            res.status(204).end();
         } catch (error) {
             const message = (error as Error).message;
 

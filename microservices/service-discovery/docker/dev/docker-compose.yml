@@ -7,7 +7,7 @@ services:
           context: ../..
           dockerfile: docker/dev/Dockerfile
         image: service-discovery:dev
-        container_name: service_discovery-dev
+        container_name: service-discovery-dev
         depends_on:
           - redis
         ports:

@@ -7,3 +7,21 @@ services:
     container_name: "service-discovery-redis-test"
     ports:
       - "6379:6379"
+
+  app:
+    build:
+      context: ../..
+      dockerfile: docker/dev/Dockerfile
+    image: service-discovery:test
+    container_name: service-discovery-test
+    depends_on:
+      - redis
+    ports:
+      - "3000:3000"
+    env_file:
+      - ../../.env.test
+    environment:
+      - REDIS_URL=redis://redis:6379
+      - PORT=3000
+    volumes:
+      - "../..:/home/app/"
